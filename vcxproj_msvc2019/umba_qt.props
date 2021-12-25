@@ -1,0 +1,15 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <UMBA_QTROOT>$(MSVC2019_QTROOT)</UMBA_QTROOT>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
+    <QTDIR>$(UMBA_QTROOT)\$(UMBA_MSVC)</QTDIR>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <QTDIR>$(UMBA_QTROOT)\$(UMBA_MSVC)_64</QTDIR>
+  </PropertyGroup>
+
+</Project>
