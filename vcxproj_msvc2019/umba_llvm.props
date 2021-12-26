@@ -38,8 +38,8 @@
     -->
     <LLVM_CLANG_INC>$(UMBA_LLVM_PROJECT_ROOT)\llvm\include;$(UMBA_LLVM_PROJECT_ROOT)\clang\include;$(UMBA_LLVM_CLANG_TOOLSET_PLATFORM_CONFIG_ARTIFACTS_INC)</LLVM_CLANG_INC>
     <LLVM_CLANG_TOOLS_EXTRA_ROOT>$(UMBA_LLVM_PROJECT_ROOT)\clang-tools-extra</LLVM_CLANG_TOOLS_EXTRA_ROOT>
-    <LLVM_LIB>$(LLVM_LIB_ROOT)\$(PlatformShortName)\bin\$(Configuration)\lib</LLVM_LIB>
-    <LLVM_BIN>$(LLVM_LIB_ROOT)\$(PlatformShortName)\bin\$(Configuration)\bin</LLVM_BIN>
+    <LLVM_LIB>$(LLVM_LIB_ROOT)\$(PlatformShortName)\$(Configuration)\lib</LLVM_LIB>
+    <LLVM_BIN>$(LLVM_LIB_ROOT)\$(PlatformShortName)\$(Configuration)\bin</LLVM_BIN>
   </PropertyGroup>
 
 </Project>

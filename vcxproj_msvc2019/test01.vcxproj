@@ -95,7 +95,7 @@
       <PreprocessorDefinitions>USE_LOUT;UNICODE;_UNICODE;WIN32;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -119,7 +119,7 @@
       <PreprocessorDefinitions>USE_LOUT;UNICODE;_UNICODE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -142,7 +142,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>USE_LOUT;UNICODE;_UNICODE;WIN32;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat />
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -166,7 +166,7 @@
       <PreprocessorDefinitions>USE_LOUT;UNICODE;_UNICODE;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
