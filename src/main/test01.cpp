@@ -31,19 +31,22 @@ int main(int argc, char* argv[])
 {
     if (argc < argsMin)
     {
-        //llvm::errs() << "Usage: " << argv[appFilenameArg] << " input.cpp output" << "\n";
+        llvm::errs() << "Usage: " << argv[appFilenameArgIdx] << " input.cpp output" << "\n";
         return -1;
     }
 
     std::ifstream inputStream(argv[inputFilenameArgIdx]);
     if (!inputStream.is_open())
     {
-        //llvm::errs() << "Cannot open " << argv[1] << "\n";
+        llvm::errs() << "Cannot open " << argv[1] << "\n";
         return -1;
     }
 
     std::string cxxCode((std::istreambuf_iterator<char>(inputStream)), std::istreambuf_iterator<char>());
-    //llvm::outs() << "File content:\n" << CXXCode << "\n";
+
+    //---------
+    llvm::outs() << "File content:\n" << cxxCode << "\n";
+    //---------
 
     std::vector<std::string> args;
     for (int arg = optionsStartArgIdx; arg < argc; ++arg)
