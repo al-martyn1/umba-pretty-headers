@@ -1,5 +1,30 @@
 
+#if defined(WIN32) || defined(_WIN32)
+
+    #include <windows.h>
+    #include <debugapi.h>
+
+    #if defined(min)
+        #undef min
+    #endif
+
+    #if defined(max)
+        #undef max
+    #endif
+
+#endif
+
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
 #include "clang.h"
+
+#include "matty_clang_helpers.h"
+#include "utils.h"
+
+
 
 
 
@@ -27,15 +52,51 @@ enum ArgNumbers
 };
 
 
+
+// ..\src\main\test01.cpp test01.cpp.txt
+
 int main(int argc, char* argv[])
 {
-    if (argc < argsMin)
-    {
-        llvm::errs() << "Usage: " << argv[appFilenameArgIdx] << " input.cpp output" << "\n";
-        return -1;
-    }
+    // llvm::errs() << "Argc: " << argc << "\n";
 
-    std::ifstream inputStream(argv[inputFilenameArgIdx]);
+    std::string inputFilename ;
+    std::string outputFilename;
+
+
+
+    #if defined(WIN32) || defined(_WIN32)
+
+        if (IsDebuggerPresent())
+        {
+            inputFilename  = "..\\src\\main\\test01.cpp";
+            outputFilename = "test01.cpp.txt";
+        }
+        else
+        {
+            if (argc < argsMin)
+            {
+                llvm::errs() << "Usage: " << argv[appFilenameArgIdx] << " input.cpp output" << "\n";
+                return -1;
+            }
+           
+            inputFilename = argv[inputFilenameArgIdx];
+        }
+
+    #else
+
+        if (argc < argsMin)
+        {
+            llvm::errs() << "Usage: " << argv[appFilenameArgIdx] << " input.cpp output" << "\n";
+            return -1;
+        }
+
+        inputFilename = argv[inputFilenameArgIdx];
+
+    #endif
+
+
+
+    std::ifstream inputStream(inputFilename);
     if (!inputStream.is_open())
     {
         llvm::errs() << "Cannot open " << argv[1] << "\n";
@@ -49,21 +110,21 @@ int main(int argc, char* argv[])
     //---------
 
     std::vector<std::string> args;
-    for (int arg = optionsStartArgIdx; arg < argc; ++arg)
+    for (int argN = optionsStartArgIdx; argN < argc; ++argN)
     {
-        args.push_back(argv[arg]);
+        args.push_back(argv[argN]);
     }
 
-    if (inputActionArgIdx!=0)
-    {
+    //if (inputActionArgIdx!=0)
+    //{
+        auto ast = clang::tooling::buildASTFromCode( cxxCode, inputFilename );
+
         //auto Action = new GenerateKernelsFrontendAction(argv[inputActionArgIdx]);
         //tooling::runToolOnCodeWithArgs(Action, CXXCode, Args, argv[1]);
         //delete Action;
-    }
+    //}
     
-
     inputStream.close();
-
     
     return 0;
 }

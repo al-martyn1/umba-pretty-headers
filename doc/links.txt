@@ -1,0 +1,12 @@
+https://clang.llvm.org/docs/IntroductionToTheClangAST.html
+https://stackoverflow.com/questions/18560019/how-to-view-clang-ast
+
+https://habr.com/ru/users/FlexFerrum/posts/
+  https://habr.com/ru/post/148508/
+  https://habr.com/ru/post/419009/
+
+Jinja2 на C++
+  https://habr.com/ru/post/416581/
+  https://habr.com/ru/post/419011/
+  https://habr.com/ru/post/491426/
+
