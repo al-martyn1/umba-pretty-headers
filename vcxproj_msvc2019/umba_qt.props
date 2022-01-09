@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Platform)'=='Win32'">
-    <QTDIR>$(UMBA_QTROOT)\$(UMBA_MSVC)</QTDIR>
+    <QTDIR>$(UMBA_QTROOT)\$(UMBA_MSVCVER)</QTDIR>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <QTDIR>$(UMBA_QTROOT)\$(UMBA_MSVC)_64</QTDIR>
+    <QTDIR>$(UMBA_QTROOT)\$(UMBA_MSVCVER)_64</QTDIR>
   </PropertyGroup>
 
 </Project>

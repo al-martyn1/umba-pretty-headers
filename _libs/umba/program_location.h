@@ -1,0 +1,404 @@
+#pragma once
+
+#if defined(WIN32) || defined(_WIN32)
+
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
+
+#ifndef STRICT
+    #define STRICT
+#endif
+
+    #include <winsock2.h>
+    #include <windows.h>
+
+#endif
+
+
+#include "string_plus.h"
+#include "filename.h"
+#include "filesys.h"
+
+
+
+
+
+#if defined(WIN32) || defined(_WIN32)
+
+    #define UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME      "conf"
+
+    #define UMBA_PROGRAM_LOCATION_INIT_IMPL( argv0 )        do {} while(0)
+    #define UMBA_PROGRAM_LOCATION_INIT( argc, argv )        do {} while(0)
+
+#else
+
+    #if defined(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME_FORCE_CONF)
+        #define UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME      "conf"
+    #else 
+        #define UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME      "etc"
+    #endif
+
+    #define UMBA_PROGRAM_LOCATION_INIT_IMPL( argv0 )        umba::program_location::setArgv0(argv[0])
+    #define UMBA_PROGRAM_LOCATION_INIT( argc, argv )             \
+                if (argc>0)                                      \
+                {                                                \
+                    UMBA_PROGRAM_LOCATION_INIT_IMPL(argv[0]);    \
+                }
+
+#endif
+
+
+
+// umba::program_location::
+namespace umba
+{
+namespace program_location
+{
+
+
+template<typename StringType>
+StringType& getArgv0_nc();
+
+template<> inline
+std::string& getArgv0_nc<std::string>()
+{
+    static std::string argv0;
+    return argv0;
+}
+
+template<> inline
+std::wstring& getArgv0_nc<std::wstring>()
+{
+    static std::wstring argv0;
+    return argv0;
+}
+
+template<typename StringType>
+const StringType& getArgv0()
+{
+    return getArgv0_nc<StringType>();
+}
+
+
+template<typename StringType> inline
+void setArgv0(const StringType &argv0)
+{
+    // Try to keep both versions the same
+
+    if (getArgv0_nc<std::string>().empty()) // prevent to overwrite allready initialized argv0
+    {
+        getArgv0_nc<std::string>() = umba::string_plus::make_string<std::string>(argv0);
+    }
+
+    if (getArgv0_nc<std::wstring>().empty()) // prevent to overwrite allready initialized argv0
+    {
+        getArgv0_nc<std::wstring>() = umba::string_plus::make_string<std::wstring>(argv0);
+    }
+}
+
+
+
+// #include "fsUtils.h"
+
+template<typename StringType>
+StringType getExeName(); // { return throw std::runtime_error("getExeName: not specified"); StringType(); }
+
+
+#if defined(WIN32) || defined(_WIN32)
+
+
+    template<> inline
+    std::string getExeName<std::string>()
+    {
+        char buf[4096];
+        const std::size_t bufSize = sizeof(buf)/sizeof(buf[0]);
+
+        DWORD res = GetModuleFileNameA( 0, buf, bufSize );
+        if (res==bufSize)
+            buf[bufSize-1] = 0;
+    
+        return std::string(buf);
+    }
+
+    template<> inline
+    std::wstring getExeName<std::wstring>()
+    {
+        wchar_t buf[4096];
+        const std::size_t bufSize = sizeof(buf)/sizeof(buf[0]);
+
+        DWORD res = GetModuleFileNameW( 0, buf, bufSize );
+        if (res==bufSize)
+            buf[bufSize-1] = 0;
+    
+        return std::wstring(buf);
+    }
+
+
+#else // Generic POSIX - Linups etc
+
+
+    template<> inline
+    std::string getExeName<std::string>()
+    {
+        return getArgv0<std::string>();
+    }
+
+#endif
+
+template<typename StringType> inline
+void detectLocation( StringType &exeFullName, StringType &progBinPath, StringType &progRootPath )
+{
+    exeFullName = getExeName<StringType>();
+    if (!exeFullName.empty())
+    {
+        progBinPath = umba::filename::getPath( exeFullName );
+        bool isExeFolderBin = false; // По умолчанию бинарник лежит сразу в главном фолдере дистра
+
+        if (!progBinPath.empty())
+        {
+            // При отладке, когда бинарники не разложены как в дистре, а лежат по каталогам конфигураций сборки в общем надкаталоге,
+            // удобно иметь иметь conf на уровень выше, чтобы он был общий для всех сборок
+
+            auto cmpHelper = [](const char *strForCmp)
+            {
+                return umba::string_plus::tolower_copy( umba::string_plus::make_string<StringType>(strForCmp) );
+            };
+
+            StringType exeFolderNameOnly = umba::string_plus::tolower_copy /* toLower */ (umba::filename::getFileName( progBinPath ));
+
+            if ( exeFolderNameOnly==cmpHelper("bin")
+
+              || exeFolderNameOnly==cmpHelper("Debug")
+              || exeFolderNameOnly==cmpHelper("Release")
+
+              || exeFolderNameOnly==cmpHelper("Unicode_Debug")
+              || exeFolderNameOnly==cmpHelper("Unicode_Release")
+
+              || exeFolderNameOnly==cmpHelper("Unicode Debug")
+              || exeFolderNameOnly==cmpHelper("Unicode Release")
+
+              || exeFolderNameOnly==cmpHelper("UnicodeDebug")
+              || exeFolderNameOnly==cmpHelper("UnicodeRelease")
+
+              || exeFolderNameOnly==cmpHelper("RelWithDebInfo")
+              || exeFolderNameOnly==cmpHelper("MinSizeRel")
+
+              || exeFolderNameOnly==cmpHelper("Unicode_RelWithDebInfo")
+              || exeFolderNameOnly==cmpHelper("Unicode_MinSizeRel")
+
+              || exeFolderNameOnly==cmpHelper("UnicodeRelWithDebInfo")
+              || exeFolderNameOnly==cmpHelper("UnicodeMinSizeRel")
+
+              || exeFolderNameOnly==cmpHelper("Ansi_Debug")
+              || exeFolderNameOnly==cmpHelper("Ansi_Release")
+
+              || exeFolderNameOnly==cmpHelper("Ansi Debug")
+              || exeFolderNameOnly==cmpHelper("Ansi Release")
+
+              || exeFolderNameOnly==cmpHelper("AnsiDebug")
+              || exeFolderNameOnly==cmpHelper("AnsiRelease")
+
+              || exeFolderNameOnly==cmpHelper("RelWithDebInfo")
+              || exeFolderNameOnly==cmpHelper("MinSizeRel")
+
+              || exeFolderNameOnly==cmpHelper("Ansi_RelWithDebInfo")
+              || exeFolderNameOnly==cmpHelper("Ansi_MinSizeRel")
+
+              || exeFolderNameOnly==cmpHelper("AnsiRelWithDebInfo")
+              || exeFolderNameOnly==cmpHelper("AnsiMinSizeRel")
+
+               )
+            {
+                // 
+                isExeFolderBin = true;
+            }
+        }
+
+        if (isExeFolderBin)
+        {
+            progRootPath    = umba::filename::getPath( progBinPath );
+        }
+        else
+        {
+            progRootPath    = progBinPath;
+        }
+
+        //progConfPath    = progRootPath + std::string("\\conf");
+        //progIncludePath = progRootPath + std::string("\\include");
+    }
+}
+
+
+template<typename StringType>
+struct ProgramLocation
+{
+    StringType  exeFullName; //!< Executable full name with path
+    StringType  exeFileName; //!< Executable file name (with extention, eg 'exe')
+    StringType  exeName    ; //!< Executable file name only (without extention)
+
+    StringType  rootPath   ; //!< App root path, eg C:\Program Files\AppName or \usr\opt\AppName
+    StringType  binPath    ; //!< App bin path, eg C:\Program Files\AppName\bin (or may be the same as rootPath) or \usr\opt\AppName\bin
+    StringType  confPath   ; //!< App conf path, depending on custom settings, eg  C:\Program Files\AppName\conf or \usr\opt\AppName\conf
+    StringType  userConf   ; //!< User config file/folder, eg C:\Users\UserName\.exeName
+
+    StringType  cwd        ; //!< Current working dir
+
+
+    //! Creates full path under AppRoot folder
+    StringType  getAppRootSubName(const StringType &subName) const
+    {
+        return umba::filename::appendPath(rootPath, subName);
+    }
+
+    //! Creates full path under AppRoot folder
+    StringType  getAppRootSubName(const StringType &subName, const StringType &subExt) const
+    {
+        return getAppRootSubName(umba::filename::appendExt(subName, subExt));
+    }
+
+    //! Creates full path under CWD if taken path is relative
+    StringType  makeAbsPath( const StringType &path ) const
+    {
+        return umba::filename::makeAbsPath(path, cwd);
+    }
+
+    //! If userConfFileOnly==true, used $(Home)\.$(AppExeName).options, else used $(Home)\.$(AppExeName)\builtin.options
+    std::vector<StringType> getBuiltinOptionFilenames( bool userConfFileOnly = true ) const
+    {
+        using namespace umba::filename   ;
+        using namespace umba::string_plus;
+
+        std::vector<StringType> res;
+
+        // Global std options file
+        res.push_back( appendPath( programLocationInfo.confPath, appendExt( programLocationInfo.exeName, make_string<StringType>("options") ) ) );
+
+        // Global user options file
+        res.push_back( appendPath( programLocationInfo.confPath, appendExt( programLocationInfo.exeName, make_string<StringType>("user") ) ) );
+
+        // Local user options file
+        if (userConfFileOnly)
+        {
+            res.push_back( appendExt( programLocationInfo.userConf, make_string<StringType>(".options") ) );
+        }
+        else
+        {
+            res.push_back( appendPath( programLocationInfo.userConf, make_string<StringType>("builtin.options") ) );
+        }
+
+        return res;
+    }
+
+
+    template<typename StreamType>
+    StreamType& print(StreamType &os) const
+    {
+        os << "Executable Full PathName        : " << exeFullName << "\n";
+        os << "Executable Full Name            : " << exeFileName << "\n";
+        os << "Executable Name                 : " << exeName     << "\n";
+
+        os << "Application Distr Root Folder   : " << rootPath    << "\n";
+        os << "Application Binaries Folder     : " << binPath     << "\n";
+        os << "Application Conf Folder         : " << confPath    << "\n";
+        os << "Application User File/Folder    : " << userConf    << "\n";
+        os << "Application Current Working Dir : " << cwd         << "\n";
+
+        auto builtinOptionFilenames = getBuiltinOptionFilenames(false);
+
+        for(const auto &fn : builtinOptionFilenames)
+            os << "Builtin Options File v1         : " << fn      << "\n";
+
+        builtinOptionFilenames = getBuiltinOptionFilenames(true);
+
+        for(const auto &fn : builtinOptionFilenames)
+            os << "Builtin Options File v2         : " << fn      << "\n";
+
+        return os;
+    }
+
+};
+
+template<typename StreamType, typename StringType> inline
+StreamType& operator<<(StreamType &os, const ProgramLocation<StringType> &pl)
+{
+    return pl.print(os);
+}
+
+
+
+
+//! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
+template<typename StringType> inline
+ProgramLocation<StringType> getProgramLocationImpl( const StringType &argv0
+                                                  , StringType        overrideExeName = StringType() //!< Used to make single user conf name for multiple exe's
+                                                  , const StringType &confFolderName  = umba::string_plus::make_string<StringType>(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME)
+                                                  )
+{
+    UMBA_PROGRAM_LOCATION_INIT_IMPL( argv0 );
+
+    ProgramLocation<StringType> loc;
+
+    // Detect main location values
+    detectLocation( loc.exeFullName, loc.binPath, loc.rootPath ); 
+
+    loc.exeFileName = umba::filename::getFileName(loc.exeFullName);
+    loc.exeName     = umba::filename::getName(loc.exeFullName);
+
+    loc.confPath    = umba::filename::appendPath(loc.rootPath, confFolderName);
+
+    auto exeName    = loc.exeName;
+    if (!overrideExeName.empty())
+        exeName = overrideExeName;
+               
+    loc.userConf    = umba::filename::appendPath( umba::filesys::getCurrentUserHomeDirectory<StringType>() , umba::filename::appendExt(StringType(), exeName) );
+
+    loc.cwd         = umba::filesys::getCurrentDirectory<StringType>();
+
+    return loc;
+
+}
+
+//! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
+inline 
+ProgramLocation<std::string> getProgramLocation( int argc, char **argv
+                                               , std::string overrideExeName       = std::string()
+                                               , const std::string &confFolderName = umba::string_plus::make_string<std::string>(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME)
+                                               )
+{
+    if (argc>0)
+    {
+        UMBA_PROGRAM_LOCATION_INIT_IMPL(std::string(argv[0]));
+    }
+
+    return getProgramLocationImpl( getArgv0<std::string>(), overrideExeName, confFolderName );
+
+}
+
+//! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
+inline 
+ProgramLocation<std::wstring> getProgramLocation( int argc, wchar_t **argv
+                                                , std::wstring overrideExeName       = std::wstring()
+                                                , const std::wstring &confFolderName = umba::string_plus::make_string<std::wstring>(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME)
+                                                )
+{
+    if (argc>0)
+    {
+        UMBA_PROGRAM_LOCATION_INIT_IMPL(std::wstring(argv[0]));
+    }
+
+    return getProgramLocationImpl( getArgv0<std::wstring>(), overrideExeName, confFolderName );
+
+}
+
+
+
+// void detectLocation( StringType &exeFullName, StringType &progBinPath, StringType &progRootPath )
+
+
+} // namespace program_location
+} // namespace umba
+
+// umba::program_location::
+
+

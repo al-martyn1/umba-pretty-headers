@@ -10,3 +10,9 @@ Jinja2 на C++
   https://habr.com/ru/post/419011/
   https://habr.com/ru/post/491426/
 
+
+My First Language Frontend with LLVM Tutorial
+  https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html
+
+Clang Tutorial: Finding Declarations
+  https://xinhuang.github.io/posts/2014-10-19-clang-tutorial-finding-declarations.html

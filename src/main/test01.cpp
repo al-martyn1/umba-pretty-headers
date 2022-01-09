@@ -1,19 +1,5 @@
 
-#if defined(WIN32) || defined(_WIN32)
-
-    #include <windows.h>
-    #include <debugapi.h>
-
-    #if defined(min)
-        #undef min
-    #endif
-
-    #if defined(max)
-        #undef max
-    #endif
-
-#endif
-
+#include "dbghlp.h"
 
 #include <iostream>
 #include <iomanip>
@@ -21,7 +7,7 @@
 
 #include "clang.h"
 
-#include "matty_clang_helpers.h"
+#include "marty_clang_helpers.h"
 #include "utils.h"
 
 

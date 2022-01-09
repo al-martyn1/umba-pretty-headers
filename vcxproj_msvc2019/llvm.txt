@@ -1,13 +1,2 @@
 UMBA_LLVM_PROJECT_ROOT=G:\llvm-project
 UMBA_LLVM_BUILT_ROOT=G:\llvm
-
-
-UMBA_LLVM_CLANG_INLUDE=$(UMBA_LLVM_PROJECT_ROOT)
-
-
-
-
-clang
-clang-tools-extra
-
-G:\llvm-project\clang\include\

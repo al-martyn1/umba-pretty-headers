@@ -1,15 +1,30 @@
 #pragma once
 
+#include <string>
+#include <memory>
+#include <map>
+#include <vector>
+#include <set>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 
 #include "clang/AST/ASTConsumer.h"
+#include "clang/AST/ASTContext.h"
 #include "clang/AST/RecursiveASTVisitor.h"
+#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include "clang/Basic/SourceLocation.h"
+#include "clang/Basic/SourceManager.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
 #include "clang/Tooling/Tooling.h"
-#include "clang/Basic/SourceLocation.h"
+#include "clang/Tooling/CommonOptionsParser.h"
+#include "clang/Tooling/CompilationDatabase.h"
+#include "clang/Tooling/JSONCompilationDatabase.h"
+
+#include "llvm/Support/raw_ostream.h"
+
 
 #if defined(_MSC_VER)
 
@@ -319,3 +334,4 @@
 #endif
 
 #endif
+

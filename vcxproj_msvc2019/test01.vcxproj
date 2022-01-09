@@ -23,7 +23,7 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="$(ProjectDir)\umba_msvc.props" />
+  <Import Project="$(ProjectDir)\umba_msvcver.props" />
   <Import Project="$(ProjectDir)\umba_boost.props" />
   <Import Project="$(ProjectDir)\umba_qt.props" />
   <Import Project="$(ProjectDir)\umba_llvm.props" />
@@ -45,24 +45,24 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\xlibs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\xlibs\sfmt\inc</IncludePath>
+    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\xlibs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\xlibs\sfmt\inc</IncludePath>
+    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\xlibs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\xlibs\sfmt\inc</IncludePath>
+    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVC)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\xlibs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\xlibs\sfmt\inc</IncludePath>
+    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared" />
@@ -86,7 +86,7 @@
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -100,7 +100,7 @@
     </Link>
     <QtMoc>
       <Define>USE_LOUT;UNICODE;_UNICODE;WIN32;WIN64;%(PreprocessorDefinitions)</Define>
-      <IncludePath>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\..;$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
+      <IncludePath>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\..;$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -124,7 +124,7 @@
     </Link>
     <QtMoc>
       <Define>USE_LOUT;UNICODE;_UNICODE;WIN32;%(PreprocessorDefinitions)</Define>
-      <IncludePath>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
+      <IncludePath>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +133,7 @@
       <PreprocessorDefinitions>USE_LOUT;UNICODE;_UNICODE;WIN32;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -147,7 +147,7 @@
     </Link>
     <QtMoc>
       <Define>USE_LOUT;UNICODE;_UNICODE;WIN32;WIN64;NDEBUG;%(PreprocessorDefinitions)</Define>
-      <IncludePath>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
+      <IncludePath>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,7 +157,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -171,7 +171,7 @@
     </Link>
     <QtMoc>
       <Define>USE_LOUT;UNICODE;_UNICODE;WIN32;NDEBUG;%(PreprocessorDefinitions)</Define>
-      <IncludePath>$(ProjectDir)\..\xlibs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\xlibs;$(ProjectDir)\..\src;$(ProjectDir)\..\xlibs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
+      <IncludePath>$(ProjectDir)\..\_libs\mem_pools\inc;.;$(QTDIR)\include;$(LLVM_CLANG_INC);.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories);$(ProjectDir)\..\_libs;$(ProjectDir)\..\src;$(ProjectDir)\..\_libs\sfmt\inc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSerialPort;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtSerialBus;$(QTDIR)\include\QtWebSockets</IncludePath>
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
