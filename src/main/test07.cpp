@@ -14,6 +14,8 @@
 #include "umba/string_plus.h"
 #include "umba/program_location.h"
 #include "umba/scope_exec.h"
+#include "umba/macro_helpers.h"
+#include "umba/macros.h"
 
 
 
