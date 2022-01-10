@@ -1,3 +1,4 @@
 -E=*/zz_*
 -E=*.cpp
---keep-compile-flags
+#--keep-compile-flags
+compile_flags.txt

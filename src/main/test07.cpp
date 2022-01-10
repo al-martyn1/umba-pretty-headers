@@ -7,10 +7,13 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+// #include <cstdio>
+#include <filesystem>
 
 #include "umba/debug_helpers.h"
 #include "umba/string_plus.h"
 #include "umba/program_location.h"
+#include "umba/scope_exec.h"
 
 
 
@@ -27,6 +30,12 @@ bool logGccFormat  = false;
 bool logSourceInfo = false;
 
 
+#include "log.h"
+
+#include "compile_flags_parser.h"
+
+
+
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
 
@@ -37,8 +46,8 @@ umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
 //PrintHelpStyle printHelpStyle = PrintHelpStyle::normal;
 
-std::string inputFilename;
-std::string outputFilename;
+// std::string inputFilename;
+// std::string outputFilename;
 
 //bool disableBuiltins = false;
 //bool disableBuiltinIncludes = false;
@@ -51,7 +60,6 @@ std::string outputFilename;
 #include "app_ver_config.h"
 #include "print_ver.h"
 
-#include "log.h"
 #include "arg_parser.h"
 
 
@@ -93,12 +101,12 @@ int main(int argc, char* argv[])
     }
 
     if (!argsParser.parseStdBuiltins())
-        return -1;
+        return 1;
     if (argsParser.mustExit)
         return 0;
 
     if (!argsParser.parse())
-        return -1;
+        return 1;
     if (argsParser.mustExit)
         return 0;
 
@@ -108,7 +116,42 @@ int main(int argc, char* argv[])
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
 
     std::cout << "# Adjusted AppConfig:\n---\n" << appConfig << "\n";
+
+
+    std::set<std::string> allCompileFlagFiles;
+    auto compileFlagFilesAutoDeleter = umba::makeLeaveScopeExec
+                                       (
+                                           [&]()
+                                           {
+                                               if (appConfig.keepCompileFlags) return;
+
+                                               for( auto f: allCompileFlagFiles)
+                                               {
+                                                   // std::remove(f.c_str());
+                                                   std::filesystem::remove(f);
+                                               }
+                                           }
+                                       );
     
+
+
+    for(auto compileFlagsTxt : appConfig.clangCompileFlagsTxtFilename)
+    {
+        std::map<std::string, std::vector<std::string> > cflags;
+        std::vector<std::string>                         commonLines;
+
+        if (!parseCompileFlags(compileFlagsTxt, cflags, commonLines))
+            return 1;
+
+
+        std::vector<std::string> generatedFiles;
+
+        generateCompileFlags(compileFlagsTxt, cflags, commonLines, generatedFiles);
+
+        allCompileFlagFiles.insert(generatedFiles.begin(), generatedFiles.end());
+        
+    }
+
 
 
 

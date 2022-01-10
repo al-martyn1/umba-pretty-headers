@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stack>
 
 #include "app_config.h"
 
@@ -10,6 +11,25 @@ AppConfig    appConfig;
 
 struct ArgParser
 {
+
+std::stack<std::string> optFiles;
+
+
+std::string makeAbsPath( std::string p )
+{
+    std::string basePath;
+
+    if (optFiles.empty())
+        basePath = umba::filesys::getCurrentDirectory<std::string>();
+    else
+        basePath = umba::filename::getPath(optFiles.top());
+
+
+    return umba::filename::makeAbsPath( p, basePath );
+
+}
+
+
 
 // 0 - ok, 1 normal stop, -1 - error
 template<typename ArgsParser>
@@ -137,7 +157,15 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
     } // if (opt.isOption())
     else if (opt.isResponseFile())
     {
-        if (!argsParser.parseBuiltinsFile( opt.name ))
+        std::string optFileName = makeAbsPath(opt.name);
+
+        optFiles.push(optFileName);
+
+        auto parseRes = argsParser.parseBuiltinsFile( optFileName );
+
+        optFiles.pop();
+
+        if (!parseRes)
             return -1;
 
         if (argsParser.mustExit)
@@ -175,7 +203,7 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
     
     }
 
-    appConfig.clangCompileFlagsTxtFilename.push_back(a);
+    appConfig.clangCompileFlagsTxtFilename.push_back(makeAbsPath(a));
 
 /*    
     if (inputFilename.empty())

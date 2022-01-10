@@ -1,7 +1,7 @@
 -I..\_libs\mem_pools\inc
 -I
 ..\_libs
-..\_src
+-I..\_src
 -I..\_libs\sfmt\inc
 
 ## WIN32
