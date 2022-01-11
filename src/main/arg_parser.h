@@ -95,7 +95,7 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
             return 0;
         }
 
-        else if (opt.isOption("exclude-files") || opt.isOption('E') || opt.setDescription("Exclude files from parsing"))
+        else if (opt.isOption("exclude-files") || opt.isOption('X') || opt.setDescription("Exclude files from parsing"))
         {
             if (argsParser.hasHelpOption) return 0;
             
@@ -108,6 +108,38 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
             std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
             appConfig.excludeFilesList.insert(appConfig.excludeFilesList.end(), lst.begin(), lst.end());
 
+
+            return 0;
+        }
+
+        else if (opt.isOption("set") || opt.isOption('S') || opt.setDescription("Set up macro in form: 'NAME:VALUE'"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"Set up macro requires at least macro name (--set)\n";
+                return -1;
+            }
+
+            std::string name, val;
+            umba::string_plus::split_to_pair( opt.optArg, name, val, ':' );
+            appConfig.macros[name] = val;
+
+            return 0;
+        }
+
+        else if (opt.isOption("path") || opt.isOption('P') || opt.setDescription("Add path to scan path list"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"Add path to scan path list requires argument (--path)\n";
+                return -1;
+            }
+
+            appConfig.scanPaths.push_back(makeAbsPath(opt.optArg));
 
             return 0;
         }

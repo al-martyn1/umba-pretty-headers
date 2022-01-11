@@ -1,4 +1,6 @@
--E=*/zz_*
--E=*.cpp
+-X=*/zz_*
+-X=*.cpp
 #--keep-compile-flags
+--set=Test:SomeTest
 compile_flags.txt
+-P=..\_libs

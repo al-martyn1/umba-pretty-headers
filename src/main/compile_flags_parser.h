@@ -8,6 +8,10 @@
 
 #include "umba/string_plus.h"
 #include "umba/filename.h"
+#include "umba/macros.h"
+#include "umba/macro_helpers.h"
+
+#include "app_config.h"
 
 
 /*
@@ -150,7 +154,8 @@ std::string filterFilenameForbiddenChars( std::string s )
 
 //----------------------------------------------------------------------------
 inline
-bool generateCompileFlags( const std::string &baseFileName
+bool generateCompileFlags( const AppConfig &appConfig
+                         , const std::string &baseFileName
                          , const std::map<std::string, std::vector<std::string> > &cflags
                          , const std::vector<std::string> &commonLines
                          , std::vector<std::string> &generatedFiles
@@ -178,6 +183,8 @@ bool generateCompileFlags( const std::string &baseFileName
         generatedFiles.push_back(fileName);
 
         auto text = umba::string_plus::merge<std::string>(lines,"\n");
+
+        text = umba::macros::substMacros(text,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
 
         optFile << text << "\n";
     }

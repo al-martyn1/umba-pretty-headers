@@ -12,14 +12,11 @@
 #include "umba/flag_helpers.h"
 
 
-template<typename MacroGetter>
-void testMacro( const std::string text, const MacroGetter &getter, int flags )
-{
-    std::cout << "Text   : " << text << "\n";
-    std::cout << "Substed: " << substMacros(text,getter,flags) << "\n";
-    std::cout << "---\n\n";
+// template<typename GetterType>
+// std::string
+//     testMacro( "$(ALLUSERSPROFILE)", MacroTextFromEnv<std::string>(), substFlagsDefault );
+//     testMacro( "$(ALLUSERSPROFILE)", MacroTextFromMap<std::string>(macroTexts), substFlagsDefault );
 
-}
 
 inline
 const std::map<int,std::string>& getUmbaMacrosFlagsStringMap()
@@ -46,6 +43,19 @@ const std::map<int,std::string>& getUmbaMacrosFlagsStringMap()
 }
 
 
+template<typename MacroGetter>
+void testMacro( const std::string text, const MacroGetter &getter, int flags )
+{
+    std::cout << "Text   : [" << text << "], "
+              << "getter: " << getter.getName() << ", "
+              << "flags: " << umba::flag::util::toStringImpl(getUmbaMacrosFlagsStringMap(), flags ) //<< ""
+              << "\n";
+    std::cout << "Substed: [" << umba::macros::substMacros(text,getter,flags) << "]\n";
+    std::cout << "---\n\n";
+}
+
+
+
 
 
 int main(int argc, char* argv[])
@@ -53,7 +63,9 @@ int main(int argc, char* argv[])
     using namespace umba::macros;
 
     std::cout << "Flags test\n";
-    std::cout << umba::flag::util::toStringImpl(getUmbaMacrosFlagsStringMap(), argsAllowed|changeDot ) << "\n";
+    auto flagsNameMap = getUmbaMacrosFlagsStringMap();
+    auto flagsStr = umba::flag::util::toStringImpl(flagsNameMap, argsAllowed|changeDot );
+    std::cout << flagsStr << "\n";
     std::cout << "-------\n";
 
     std::map<std::string,std::string>  macroTexts;
@@ -61,7 +73,21 @@ int main(int argc, char* argv[])
     macroTexts["TestMacro" ] = "test";
     macroTexts["OtherMacro"] = "other test macro";
 
-    testMacro( "$(ALLUSERSPROFILE)", MacroTextFromEnv<std::string>(), substFlagsDefault );
+
+    testMacro( "$(TestMacro) - $(OtherMacro)", MacroTextFromEnv     <std::string>(), substFlagsDefault );
+    testMacro( "$(TestMacro) - $(OtherMacro)", MacroTextFromMap     <std::string>(macroTexts), substFlagsDefault );
+    testMacro( "$(TestMacro) - $(OtherMacro)", MacroTextFromMap     <std::string>(macroTexts), keepUnknownVars );
+    testMacro( "$(TestMacro) - $(OtherMacro)", MacroTextFromMapOrEnv<std::string>(macroTexts), keepUnknownVars );
+
+    testMacro( "$(ALLUSERSPROFILE)", MacroTextFromEnv     <std::string>(), substFlagsDefault );
+    testMacro( "$(ALLUSERSPROFILE)", MacroTextFromMap     <std::string>(macroTexts), substFlagsDefault );
+    testMacro( "$(ALLUSERSPROFILE)", MacroTextFromMap     <std::string>(macroTexts), keepUnknownVars );
+    testMacro( "$(ALLUSERSPROFILE)", MacroTextFromMapOrEnv<std::string>(macroTexts), keepUnknownVars );
+
+    testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromEnv     <std::string>(), substFlagsDefault );
+    testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromMap     <std::string>(macroTexts), substFlagsDefault );
+    testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromMap     <std::string>(macroTexts), keepUnknownVars );
+    testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromMapOrEnv<std::string>(macroTexts), keepUnknownVars );
 
     /*
     MacroTextFromMap

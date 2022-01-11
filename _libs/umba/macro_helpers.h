@@ -46,6 +46,8 @@ struct MacroTextFromMap
         return getMacroTextFromMap(m, name, text);
     }
 
+    const char* getName() const { return "MacroTextFromMap"; }
+
 }; // struct MacroTextFromMap
 
 //------------------------------
@@ -61,6 +63,8 @@ struct MacroTextFromMapRef
         return getMacroTextFromMap(m, name, text);
     }
 
+    const char* getName() const { return "MacroTextFromMapRef"; }
+
 }; // struct MacroTextFromMapRef
 
 //------------------------------
@@ -74,6 +78,8 @@ struct MacroTextFromEnv
         return umba::env::getVar(name, text);
     }
 
+    const char* getName() const { return "MacroTextFromEnv"; }
+
 }; // struct MacroTextFromEnv
 
 //------------------------------
@@ -81,15 +87,22 @@ template<typename StringType>
 struct MacroTextFromMapOrEnv
 {
     std::map<StringType,StringType> m;
+    bool                            envAllowed = true; // To allow control in runtime
 
-    MacroTextFromMapOrEnv(const std::map<StringType,StringType> &_m) : m(_m) {}
+    MacroTextFromMapOrEnv(const std::map<StringType,StringType> &_m, bool _envAllowed = true) : m(_m), envAllowed(_envAllowed) {}
 
     bool operator()(const StringType &name, StringType &text) const
     {
         if (getMacroTextFromMap(m, name, text))
             return true;
+
+        if (!envAllowed)
+            return false;
+
         return umba::env::getVar(name, text);
     }
+
+    const char* getName() const { return "MacroTextFromMapOrEnv"; }
 
 }; // struct MacroTextFromMapOrEnv
 
@@ -98,15 +111,22 @@ template<typename StringType>
 struct MacroTextFromMapOrEnvRef
 {
     const std::map<StringType,StringType> &m;
+    bool                            envAllowed = true; // To allow control in runtime
 
-    MacroTextFromMapOrEnvRef(const std::map<StringType,StringType> &_m) : m(_m) {}
+    MacroTextFromMapOrEnvRef(const std::map<StringType,StringType> &_m, bool _envAllowed = true) : m(_m), envAllowed(_envAllowed) {}
 
     bool operator()(const StringType &name, StringType &text) const
     {
         if (getMacroTextFromMap(m, name, text))
             return true;
+
+        if (!envAllowed)
+            return false;
+
         return umba::env::getVar(name, text);
     }
+
+    const char* getName() const { return "MacroTextFromMapOrEnvRef"; }
 
 }; // struct MacroTextFromMapOrEnvRef
 

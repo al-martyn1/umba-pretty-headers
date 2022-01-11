@@ -42,15 +42,11 @@ FlagType getAllFlags( const std::map<FlagType,StringType> &flagsMap )
 }
 
 //----------------------------------------------------------------------------
-template< typename StringType, typename FlagType > inline
-StringType toStringImpl( const std::map<FlagType,StringType> &flagsMap, FlagType flagsVal )
+template< typename StringType, typename FlagType, typename IntType > inline
+StringType toStringImpl2( const std::map<FlagType,StringType> &flagsMap, FlagType flagsVal )
 {
-    typedef typename std::underlying_type< FlagType >::type    IntType;
-
-
     auto intFlagsVal = (IntType)flagsVal;
 
-    //FlagType allFlags = getAllFlags(flagsMap);
     IntType intAllFlags = (IntType)getAllFlags(flagsMap);
 
     // Special case - no flags set - looking up for this case
@@ -69,18 +65,31 @@ StringType toStringImpl( const std::map<FlagType,StringType> &flagsMap, FlagType
     for(auto [flag,flagName] : flagsMap)
     {
         IntType iFlags = (IntType)flag;
-        if ((intAllFlags&iFlags)==iFlags)
+        if ((intFlagsVal&iFlags)==iFlags)
         {
             resStrVec.push_back(flagName);
-            intAllFlags &= ~iFlags;
+            //intAllFlags &= ~iFlags;
+            intFlagsVal &= ~iFlags;
         }
 
-        if (intAllFlags==0)
+        if (intFlagsVal==0)
             break;
     }
 
-    return umba::string_plus::make_string<StringType>(resStrVec, umba::string_plus::make_string<StringType>("|") );
+    return umba::string_plus::merge<StringType>(resStrVec, umba::string_plus::make_string<StringType>("|") );
 
+}
+
+template< typename StringType, typename FlagType, typename std::enable_if<std::is_enum<FlagType>{}, bool>::type = true > inline
+StringType toStringImpl( const std::map<FlagType,StringType> &flagsMap, FlagType flagsVal )
+{
+    return toStringImpl2< StringType, FlagType, typename std::underlying_type< FlagType >::type >( flagsMap, flagsVal );
+}
+
+template< typename StringType, typename FlagType, typename std::enable_if<!std::is_enum<FlagType>{} && std::is_integral< FlagType >{} /* ::value */ , bool>::type = true > inline
+StringType toStringImpl( const std::map<FlagType,StringType> &flagsMap, FlagType flagsVal )
+{
+    return toStringImpl2< StringType, FlagType, FlagType >( flagsMap, flagsVal );
 }
 
 

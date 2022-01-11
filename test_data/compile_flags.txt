@@ -3,6 +3,8 @@
 ..\_libs
 -I..\_src
 -I..\_libs\sfmt\inc
+-DUMBA_VSLANG=$(VSLANG)
+-DUMBA_MACRO_TEST=$(Test)
 
 ## WIN32
 -DWIN32

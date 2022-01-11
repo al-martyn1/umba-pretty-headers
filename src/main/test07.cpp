@@ -16,7 +16,7 @@
 #include "umba/scope_exec.h"
 #include "umba/macro_helpers.h"
 #include "umba/macros.h"
-
+#include "scan_folders.h"
 
 
 umba::StdStreamCharWriter coutWriter(std::cout);
@@ -148,13 +148,15 @@ int main(int argc, char* argv[])
 
         std::vector<std::string> generatedFiles;
 
-        generateCompileFlags(compileFlagsTxt, cflags, commonLines, generatedFiles);
+        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, generatedFiles);
 
         allCompileFlagFiles.insert(generatedFiles.begin(), generatedFiles.end());
         
     }
 
 
+    std::vector<std::string> foundFiles;
+    scanFolders(appConfig, foundFiles);
 
 
     return 0;

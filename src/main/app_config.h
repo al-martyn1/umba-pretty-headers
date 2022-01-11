@@ -9,10 +9,14 @@
 
 struct AppConfig
 {
-    bool                        keepCompileFlags = false;
-    std::vector<std::string>    clangCompileFlagsTxtFilename; // compile_flags.txt
+    std::map<std::string,std::string>    macros;
 
-    std::vector<std::string>    excludeFilesList;
+    bool                                 keepCompileFlags = false;
+    std::vector<std::string>             clangCompileFlagsTxtFilename; // compile_flags.txt
+
+    std::vector<std::string>             excludeFilesList;
+
+    std::vector<std::string>             scanPaths;
 
 
     template<typename StreamType>
@@ -22,6 +26,13 @@ struct AppConfig
         for(auto inputFilename: clangCompileFlagsTxtFilename)
         {
             s << "CLang options file: " << inputFilename << "\n";
+        }
+
+        s << "---\n";
+
+        for(auto scanPath : scanPaths)
+        {
+            s << "Scan Path          : " << scanPath << "\n";
         }
 
         s << "---\n";
@@ -39,7 +50,9 @@ struct AppConfig
     {
         AppConfig appConfig;
 
+        appConfig.macros           = macros;
         appConfig.keepCompileFlags = keepCompileFlags;
+        appConfig.scanPaths        = scanPaths;
 
         for(auto inputFilename: clangCompileFlagsTxtFilename)
         {
@@ -48,7 +61,7 @@ struct AppConfig
 
         for(auto excludedFile: excludeFilesList)
         {
-            appConfig.excludeFilesList.push_back( umba::filename::normalizePathSeparators(excludedFile) );
+            appConfig.excludeFilesList.push_back( umba::filename::normalizePathSeparators(excludedFile,'/') );
         }
 
         return appConfig;
