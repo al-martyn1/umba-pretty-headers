@@ -52,10 +52,14 @@ bool parseCompileFlags( const std::string &curFile, std::ifstream &optFile, std:
     auto startNewSection = [&]()
         {
             if (curConfig.empty())
+            {
                 commonLines       = curLines;
+            }
             else
-                cflags[curConfig] = curLines;
-
+            {
+                if (!curLines.empty())
+                    cflags[curConfig] = curLines;
+            }
             appendToPrevLine = false;
             curConfig        = optLine;
             curLines.clear();
@@ -166,27 +170,69 @@ bool generateCompileFlags( const AppConfig &appConfig
     std::string baseExt  = umba::filename::getExt(baseFileName);
 
     // https://en.cppreference.com/w/cpp/language/range-for
+
+    auto generateFilenameAndSave = [&](std::string configName, const std::vector<std::string> &lines)
+        {
+            configName = filterFilenameForbiddenChars(configName);
+
+            if (configName.empty())
+                configName = "_0";
+            else 
+                configName = "_" + configName;
+
+            auto fileName = umba::filename::appendPath(basePath, umba::filename::appendExt( baseName+configName, baseExt));
+
+            //auto lines = commonLines;
+            //lines.insert(lines.end(), val.begin(), val.end());
+             
+            std::ofstream optFile(fileName.c_str());
+            if (!optFile)
+                return  /* false */ ; // resVec;
+             
+            generatedFiles.push_back(fileName);
+             
+            auto text = umba::string_plus::merge<std::string>(lines,"\n");
+             
+            text = umba::macros::substMacros(text,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
+             
+            optFile << text << "\n";
+
+        };
+
+
+    unsigned generatedCount = 0;
+
     for(auto [key,val] : cflags)
     {
-        auto configName = filterFilenameForbiddenChars(key);
-
-        auto fileName = umba::filename::appendPath(basePath, umba::filename::appendExt( baseName+std::string("_")+configName, baseExt));
-
+        generatedCount++;
         auto lines = commonLines;
-
         lines.insert(lines.end(), val.begin(), val.end());
+        generateFilenameAndSave(key, lines);
 
-        std::ofstream optFile(fileName.c_str());
-        if (!optFile)
-            return false; // resVec;
+        // auto configName = filterFilenameForbiddenChars(key);
+        //  
+        // auto fileName = umba::filename::appendPath(basePath, umba::filename::appendExt( baseName+std::string("_")+configName, baseExt));
+        //  
+        // auto lines = commonLines;
+        //  
+        // lines.insert(lines.end(), val.begin(), val.end());
+        //  
+        // std::ofstream optFile(fileName.c_str());
+        // if (!optFile)
+        //     return false; // resVec;
+        //  
+        // generatedFiles.push_back(fileName);
+        //  
+        // auto text = umba::string_plus::merge<std::string>(lines,"\n");
+        //  
+        // text = umba::macros::substMacros(text,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
+        //  
+        // optFile << text << "\n";
+    }
 
-        generatedFiles.push_back(fileName);
-
-        auto text = umba::string_plus::merge<std::string>(lines,"\n");
-
-        text = umba::macros::substMacros(text,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
-
-        optFile << text << "\n";
+    if (!generatedCount)
+    {
+        generateFilenameAndSave(std::string(), commonLines);
     }
 
     return true;

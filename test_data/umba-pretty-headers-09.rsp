@@ -10,7 +10,7 @@
 
 #--keep-compile-flags
 --set=Test:SomeTest
-compile_flags.txt
+compile_flags_09.txt
 -P=..\_libs
 #-P=$(MSVC2017_QTROOT)\msvc2017\include
 

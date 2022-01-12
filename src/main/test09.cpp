@@ -136,6 +136,9 @@ int main(int argc, char* argv[])
     
 
 
+
+    std::vector<std::string> generatedFiles;
+
     for(auto compileFlagsTxt : appConfig.clangCompileFlagsTxtFilename)
     {
         std::map<std::string, std::vector<std::string> > cflags;
@@ -145,18 +148,26 @@ int main(int argc, char* argv[])
             return 1;
 
 
-        std::vector<std::string> generatedFiles;
+        std::vector<std::string> tmpGeneratedFiles;
 
-        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, generatedFiles);
+        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, tmpGeneratedFiles);
 
-        allCompileFlagFiles.insert(generatedFiles.begin(), generatedFiles.end());
+        generatedFiles.insert(generatedFiles.end(), tmpGeneratedFiles.begin(), tmpGeneratedFiles.end());
         
     }
 
-    // Phases: Init, Scaning, Processing, Generating
+    allCompileFlagFiles.insert(generatedFiles.begin(), generatedFiles.end());
+
 
     if (!appConfig.getOptQuet())
     {
+        if (!generatedFiles.empty())
+            printInfoLogSectionHeader(logMsg, "Generated Files");
+        for(const auto & name : generatedFiles)
+        {
+            logMsg << name << endl;
+        }
+
         printInfoLogSectionHeader(logMsg, "Initialization completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
