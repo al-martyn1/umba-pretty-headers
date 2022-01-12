@@ -62,7 +62,7 @@ const std::map<int,std::string>& getUmbaMacrosFlagsStringMap()
 
 
 template<typename MacroGetter>
-void testMacro( const std::string text, const MacroGetter &getter, int flags )
+void testMacro( const std::string &text, const MacroGetter &getter, int flags )
 {
     std::cout << "Text   : [" << text << "], "
               << "getter: " << getter.getName() << ", "
@@ -73,6 +73,21 @@ void testMacro( const std::string text, const MacroGetter &getter, int flags )
 }
 
 
+void testMask(const std::string &testRegexText, const std::string &testMaskStr, bool useAnchors)
+{
+    std::string testRegexStr      = umba::regex_helpers::expandSimpleMaskToEcmaRegex( testMaskStr, useAnchors );
+    std::string testRegexTextNorm = umba::filename::normalizePathSeparators(testRegexText,'/');
+
+    std::cout << "Regex test\n";
+    std::cout << "Mask       : " << testMaskStr       << "\n";
+    std::cout << "Use Anchors: " << (useAnchors?"yes":"no") << "\n";
+    std::cout << "Regex      : " << testRegexStr      << "\n";
+    std::cout << "Text       : " << testRegexText     << "\n";
+    std::cout << "TextNorm   : " << testRegexTextNorm << "\n";
+    std::cout << "Result     : " << (umba::regex_helpers::regexMatch(testRegexTextNorm, testRegexStr) ? "true" : "false") << "\n";
+    std::cout << "-------\n";
+}
+
 
 
 
@@ -80,19 +95,12 @@ int main(int argc, char* argv[])
 {
     using namespace umba::macros;
 
-
     std::string testMaskStr       = "*.cpp";
-    std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr );
     std::string testRegexText     = "F:\\_github\\umba_pretty_headers\\_libs\\sfmt\\simple_formatter.cpp";
-    std::string testRegexTextNorm = umba::filename::normalizePathSeparators(testRegexText,'/');
 
-    std::cout << "Regex test\n";
-    std::cout << "Mask    : " << testMaskStr       << "\n";
-    std::cout << "Regex   : " << testRegexStr      << "\n";
-    std::cout << "Text    : " << testRegexText     << "\n";
-    std::cout << "TextNorm: " << testRegexTextNorm << "\n";
-    std::cout << "Result  : " << (regexMatch(testRegexTextNorm, testRegexStr) ? "true" : "false") << "\n";
-    std::cout << "-------\n";
+    testMask("F:\\_github\\umba_pretty_headers\\_libs\\sfmt\\simple_formatter.cpp", "*.cpp"   , false);
+    testMask("F:\\_github\\umba_pretty_headers\\_libs\\sfmt\\simple_formatter.cpp", "^*.cpp^" , false);
+    testMask("F:\\_github\\umba_pretty_headers\\_libs\\sfmt\\simple_formatter.cpp", "^*.cpp^" , true );
     
 
     std::cout << "Flags test\n";
@@ -176,6 +184,25 @@ int main(int argc, char* argv[])
     USERPROFILE=C:\Users\Local_User_Name
  
     */
+
+
+
+    using namespace umba::omanip;
+
+    printInfoLogSectionHeader(logMsg, "Log Colors");
+
+    logMsg << emergency << "emergency " << normal << endl;
+    logMsg << alert     << "alert     " << normal << endl;
+    logMsg << critical  << "critical  " << normal << endl;
+    logMsg << error     << "error     " << normal << endl;
+    logMsg << warning   << "warning   " << normal << endl;
+    logMsg << notice    << "notice    " << normal << endl;
+    logMsg << info      << "info      " << normal << endl;
+    logMsg << debug     << "debug     " << normal << endl;
+    logMsg << good      << "good      " << normal << endl;
+    logMsg << caption   << "caption   " << normal << endl;
+    logMsg << normal    << "normal    " << normal << endl;
+
 
 
     return 0;

@@ -230,9 +230,21 @@ void detectLocation( StringType &exeFullName, StringType &progBinPath, StringTyp
 }
 
 
+
+struct BuiltinOptionsLocationFlag
+{
+    const static unsigned     appGlobal     = 0x0001;
+    const static unsigned     customGlobal  = 0x0002;
+    const static unsigned     userLocal     = 0x0004;
+    const static unsigned     all           = 0x0007;
+};
+
+
+
 template<typename StringType>
 struct ProgramLocation
 {
+
     StringType  exeFullName; //!< Executable full name with path
     StringType  exeFileName; //!< Executable file name (with extention, eg 'exe')
     StringType  exeName    ; //!< Executable file name only (without extention)
@@ -243,6 +255,8 @@ struct ProgramLocation
     StringType  userConf   ; //!< User config file/folder, eg C:\Users\UserName\.exeName
 
     StringType  cwd        ; //!< Current working dir
+
+    bool        useUserFolder = false; //!< If false single file(s) used
 
 
     //! Creates full path under AppRoot folder
@@ -263,8 +277,9 @@ struct ProgramLocation
         return umba::filename::makeAbsPath(path, cwd);
     }
 
+
     //! If userConfFileOnly==true, used $(Home)\.$(AppExeName).options, else used $(Home)\.$(AppExeName)\builtin.options
-    std::vector<StringType> getBuiltinOptionFilenames( bool userConfFileOnly = true ) const
+    std::vector<StringType> getBuiltinOptionsFilenames( unsigned flags, bool _useUserFolder ) const
     {
         using namespace umba::filename   ;
         using namespace umba::string_plus;
@@ -272,22 +287,49 @@ struct ProgramLocation
         std::vector<StringType> res;
 
         // Global std options file
-        res.push_back( appendPath( programLocationInfo.confPath, appendExt( programLocationInfo.exeName, make_string<StringType>("options") ) ) );
+        if (flags&BuiltinOptionsLocationFlag::appGlobal)
+            res.push_back( appendPath( programLocationInfo.confPath, appendExt( programLocationInfo.exeName, make_string<StringType>("options") ) ) );
 
         // Global user options file
-        res.push_back( appendPath( programLocationInfo.confPath, appendExt( programLocationInfo.exeName, make_string<StringType>("user") ) ) );
+        if (flags&BuiltinOptionsLocationFlag::customGlobal)
+            res.push_back( appendPath( programLocationInfo.confPath, appendExt( programLocationInfo.exeName, make_string<StringType>("custom.options") ) ) );
 
         // Local user options file
-        if (userConfFileOnly)
+        // $(HOME)\.$(AppExeName).options
+        // or
+        // $(HOME)\.$(AppExeName)\.options
+        if (flags&BuiltinOptionsLocationFlag::userLocal)
         {
-            res.push_back( appendExt( programLocationInfo.userConf, make_string<StringType>(".options") ) );
-        }
-        else
-        {
-            res.push_back( appendPath( programLocationInfo.userConf, make_string<StringType>("builtin.options") ) );
+            if (!_useUserFolder /* userConfFileOnly */ )
+            {
+                res.push_back( appendExt( programLocationInfo.userConf, make_string<StringType>(".options") ) );
+            }
+            else
+            {
+                res.push_back( appendPath( programLocationInfo.userConf, make_string<StringType>(".options") ) );
+            }
         }
 
         return res;
+    }
+
+    std::vector<StringType> getBuiltinOptionsFilenames( unsigned flags ) const
+    {
+        return getBuiltinOptionsFilenames( flags, useUserFolder );
+    }
+
+    //! Can return wrong result if multiple flags are taken
+    StringType getBuiltinOptionsFilename( unsigned flag, bool _useUserFolder ) const
+    {
+        auto names = getBuiltinOptionsFilenames(flag, _useUserFolder);
+        if (names.empty())
+            return StringType();
+         return names[0];
+    }
+
+    StringType getBuiltinOptionsFilename( unsigned flag ) const
+    {
+        return getBuiltinOptionsFilename( flag, useUserFolder );
     }
 
 
@@ -304,12 +346,12 @@ struct ProgramLocation
         os << "Application User File/Folder    : " << userConf    << "\n";
         os << "Application Current Working Dir : " << cwd         << "\n";
 
-        auto builtinOptionFilenames = getBuiltinOptionFilenames(false);
+        auto builtinOptionFilenames = getBuiltinOptionsFilenames(false);
 
         for(const auto &fn : builtinOptionFilenames)
             os << "Builtin Options File v1         : " << fn      << "\n";
 
-        builtinOptionFilenames = getBuiltinOptionFilenames(true);
+        builtinOptionFilenames = getBuiltinOptionsFilenames(true);
 
         for(const auto &fn : builtinOptionFilenames)
             os << "Builtin Options File v2         : " << fn      << "\n";
@@ -331,7 +373,8 @@ StreamType& operator<<(StreamType &os, const ProgramLocation<StringType> &pl)
 //! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
 template<typename StringType> inline
 ProgramLocation<StringType> getProgramLocationImpl( const StringType &argv0
-                                                  , StringType        overrideExeName = StringType() //!< Used to make single user conf name for multiple exe's
+                                                  , bool             useUserFolder    = false        //!< If false single file(s) used
+                                                  , StringType       overrideExeName  = StringType() //!< Used to make single user conf name for multiple exe's
                                                   , const StringType &confFolderName  = umba::string_plus::make_string<StringType>(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME)
                                                   )
 {
@@ -355,14 +398,17 @@ ProgramLocation<StringType> getProgramLocationImpl( const StringType &argv0
 
     loc.cwd         = umba::filesys::getCurrentDirectory<StringType>();
 
+    loc.useUserFolder = useUserFolder;
+
     return loc;
 
 }
 
 //! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
 inline 
-ProgramLocation<std::string> getProgramLocation( int argc, char **argv
-                                               , std::string overrideExeName       = std::string()
+ProgramLocation<std::string> getProgramLocation( int argc, char    **argv
+                                               , bool              useUserFolder   = false        //!< If false single file(s) used
+                                               , std::string       overrideExeName = std::string()
                                                , const std::string &confFolderName = umba::string_plus::make_string<std::string>(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME)
                                                )
 {
@@ -371,13 +417,14 @@ ProgramLocation<std::string> getProgramLocation( int argc, char **argv
         UMBA_PROGRAM_LOCATION_INIT_IMPL(std::string(argv[0]));
     }
 
-    return getProgramLocationImpl( getArgv0<std::string>(), overrideExeName, confFolderName );
+    return getProgramLocationImpl( getArgv0<std::string>(), useUserFolder, overrideExeName, confFolderName );
 
 }
 
 //! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
 inline 
 ProgramLocation<std::wstring> getProgramLocation( int argc, wchar_t **argv
+                                                , bool              useUserFolder    = false        //!< If false single file(s) used
                                                 , std::wstring overrideExeName       = std::wstring()
                                                 , const std::wstring &confFolderName = umba::string_plus::make_string<std::wstring>(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME)
                                                 )
@@ -387,7 +434,7 @@ ProgramLocation<std::wstring> getProgramLocation( int argc, wchar_t **argv
         UMBA_PROGRAM_LOCATION_INIT_IMPL(std::wstring(argv[0]));
     }
 
-    return getProgramLocationImpl( getArgv0<std::wstring>(), overrideExeName, confFolderName );
+    return getProgramLocationImpl( getArgv0<std::wstring>(), useUserFolder, overrideExeName, confFolderName );
 
 }
 

@@ -153,10 +153,15 @@
             LOG_MSG_OPT << programLocationInfo.exeFullName << "\n";
             return 0;
         }
-        else if (opt.isOption("no-builtin-options") || opt.setDescription("Don't parse predefined options from command line options file 'conf/umba-pretty-headers.options' and 'conf/umba-pretty-headers.user'"))
-        {
-            // simple skip - обработка уже сделана
-        }
+
+        else if (opt.isOption("no-builtin-options")        || opt.setDescription("Don't parse predefined options from main distribution options file 'conf/umba-pretty-headers.options' and 'conf/umba-pretty-headers.user'"))
+        { } // simple skip - обработка уже сделана
+
+        else if (opt.isOption("no-custom-builtin-options") || opt.setDescription("Don't parse predefined options from custom global options file 'conf/umba-pretty-headers.custom.options'"))
+        { } // simple skip - обработка уже сделана
+
+        else if (opt.isOption("no-user-builtin-options")   || opt.setDescription("Don't parse predefined options from user local options file '$(HOME)\.$(AppExeName).options' or '$(HOME)\.$(AppExeName)\.options'"))
+        { } // simple skip - обработка уже сделана
 
         // Создается опция --color=CLR, где CLR - одно из значений перечисления.
         // Перечисления задаются строкой, в которой '|' - задаёт альтернативы, а
@@ -959,6 +964,31 @@ struct CommandLineOption
 
         return name=="quet" || name=="q" || name=="version" || name=="v" || name=="build-info" || name=="build-info-x";
     }
+
+    static unsigned getBuiltinsDisableOptionMainFlag  () { return umba::program_location::BuiltinOptionsLocationFlag::appGlobal   ; }
+    static unsigned getBuiltinsDisableOptionCustomFlag() { return umba::program_location::BuiltinOptionsLocationFlag::customGlobal; }
+    static unsigned getBuiltinsDisableOptionUserFlag  () { return umba::program_location::BuiltinOptionsLocationFlag::userLocal   ; }
+
+    static std::string getBuiltinsDisableOptionName( unsigned f )
+    {
+        using namespace umba::program_location;
+        switch(f)
+        {
+            case BuiltinOptionsLocationFlag::appGlobal    : return "no-builtin-options";
+            case BuiltinOptionsLocationFlag::customGlobal : return "no-custom-builtin-options";
+            case BuiltinOptionsLocationFlag::userLocal    : return "no-user-builtin-options";
+            default : return "";
+        }
+    }
+    
+    static std::string getBuiltinsDisableOptionMainName  () { return getBuiltinsDisableOptionName(umba::program_location::BuiltinOptionsLocationFlag::appGlobal   ); }
+    static std::string getBuiltinsDisableOptionCustomName() { return getBuiltinsDisableOptionName(umba::program_location::BuiltinOptionsLocationFlag::customGlobal); }
+    static std::string getBuiltinsDisableOptionUserName  () { return getBuiltinsDisableOptionName(umba::program_location::BuiltinOptionsLocationFlag::userLocal   ); }
+
+    bool isBuiltinsDisableOptionMain  () const { return isOption( getBuiltinsDisableOptionMainName  () ); }
+    bool isBuiltinsDisableOptionCustom() const { return isOption( getBuiltinsDisableOptionCustomName() ); }
+    bool isBuiltinsDisableOptionUser  () const { return isOption( getBuiltinsDisableOptionUserName  () ); }
+
 
     bool isWhereOption() const
     {
@@ -2391,10 +2421,10 @@ int autocompletionInstaller ( ICommandLineOptionCollector *pCol, CommandLineOpti
         return -1;
     }
 
-    #if defined(WIN32) || defined(_WIN32)
-    #else
-        useCLink = false; // --clink simple ignored 
-    #endif
+    // #if defined(WIN32) || defined(_WIN32)
+    // #else
+    //     useCLink = false; // --clink simple ignored 
+    // #endif
 
     if (useBash)
     {
@@ -2406,6 +2436,7 @@ int autocompletionInstaller ( ICommandLineOptionCollector *pCol, CommandLineOpti
         }
     }
 
+    #if defined(WIN32) || defined(_WIN32)
     if (useCLink)
     {
         if (!updateAutocompletionCLinkScripts(pCol, !installMode, opt.optArg))
@@ -2415,6 +2446,7 @@ int autocompletionInstaller ( ICommandLineOptionCollector *pCol, CommandLineOpti
             return -1;
         }
     }
+    #endif
 
     streamGetter(false)<<"Autocompletion successfully installed\n";
 
@@ -2498,6 +2530,20 @@ struct ArgParsingContext
 */
 
 
+
+/*
+
+struct BuiltinOptionsLocationFlag
+{
+    const static unsigned     appGlobal     = 0x0001;
+    const static unsigned     customGlobal  = 0x0002;
+    const static unsigned     userLocal     = 0x0004;
+    const static unsigned     all           = 0x0007;
+};
+
+*/
+
+
 template<typename StringType, typename ArgParser, typename OptionsCollector >
 struct ArgsParser
 {
@@ -2507,16 +2553,23 @@ struct ArgsParser
     umba::program_location::ProgramLocation<StringType>  programLocationInfo;
 
     std::vector<StringType>   args;
-    bool                      hasHelpOption   = false;
-    bool                      disableBuiltins = false; // prevent to parse conf/$(AppExeName).options
-    bool                      quet            = false;
-    bool                      mustExit        = false; // prevent to parse 
-    std::set<StringType>      argsNeedHelp    ;
+    bool                      hasHelpOption          = false;
+    // bool                      disableAppBuiltins     = false; //!< prevent to parse conf/$(AppExeName).options
+    // bool                      disableCustomBuiltins  = false; //!< prevent to parse conf/$(AppExeName).user
+    // bool                      disableUserBuiltins    = false; //!< prevent to parse $(Home)\.$(AppExeName).options OR used $(Home)\.$(AppExeName)\builtin.options
+
+    unsigned                  builtinsOptions        = umba::program_location::BuiltinOptionsLocationFlag::all;
+
+    bool                      quet                   = false;
+    bool                      mustExit               = false; //!< prevent to continue parsing
+    std::set<StringType>      argsNeedHelp           ;
 
 
     ArgParser                             argParser;
     OptionsCollector                      optionsCollector;
-              
+
+
+    std::string getBuiltinsOptFileName(unsigned flag) const { return programLocationInfo.getBuiltinOptionsFilename(flag); }
 
     int callArgParser( std::string a, bool fBuiltin, bool ignoreInfos )
     {
@@ -2544,10 +2597,10 @@ struct ArgsParser
     // virtual int parseArg( std::string a, ICommandLineOptionsCollector *pCol, bool fBuiltin, bool ignoreInfos) = 0;
 
     //! Returns true if ok, false if some error occured
-    bool parseBuiltinsFile( const StringType &optionsFileName )
+    bool parseOptionsFile( const StringType &optionsFileName )
     {
-        if (disableBuiltins)
-            return true;
+        // if (disableBuiltins)
+        //     return true;
 
         // std::string optionsFileName = umba::filename::appendPath<std::string>(programLocationInfo.confPath, optFilename );
         std::vector<std::string> opts;
@@ -2572,17 +2625,23 @@ struct ArgsParser
         return true;
     }
 
+    //! Parses predefined files
+    /*!
+        $(AppRoot)/conf/$(AppExeName).options     - file from distribution, can be skipped 
+     */
     //! If userConfFileOnly==true, used $(Home)\.$(AppExeName).options, else used $(Home)\.$(AppExeName)\builtin.options
     bool parseStdBuiltins( bool userConfFileOnly = true )
     {
-        if (disableBuiltins)
-            return true;
+        // if (disableBuiltins)
+        //     return true;
 
-        auto filenames = programLocationInfo.getBuiltinOptionFilenames();
+        auto filenames = programLocationInfo.getBuiltinOptionsFilenames(builtinsOptions);
 
-        for(const auto &fn : filenames)
+        auto it = filenames.begin();
+
+        for(; it!=filenames.end(); ++it)
         {
-            if (!parseBuiltinsFile( fn ) )
+            if (!parseOptionsFile( *it ) )
                 return false;
         }
 
@@ -2644,8 +2703,16 @@ makeArgsParserImpl( const ArgParser                                            &
         if (!opt.isOption())
             continue;
 
-        if (opt.isOption("no-builtin-options"))
-            argsParser.disableBuiltins = true;
+        if (opt.isBuiltinsDisableOptionMain())
+            argsParser.builtinsOptions &= ~umba::program_location::BuiltinOptionsLocationFlag::appGlobal   ;
+
+        if (opt.isBuiltinsDisableOptionCustom())
+            argsParser.builtinsOptions &= ~umba::program_location::BuiltinOptionsLocationFlag::customGlobal;
+
+        if (opt.isBuiltinsDisableOptionUser())
+            argsParser.builtinsOptions &= ~umba::program_location::BuiltinOptionsLocationFlag::userLocal   ;
+
+
         // else if (opt.isOption("no-builtin-includes"))
         //     disableBuiltinIncludes = true;
         else if (opt.isSomeKindOfQuet() && !argsParser.hasHelpOption)

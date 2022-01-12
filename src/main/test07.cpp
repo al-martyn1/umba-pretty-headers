@@ -86,6 +86,9 @@ int main(int argc, char* argv[])
     umba::time_service::TimeTick startTick = umba::time_service::getCurTimeMs();
 
 
+    using namespace umba::omanip;
+
+
     auto argsParser = umba::command_line::makeArgsParser( ArgParser(), CommandLineOptionCollector(), argc, argv );
 
     // Force set CLI arguments while running under debugger
@@ -121,21 +124,6 @@ int main(int argc, char* argv[])
         return 0;
 
 
-    using namespace umba::omanip;
-
-    printInfoLogSectionHeader(logMsg, "Log Colors");
-
-    logMsg << emergency << "emergency " << normal << endl;
-    logMsg << alert     << "alert     " << normal << endl;
-    logMsg << critical  << "critical  " << normal << endl;
-    logMsg << error     << "error     " << normal << endl;
-    logMsg << warning   << "warning   " << normal << endl;
-    logMsg << notice    << "notice    " << normal << endl;
-    logMsg << info      << "info      " << normal << endl;
-    logMsg << debug     << "debug     " << normal << endl;
-    logMsg << good      << "good      " << normal << endl;
-    logMsg << caption   << "caption   " << normal << endl;
-    logMsg << normal    << "normal    " << normal << endl;
 
 
     printInfoLogSectionHeader(logMsg, "App Config");

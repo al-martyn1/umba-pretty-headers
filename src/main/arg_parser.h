@@ -88,10 +88,15 @@ int operator()( const std::string                               &a           //!
             LOG_MSG_OPT << programLocationInfo.exeFullName << "\n";
             return 0;
         }
-        else if (opt.isOption("no-builtin-options") || opt.setDescription("Don't parse predefined options from command line options file 'conf/umba-pretty-headers.options' and 'conf/umba-pretty-headers.user'"))
-        {
-            // simple skip - обработка уже сделана
-        }
+
+        else if (opt.isBuiltinsDisableOptionMain  () || opt.setDescription("Don't parse predefined options from main distribution options file '" + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::appGlobal   ) + "'"))
+        { } // simple skip - обработка уже сделана
+
+        else if (opt.isBuiltinsDisableOptionCustom() || opt.setDescription("Don't parse predefined options from custom global options file '"     + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::customGlobal) + "'"))
+        { } // simple skip - обработка уже сделана
+
+        else if (opt.isBuiltinsDisableOptionUser  () || opt.setDescription("Don't parse predefined options from user local options file '"        + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::userLocal   ) + "'"))
+        { } // simple skip - обработка уже сделана
 
         else if (opt.setParam("CLR", 0, "no/none/file|" 
                                         "ansi/term|" 
@@ -258,7 +263,7 @@ int operator()( const std::string                               &a           //!
 
         optFiles.push(optFileName);
 
-        auto parseRes = argsParser.parseBuiltinsFile( optFileName );
+        auto parseRes = argsParser.parseOptionsFile( optFileName );
 
         optFiles.pop();
 
