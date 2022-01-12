@@ -179,6 +179,8 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\_libs\umba\critical_section.cpp" />
+    <ClCompile Include="..\_libs\umba\time_service.cpp" />
     <ClCompile Include="..\src\main\test07.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

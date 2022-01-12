@@ -2,13 +2,22 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "umba/program_location.h"
 
 
 
+
 struct AppConfig
 {
+
+    static const unsigned                ofEmptyOptionFlags      = 0x0000;
+    static const unsigned                ofQuet                  = 0x0001; // remove '.' and '..' entries. Al
+    static const unsigned                ofNormalizeFilenames    = 0x0002; // remove '.' and '..' entries. Al
+
+
+
     std::map<std::string,std::string>    macros;
 
     bool                                 keepCompileFlags = false;
@@ -17,6 +26,25 @@ struct AppConfig
     std::vector<std::string>             excludeFilesList;
 
     std::vector<std::string>             scanPaths;
+
+
+    unsigned                             optionFlags = ofNormalizeFilenames; // ofEmptyOptionFlags;
+
+
+    void ofSet  ( unsigned ofFlags )       { optionFlags |=  ofFlags; }
+    void ofReset( unsigned ofFlags )       { optionFlags &= ~ofFlags; }
+    bool ofGet  ( unsigned ofFlags ) const { return (optionFlags&ofFlags)==ofFlags; }
+    void ofSet  ( unsigned ofFlags , bool setState )
+    {
+        if (setState) ofSet  (ofFlags);
+        else          ofReset(ofFlags);
+    }
+
+    void setOptQuet( bool q ) { ofSet(ofQuet,q);      }
+    bool getOptQuet( )  const { return ofGet(ofQuet); }
+
+    void setOptNormalizeFilenames( bool q ) { ofSet(ofNormalizeFilenames,q);      }
+    bool getOptNormalizeFilenames( )  const { return ofGet(ofNormalizeFilenames); }
 
 
     template<typename StreamType>

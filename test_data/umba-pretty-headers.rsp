@@ -1,6 +1,69 @@
+## Standard ignored types
+
+# .c .cpp .cxx .c++ etc
+-X=*.c*^
+
+# Config files
+-X=*.cfg^
+-X=*.ini^
+-X=*.yaml^
+-X=*.toml^
+-X=*.properties^
+
+# Misc script files
+-X=*.g^
+
+# Generic include
+-X=*.inc^
+
+# XML files
+-X=*.*ml^
+
+# Shell scripts
+-X=*.bat^
+-X=*.cmd^
+-X=*.sh^
+
+# Doc files
+-X=*.md^
+-X=*.txt^
+-X=*.ht*^
+-X=*.xht*^
+-X=*.mht*^
+-X=*.doc*^
+-X=*.rtf*^
+-X=*.xls*^
+-X=*.xlt*^
+-X=*.xla*^
+-X=*.csv^
+-X=*.xlw^
+-X=*.wk*^
+-X=*.wq*^
+-X=*.dbf^
+-X=*.prn^
+-X=*.slk^
+-X=*.dif*^
+-X=*readme.*^
+-X=*Readme.*^
+-X=*ReadMe.*^
+-X=*README.*^
+
+# Qt private (or other private folders) and other stuff
+-X=*\private\*
+-X=*_p.h
+
+
+## Custom ignored files
+
+# My prefix for non-standalone headers
 -X=*/zz_*
--X=*.cpp
+
+
+
 #--keep-compile-flags
 --set=Test:SomeTest
 compile_flags.txt
 -P=..\_libs
+#-P=$(MSVC2017_QTROOT)\msvc2017\include
+
+

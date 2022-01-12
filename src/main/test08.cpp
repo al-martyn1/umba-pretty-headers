@@ -12,6 +12,24 @@
 #include "umba/flag_helpers.h"
 
 
+umba::StdStreamCharWriter coutWriter(std::cout);
+umba::StdStreamCharWriter cerrWriter(std::cerr);
+umba::NulCharWriter       nulWriter;
+
+umba::SimpleFormatter logMsg(&coutWriter);
+umba::SimpleFormatter logErr(&cerrWriter);
+umba::SimpleFormatter logNul(&nulWriter);
+
+bool logWarnType   = true;
+bool logGccFormat  = false;
+bool logSourceInfo = false;
+
+
+#include "log.h"
+#include "utils.h"
+#include "scan_folders.h"
+
+
 // template<typename GetterType>
 // std::string
 //     testMacro( "$(ALLUSERSPROFILE)", MacroTextFromEnv<std::string>(), substFlagsDefault );
@@ -61,6 +79,21 @@ void testMacro( const std::string text, const MacroGetter &getter, int flags )
 int main(int argc, char* argv[])
 {
     using namespace umba::macros;
+
+
+    std::string testMaskStr       = "*.cpp";
+    std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr );
+    std::string testRegexText     = "F:\\_github\\umba_pretty_headers\\_libs\\sfmt\\simple_formatter.cpp";
+    std::string testRegexTextNorm = umba::filename::normalizePathSeparators(testRegexText,'/');
+
+    std::cout << "Regex test\n";
+    std::cout << "Mask    : " << testMaskStr       << "\n";
+    std::cout << "Regex   : " << testRegexStr      << "\n";
+    std::cout << "Text    : " << testRegexText     << "\n";
+    std::cout << "TextNorm: " << testRegexTextNorm << "\n";
+    std::cout << "Result  : " << (regexMatch(testRegexTextNorm, testRegexStr) ? "true" : "false") << "\n";
+    std::cout << "-------\n";
+    
 
     std::cout << "Flags test\n";
     auto flagsNameMap = getUmbaMacrosFlagsStringMap();

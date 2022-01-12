@@ -1,12 +1,33 @@
 #pragma once
 
-#include "marty_clang_helpers.h"
+#include "umba/umba.h"
+#include "umba/simple_formatter.h"
+
+#include <string>
+
+static const char *infoLogSectionSeparator = // "--------------------------------------"; // 38
+"------------------------------------------------------------------------------"; // 78
 
 
-#define LLVM_ERROR(__Context, __Object, __File, __Message) \
-do { \
-    marty::clang::helpers::printError( llvm::errs(), marty::clang::helpers::getFullSourceLoc(__Context, __Object), __Message ); \
-    /*__Object->dump();*/ \
-} while (0)
+template<typename StreamType> inline
+StreamType& printInfoLogSectionHeader( StreamType &s, std::string secCaption )
+{
+    using namespace umba::omanip;
 
+    secCaption += ":";
+
+    s << "\n";
+    s << infoLogSectionSeparator << "\n";
+    s << warning << secCaption << normal << "\n";
+    s << std::string(secCaption.size(), '-');
+    s << "\n";
+
+    return s;
+}
+
+template<typename StreamType> inline
+StreamType& printInfoLogSectionHeader( StreamType &s, const char* secCaption )
+{
+    return printInfoLogSectionHeader( s, std::string(secCaption) );
+}
 

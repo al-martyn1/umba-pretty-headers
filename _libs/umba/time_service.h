@@ -30,7 +30,7 @@
 #endif
 
 
-
+// umba::timeservice::
 namespace umba{
 namespace time_service{
 
@@ -95,7 +95,8 @@ namespace time_service{
     //! Производит задержку выполнения (устаревшее имя), см также delayMs
     UMBA_DECLARE_DEPRECATED_FN( void delay_ms(TimeTick deltaMs) );
 
+
 } // namespace time_service
 } // namespace umba
-
+// umba::timeservice::
 

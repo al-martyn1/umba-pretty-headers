@@ -6,6 +6,37 @@
 
 #include "string_plus.h"
 
+
+
+/*
+
+: - in reference to macro perform a parameter substitution (like params in function call)
+CALLED_MACRO := $(%0) $(%1) $(%2) $(%3)
+                 ^ - number of passed args
+usage 
+CALLED_MACRO(A:B) expands to '2 A B ' (trailing space included)
+CALLED_MACRO(A:B:C) expands to '3 A B C' (no trailing space)
+
+
+conditions
+CONDITIONAL_TEST_EXISTENCE := $(SOME_MACRO_NAME?*A:B)
+$(CONDITIONAL_TEST_EXISTENCE) expands to B (macro SOME_MACRO_NAME not exists)
+
+CONDITIONAL_TEST_EXISTENCE := $(SOME_MACRO_NAME?*A:B)
+SOME_MACRO_NAME:=
+$(CONDITIONAL_TEST_EXISTENCE) expands to A (macro SOME_MACRO_NAME exists)
+
+CONDITIONAL_TEST_EXISTENCE := $(SOME_MACRO_NAME?+A:B)
+SOME_MACRO_NAME:=
+$(CONDITIONAL_TEST_EXISTENCE) expands to B (macro SOME_MACRO_NAME exists, but empty)
+
+CONDITIONAL_TEST_EXISTENCE := $(%1?+A:B)
+SOME_MACRO_NAME:=C
+$(CONDITIONAL_TEST_EXISTENCE:SOME_MACRO_NAME) expands to A %1 is a macro, its text is SOME_MACRO_NAME
+$(CONDITIONAL_TEST_EXISTENCE:) expands to B
+
+*/
+
 // umba::macros::
 namespace umba{
 namespace macros{

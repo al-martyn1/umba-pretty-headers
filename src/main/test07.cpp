@@ -16,7 +16,9 @@
 #include "umba/scope_exec.h"
 #include "umba/macro_helpers.h"
 #include "umba/macros.h"
-#include "scan_folders.h"
+
+#include "umba/time_service.h"
+
 
 
 umba::StdStreamCharWriter coutWriter(std::cout);
@@ -33,9 +35,9 @@ bool logSourceInfo = false;
 
 
 #include "log.h"
-
 #include "compile_flags_parser.h"
-
+#include "utils.h"
+#include "scan_folders.h"
 
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
@@ -78,6 +80,27 @@ umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
 int main(int argc, char* argv[])
 {
+    umba::time_service::init();
+    umba::time_service::start();
+
+    umba::time_service::TimeTick startTick = umba::time_service::getCurTimeMs();
+
+
+    using namespace umba::omanip;
+
+    printInfoLogSectionHeader(logMsg, "Log Colors");
+
+    logMsg << emergency << "emergency " << normal << endl;
+    logMsg << alert     << "alert     " << normal << endl;
+    logMsg << critical  << "critical  " << normal << endl;
+    logMsg << error     << "error     " << normal << endl;
+    logMsg << warning   << "warning   " << normal << endl;
+    logMsg << notice    << "notice    " << normal << endl;
+    logMsg << info      << "info      " << normal << endl;
+    logMsg << debug     << "debug     " << normal << endl;
+    logMsg << good      << "good      " << normal << endl;
+    logMsg << normal    << "normal    " << normal << endl;
+
 
     auto argsParser = umba::command_line::makeArgsParser( ArgParser(), CommandLineOptionCollector(), argc, argv );
 
@@ -113,12 +136,16 @@ int main(int argc, char* argv[])
         return 0;
 
 
-    std::cout << "# AppConfig:\n---\n" << appConfig << "\n";
+    printInfoLogSectionHeader(logMsg, "App Config");
+    appConfig.print(logMsg) << "\n";
 
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
 
-    std::cout << "# Adjusted AppConfig:\n---\n" << appConfig << "\n";
+    // printInfoLogSectionHeader(logMsg, "Adjusted App Config") << appConfig << "\n";
+    printInfoLogSectionHeader(logMsg, "Adjusted App Config");
+    appConfig.print(logMsg) << "\n";
 
+    printInfoLogSectionHeader(logMsg, "### Normal Output") << "\n";
 
     std::set<std::string> allCompileFlagFiles;
     auto compileFlagFilesAutoDeleter = umba::makeLeaveScopeExec
@@ -155,9 +182,47 @@ int main(int argc, char* argv[])
     }
 
 
-    std::vector<std::string> foundFiles;
-    scanFolders(appConfig, foundFiles);
+    if (!appConfig.getOptQuet())
+    {
+        printInfoLogSectionHeader(logMsg, "Initialization completed");
+        auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
+        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        startTick = umba::time_service::getCurTimeMs();
+    }
 
+
+    std::vector<std::string> foundFiles, excludedFiles;
+    std::set<std::string>    foundExtentions;
+    scanFolders(appConfig, foundFiles, excludedFiles, foundExtentions);
+
+
+
+    if (!appConfig.getOptQuet())
+    {
+        if (!foundExtentions.empty())
+            printInfoLogSectionHeader(logMsg, "Found File Extentions");
+
+        for(const auto & ext : foundExtentions)
+        {
+            if (ext.empty())
+                logMsg << "<EMPTY>" << endl;
+            else
+                logMsg << "." << ext << endl;
+        }
+    }
+
+    // Phases: Init, Scaning, Processing, Generating
+
+    if (!appConfig.getOptQuet())
+    {
+        if (!foundFiles.empty())
+        {
+            printInfoLogSectionHeader(logMsg, "Scaning completed");
+            auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
+            logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+            startTick = umba::time_service::getCurTimeMs();
+        }
+    }
 
     return 0;
 }

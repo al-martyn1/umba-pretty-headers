@@ -3,7 +3,7 @@
 #include <stack>
 
 #include "app_config.h"
-
+#include "umba/cmd_line.h"
 
 
 AppConfig    appConfig;
@@ -63,6 +63,7 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
        if (opt.isOption("quet") || opt.isOption('q') || opt.setDescription("Operate quetly"))
         {
             argsParser.quet = true;
+            appConfig.setOptQuet(true);
         }
         else if (opt.isOption("version") || opt.isOption('v') || opt.setDescription("Show version info"))
         {
@@ -139,7 +140,8 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
                 return -1;
             }
 
-            appConfig.scanPaths.push_back(makeAbsPath(opt.optArg));
+            auto optArg = umba::macros::substMacros(opt.optArg,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
+            appConfig.scanPaths.push_back(makeAbsPath(optArg));
 
             return 0;
         }

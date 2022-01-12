@@ -175,6 +175,8 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\main\critical_section.cpp" />
+    <ClCompile Include="..\src\main\time_service.cpp" />
     <ClCompile Include="..\test_data\test_data_02.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -32,3 +32,4 @@
 *.app
 /.vs
 /vcxproj_msvc2019/*.user
+/tests/*.txt
