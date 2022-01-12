@@ -386,13 +386,14 @@ ProgramLocation<StringType> getProgramLocationImpl( const StringType &argv0
     detectLocation( loc.exeFullName, loc.binPath, loc.rootPath ); 
 
     loc.exeFileName = umba::filename::getFileName(loc.exeFullName);
-    loc.exeName     = umba::filename::getName(loc.exeFullName);
 
     loc.confPath    = umba::filename::appendPath(loc.rootPath, confFolderName);
 
-    auto exeName    = loc.exeName;
+    auto exeName    = umba::filename::getName(loc.exeFullName);
     if (!overrideExeName.empty())
         exeName = overrideExeName;
+
+    loc.exeName     = exeName;
                
     loc.userConf    = umba::filename::appendPath( umba::filesys::getCurrentUserHomeDirectory<StringType>() , umba::filename::appendExt(StringType(), exeName) );
 

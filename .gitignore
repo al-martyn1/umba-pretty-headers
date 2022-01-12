@@ -33,3 +33,4 @@
 /.vs
 /vcxproj_msvc2019/*.user
 /tests/*.txt
+/tests/test.bat

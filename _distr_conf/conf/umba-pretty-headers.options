@@ -1,3 +1,5 @@
+# umba-pretty-headers default options
+
 ## Standard ignored types
 
 # .c .cpp .cxx .c++ etc
@@ -51,23 +53,3 @@
 # Qt private (or other private folders and files) and other stuff
 -X=*\private\*
 -X=*_p.h
-
-#---
-
-## Custom ignored files
-
-# My prefix for non-standalone headers
--X=*/zz_*
-
-# Keil C++11 support
--X=*umba/stl_*
-
-
-
-#--keep-compile-flags
---set=Test:SomeTest
-compile_flags.txt
--P=..\_libs
-#-P=$(MSVC2017_QTROOT)\msvc2017\include
-
-

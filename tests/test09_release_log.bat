@@ -1,0 +1,1 @@
+call test09_release.bat >test09_release.txt 2>&1
