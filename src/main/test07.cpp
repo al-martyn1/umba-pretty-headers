@@ -86,29 +86,14 @@ int main(int argc, char* argv[])
     umba::time_service::TimeTick startTick = umba::time_service::getCurTimeMs();
 
 
-    using namespace umba::omanip;
-
-    printInfoLogSectionHeader(logMsg, "Log Colors");
-
-    logMsg << emergency << "emergency " << normal << endl;
-    logMsg << alert     << "alert     " << normal << endl;
-    logMsg << critical  << "critical  " << normal << endl;
-    logMsg << error     << "error     " << normal << endl;
-    logMsg << warning   << "warning   " << normal << endl;
-    logMsg << notice    << "notice    " << normal << endl;
-    logMsg << info      << "info      " << normal << endl;
-    logMsg << debug     << "debug     " << normal << endl;
-    logMsg << good      << "good      " << normal << endl;
-    logMsg << normal    << "normal    " << normal << endl;
-
-
     auto argsParser = umba::command_line::makeArgsParser( ArgParser(), CommandLineOptionCollector(), argc, argv );
 
     // Force set CLI arguments while running under debugger
     if (umba::isDebuggerPresent())
     {
         argsParser.args.clear();
-        argsParser.args.push_back("@..\\test_data\\umba-pretty-headers.rsp");
+        argsParser.args.push_back("--help");
+        // argsParser.args.push_back("@..\\test_data\\umba-pretty-headers.rsp");
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
@@ -134,6 +119,22 @@ int main(int argc, char* argv[])
         return 1;
     if (argsParser.mustExit)
         return 0;
+
+
+    using namespace umba::omanip;
+
+    printInfoLogSectionHeader(logMsg, "Log Colors");
+
+    logMsg << emergency << "emergency " << normal << endl;
+    logMsg << alert     << "alert     " << normal << endl;
+    logMsg << critical  << "critical  " << normal << endl;
+    logMsg << error     << "error     " << normal << endl;
+    logMsg << warning   << "warning   " << normal << endl;
+    logMsg << notice    << "notice    " << normal << endl;
+    logMsg << info      << "info      " << normal << endl;
+    logMsg << debug     << "debug     " << normal << endl;
+    logMsg << good      << "good      " << normal << endl;
+    logMsg << normal    << "normal    " << normal << endl;
 
 
     printInfoLogSectionHeader(logMsg, "App Config");
@@ -199,6 +200,24 @@ int main(int argc, char* argv[])
 
     if (!appConfig.getOptQuet())
     {
+        if (!foundFiles.empty())
+            printInfoLogSectionHeader(logMsg, "Files for Processing");
+
+        for(const auto & name : foundFiles)
+        {
+            logMsg << name << endl;
+        }
+
+
+        if (!excludedFiles.empty())
+            printInfoLogSectionHeader(logMsg, "Files Excluded from Processing");
+
+        for(const auto & name : excludedFiles)
+        {
+            logMsg << name << endl;
+        }
+
+
         if (!foundExtentions.empty())
             printInfoLogSectionHeader(logMsg, "Found File Extentions");
 

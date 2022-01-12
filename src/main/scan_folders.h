@@ -266,7 +266,7 @@ void scanFolders( const AppConfig &appConfig
             std::string regexStr;
             if (!regexMatch(normalizedEntryName,regexes,&regexStr))
             {
-                excludedFiles.push_back(entryName);
+                foundFiles.push_back(entryName);
 
                 auto ext = umba::filename::getExt(entryName);
 
@@ -286,7 +286,7 @@ void scanFolders( const AppConfig &appConfig
             }
             else
             {
-                foundFiles.push_back(entryName);
+                excludedFiles.push_back(entryName);
 
                 if (!appConfig.getOptQuet())
                     logMsg << notice << "Skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;

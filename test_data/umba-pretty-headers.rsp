@@ -58,6 +58,9 @@
 # My prefix for non-standalone headers
 -X=*/zz_*
 
+# Keil C++11 support
+-X=*umba/stl_*
+
 
 
 #--keep-compile-flags

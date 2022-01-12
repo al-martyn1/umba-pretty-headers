@@ -786,7 +786,10 @@ struct CommandLineOption
         "-?\n"
         "--help\n"
         "    Show this help.\n"
-        "    See also RTC RFC010 for details (http://wiki.dep111.rtc.local/rfcrtc:rfcrtc010).\n";
+        #if defined(RTC_PRIVATE_BUILD)
+        "    See also RTC RFC010 for details (http://wiki.dep111.rtc.local/rfcrtc:rfcrtc010).\n"
+        #endif
+        ;
 
     }
 

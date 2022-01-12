@@ -87,22 +87,57 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
             // simple skip
         }
 
+        else if (opt.setParam("CLR", 0, "no/none/file|" 
+                                        "ansi/term|" 
+                                        #if defined(WIN32) || defined(_WIN32)
+                                        "win32/win/windows/cmd/console"
+                                        #endif
+                             )
+              || opt.setInitial(-1) || opt.isOption("color") 
+              || opt.setDescription("Force set console output coloring")
+              /* ", can be:\nno, none, file - disable coloring\nansi, term - set ansi terminal coloring\nwin32, win, windows, cmd, console - windows console specific coloring method" */
+              )
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            umba::term::ConsoleType res;
+            auto mapper = [](int i) -> umba::term::ConsoleType
+                          {
+                              switch(i)
+                              {
+                                  case 0 : return umba::term::ConsoleType::file;
+                                  case 1 : return umba::term::ConsoleType::ansi_terminal;
+                                  case 2 : return umba::term::ConsoleType::windows_console;
+                                  default: return umba::term::ConsoleType::file;
+                              };
+                          };
+            if (!opt.getParamValue( res, errMsg, mapper ) )
+            {
+                LOG_ERR_OPT<<errMsg<<"\n";
+                return -1;
+            }
+
+            coutWriter.forceSetConsoleType(res);
+            cerrWriter.forceSetConsoleType(res);
+        }
+
         //------------
 
-        else if (opt.isOption("keep-compile-flags") || opt.isOption('K') || opt.setDescription("Keep generated compile_flags_*.txt"))
+        else if (opt.isOption("keep-compile-flags") || opt.isOption('K') || opt.setDescription("Keep generated 'compile_flags_*.txt'"))
         {
             if (argsParser.hasHelpOption) return 0;
             appConfig.keepCompileFlags = true;
             return 0;
         }
 
-        else if (opt.isOption("exclude-files") || opt.isOption('X') || opt.setDescription("Exclude files from parsing"))
+        else if ( opt.isOption("exclude-files") || opt.isOption('X') || opt.setParam("MASK")
+               || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' means any number of any char, and '?' means exact one any char. In addition, symbol '^' in front and/or back of mask means that mask will be bound to beginning/ending of the tested file name"))
         {
             if (argsParser.hasHelpOption) return 0;
             
             if (!opt.hasArg())
             {
-                LOG_ERR_OPT<<"exclude files list not taken (--exclude-files)\n";
+                LOG_ERR_OPT<<"exclude files mask not taken (--exclude-files)\n";
                 return -1;
             }
 
@@ -149,6 +184,21 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
 
         //------------
 
+        else if (opt.isOption("autocomplete-install") || opt.setDescription("Install autocompletion to bash/clink(cmd)"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            //return autocomplete(opt, true);
+            return umba::command_line::autocompletionInstaller( pCol, opt, pCol->getPrintHelpStyle(), true, [&]( bool bErr ) -> decltype(auto) { return bErr ? LOG_ERR_OPT : LOG_MSG_OPT; } );
+        }
+        else if (opt.isOption("autocomplete-uninstall") || opt.setDescription("Remove autocompletion from bash/clink(cmd)"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            //return autocomplete(opt, false);
+            return umba::command_line::autocompletionInstaller( pCol, opt, pCol->getPrintHelpStyle(), false, [&]( bool bErr ) -> decltype(auto) { return bErr ? LOG_ERR_OPT : LOG_MSG_OPT; } );
+        }
+
         else if (opt.isHelpStyleOption())
         {
             // Job is done in isHelpStyleOption
@@ -172,7 +222,7 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
                     std::cout<<"Usage: " << programLocationInfo.exeFullName << " [OPTIONS] input_file [output_file]\n\nOptions:\n\n"<<opt.getHelpOptionsString();
                 
                 if (pCol) // argsNeedHelp
-                    std::cout<<pCol->makeText( 64, &argsParser.argsNeedHelp );
+                    std::cout<<pCol->makeText( 78, &argsParser.argsNeedHelp );
 
                 return 1;
 

@@ -276,8 +276,9 @@ enum class ColoringLevel
     info          = 6, // ярко-белый на дефолтном фоне
     debug         = 7, // голубой на дефолтном фоне
     good          = 8, // светло-зеленый на дефолтном фоне
-    normal        = 9,  // дефолтный цвет
-    num_levels    = 10
+    caption       = 9, // магента на дефолтном фоне
+    normal        = 10,  // дефолтный цвет
+    num_levels    = 11
 };
 
 
@@ -1255,7 +1256,8 @@ private:
     , UMBA_TERM_COLORS_MAKE_COMPOSITE( umba::term::colors::white        , umba::term::colors::color_default, true  ,  false,  false ) // info          = 6, // ярко-белый на дефолтном фоне                  
     , UMBA_TERM_COLORS_MAKE_COMPOSITE( umba::term::colors::blue         , umba::term::colors::color_default, true  ,  false,  false ) // debug         = 7, // голубой на дефолтном фоне                     
     , UMBA_TERM_COLORS_MAKE_COMPOSITE( umba::term::colors::green        , umba::term::colors::color_default, true  ,  false,  false ) // good          = 8, // светло-зеленый на дефолтном фоне              
-    , UMBA_TERM_COLORS_MAKE_COMPOSITE( umba::term::colors::color_default, umba::term::colors::color_default, false ,  false,  false ) // normal        = 9,  // дефолтный цвет                               
+    , UMBA_TERM_COLORS_MAKE_COMPOSITE( umba::term::colors::magenta      , umba::term::colors::color_default, true  ,  false,  false ) // caption       = 9, // магента на дефолтном фоне              
+    , UMBA_TERM_COLORS_MAKE_COMPOSITE( umba::term::colors::color_default, umba::term::colors::color_default, false ,  false,  false ) // normal        = 10, // дефолтный цвет                               
     };
 
 
@@ -1516,6 +1518,14 @@ inline
 SimpleFormatter& good( SimpleFormatter& fmt )
 {
     fmt.coloring( ColoringLevel::good );
+    return fmt;
+}
+
+//-----------------------------------------------------------------------------
+inline
+SimpleFormatter& caption( SimpleFormatter& fmt )
+{
+    fmt.coloring( ColoringLevel::caption );
     return fmt;
 }
 

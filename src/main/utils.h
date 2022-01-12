@@ -18,7 +18,7 @@ StreamType& printInfoLogSectionHeader( StreamType &s, std::string secCaption )
 
     s << "\n";
     s << infoLogSectionSeparator << "\n";
-    s << warning << secCaption << normal << "\n";
+    s << caption << secCaption << normal << "\n";
     s << std::string(secCaption.size(), '-');
     s << "\n";
 
