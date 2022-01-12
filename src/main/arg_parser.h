@@ -33,21 +33,27 @@ std::string makeAbsPath( std::string p )
 
 // 0 - ok, 1 normal stop, -1 - error
 template<typename ArgsParser>
-int operator()( std::string a, ArgsParser &argsParser, umba::command_line::ICommandLineOptionCollector *pCol, bool fBuiltin, bool ignoreInfos)
+int operator()( const std::string                               &a           //!< строка - текущий аргумент
+              , umba::command_line::CommandLineOption           &opt         //!< Объект-опция, содержит разобранный аргумент и умеет отвечать на некоторые вопросы
+              , ArgsParser                                      &argsParser  //!< Класс, который нас вызывает, содержит некоторый контекст
+              , umba::command_line::ICommandLineOptionCollector *pCol        //!< Коллектор опций - собирает инфу по всем опциям и готов вывести справку
+              , bool fBuiltin
+              , bool ignoreInfos
+              )
 {
     //const GeneratorOptions &gopts = generatorOptions; // stub for log
 
-    umba::string_plus::trim(a);
+    // umba::string_plus::trim(a);
+    //  
+    // if (a.empty())
+    // {
+    //     LOG_ERR_OPT<<"invalid (empty) argument\n";
+    //     return -1;
+    // }
+    //  
+    // umba::command_line::CommandLineOption opt(a, pCol);
 
-    if (a.empty())
-    {
-        LOG_ERR_OPT<<"invalid (empty) argument\n";
-        return -1;
-    }
-
-    umba::command_line::CommandLineOption opt(a, pCol);
-
-    pCol->setCollectMode( opt.isHelpOption() );
+    // pCol->setCollectMode( opt.isHelpOption() );
 
     if (opt.isOption())
     {
@@ -84,7 +90,7 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
         }
         else if (opt.isOption("no-builtin-options") || opt.setDescription("Don't parse predefined options from command line options file 'conf/umba-pretty-headers.options' and 'conf/umba-pretty-headers.user'"))
         {
-            // simple skip
+            // simple skip - обработка уже сделана
         }
 
         else if (opt.setParam("CLR", 0, "no/none/file|" 
@@ -123,7 +129,9 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
 
         //------------
 
-        else if (opt.isOption("keep-compile-flags") || opt.isOption('K') || opt.setDescription("Keep generated 'compile_flags_*.txt'"))
+        else if ( opt.isOption("keep-compile-flags") || opt.isOption('K') 
+               // || opt.setParam("VAL",true)
+               || opt.setDescription("Keep generated 'compile_flags_*.txt'"))
         {
             if (argsParser.hasHelpOption) return 0;
             appConfig.keepCompileFlags = true;
@@ -131,7 +139,7 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
         }
 
         else if ( opt.isOption("exclude-files") || opt.isOption('X') || opt.setParam("MASK")
-               || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' means any number of any char, and '?' means exact one any char. In addition, symbol '^' in front and/or back of mask means that mask will be bound to beginning/ending of the tested file name"))
+               || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' means any number of any chars, and '?' means exact one any char. In addition, symbol '^' in front and/or back of mask means that mask will be bound to beginning/ending of the tested file name"))
         {
             if (argsParser.hasHelpOption) return 0;
             
@@ -148,7 +156,8 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
             return 0;
         }
 
-        else if (opt.isOption("set") || opt.isOption('S') || opt.setDescription("Set up macro in form: 'NAME:VALUE'"))
+        else if ( opt.isOption("set") || opt.isOption('S') || opt.setParam("NAME:VALUE")
+               || opt.setDescription("Set up macro in form: 'NAME:VALUE'"))
         {
             if (argsParser.hasHelpOption) return 0;
             
@@ -165,7 +174,8 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
             return 0;
         }
 
-        else if (opt.isOption("path") || opt.isOption('P') || opt.setDescription("Add path to scan path list"))
+        else if ( opt.isOption("path") || opt.isOption('P') || opt.setParam("PATH")
+               || opt.setDescription("Add path to scan path list"))
         {
             if (argsParser.hasHelpOption) return 0;
             
@@ -219,7 +229,10 @@ int operator()( std::string a, ArgsParser &argsParser, umba::command_line::IComm
                 }
 
                 if (pCol && pCol->isNormalPrintHelpStyle() && argsParser.argsNeedHelp.empty())
-                    std::cout<<"Usage: " << programLocationInfo.exeFullName << " [OPTIONS] input_file [output_file]\n\nOptions:\n\n"<<opt.getHelpOptionsString();
+                {
+                    auto helpText = opt.getHelpOptionsString();
+                    std::cout<<"Usage: " << programLocationInfo.exeFullName << " [OPTIONS] input_file [output_file]\n\nOptions:\n\n"<<helpText;
+                }
                 
                 if (pCol) // argsNeedHelp
                     std::cout<<pCol->makeText( 78, &argsParser.argsNeedHelp );

@@ -134,6 +134,7 @@ int main(int argc, char* argv[])
     logMsg << info      << "info      " << normal << endl;
     logMsg << debug     << "debug     " << normal << endl;
     logMsg << good      << "good      " << normal << endl;
+    logMsg << caption   << "caption   " << normal << endl;
     logMsg << normal    << "normal    " << normal << endl;
 
 

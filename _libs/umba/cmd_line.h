@@ -23,6 +23,242 @@
 // #include "sys_paths.h"
 // #include "cpp.h"
 
+
+/*
+
+ Использование
+
+
+ 1) Создаём наследника umba::command_line::CommandLineOptionCollectorImplBase
+    Он просто обрабатывает ошибки задания повторяющихся значений - примерно как
+    компилятор ругается на дублирующиеся case'ы в switch
+
+    class CommandLineOptionCollector : public umba::command_line::CommandLineOptionCollectorImplBase
+    {
+    protected:
+       virtual void onOptionDup( const std::string &opt ) override
+       {
+           LOG_ERR_OPT<<"Duplicated option key - '"<<opt<<"'\n";
+           // std::cout << <<"Duplicated option key - '"<<opt<<"'\n";
+           throw std::runtime_error("Duplicated option key");
+       }
+    };
+
+
+ 2) Создаём ArgParser - функциональный объект, обрабатывающий аргумент
+
+    struct ArgParser
+    {
+
+        // Для корректной обработки путей - в респонз файлах считается, что пути указаны относительно него
+        std::stack<std::string> optFiles;
+
+        std::string makeAbsPath( std::string p )
+        {
+            std::string basePath;
+        
+            if (optFiles.empty())
+                basePath = umba::filesys::getCurrentDirectory<std::string>();
+            else
+                basePath = umba::filename::getPath(optFiles.top());
+        
+            return umba::filename::makeAbsPath( p, basePath );
+        }
+
+
+        // 0 - ok, 1 normal stop, -1 - error
+        template<typename ArgsParser>
+        int operator()( const std::string                               &a           //!< строка - текущий аргумент
+                      , umba::command_line::CommandLineOption           &opt         //!< Объект-опция, содержит разобранный аргумент и умеет отвечать на некоторые вопросы
+                      , ArgsParser                                      &argsParser  //!< Класс, который нас вызывает, содержит некоторый контекст
+                      , umba::command_line::ICommandLineOptionCollector *pCol        //!< Коллектор опций - собирает инфу по всем опциям и готов вывести справку
+                      , bool fBuiltin
+                      , bool ignoreInfos
+                      )
+        {
+            return -1;
+        }
+    };
+
+
+ 3) В операторе operator() пишем
+
+    if (opt.isOption())
+    {
+        // Тут будет обработка опций
+    }
+    else if (opt.isResponseFile())
+    {
+        // Если не нужна обработка респонз файлов, просто вернуть -1;
+
+        std::string optFileName = makeAbsPath(opt.name);
+
+        optFiles.push(optFileName);
+
+        auto parseRes = argsParser.parseBuiltinsFile( optFileName );
+
+        optFiles.pop();
+
+        if (!parseRes)
+            return -1;
+
+        if (argsParser.mustExit)
+            return 1;
+    
+        return 0;
+    
+    }
+
+    // А тут просто собираем всё, что не опция или респонз файл - простые аргументы
+
+    appConfig.inpu.push_back(makeAbsPath(a));
+
+    return 0;
+
+
+
+ 4) Обрабатываем опции
+
+
+        std::string errMsg;
+        int intVal;
+
+        if (opt.name.empty())
+        {
+            LOG_ERR_OPT<<"invalid (empty) option name\n";
+            return -1;
+        }
+
+       if ( opt.isOption("quet")                   // Длинная опция  - --quet   \  допустимо использовать
+         || opt.isOption('q')                      // Короткая опция - -q       /  только одно
+         || opt.setDescription("Operate quetly"))  // Описание для автогенерируемой справки
+        {
+            argsParser.quet = true;
+            appConfig.setOptQuet(true);
+        }
+        else if (opt.isOption("version") || opt.isOption('v') || opt.setDescription("Show version info"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            if (!ignoreInfos)
+            {
+                printOnlyVersion();
+                return 1;
+            }
+        }
+        else if (opt.isOption("where") || opt.setDescription("Show where the executable file is"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            LOG_MSG_OPT << programLocationInfo.exeFullName << "\n";
+            return 0;
+        }
+        else if (opt.isOption("no-builtin-options") || opt.setDescription("Don't parse predefined options from command line options file 'conf/umba-pretty-headers.options' and 'conf/umba-pretty-headers.user'"))
+        {
+            // simple skip - обработка уже сделана
+        }
+
+        // Создается опция --color=CLR, где CLR - одно из значений перечисления.
+        // Перечисления задаются строкой, в которой '|' - задаёт альтернативы, а
+        //                                          '/' - позволяет задавать алиасы
+        // Для обработки таких enum-значений 
+        else if (opt.setParam("CLR", 0, "no/none/file|" 
+                                        "ansi/term|" 
+                                        #if defined(WIN32) || defined(_WIN32)
+                                        "win32/win/windows/cmd/console"
+                                        #endif
+                             )
+              || opt.setInitial(-1) || opt.isOption("color") 
+              || opt.setDescription("Force set console output coloring")
+              // ", can be:\nno, none, file - disable coloring\nansi, term - set ansi terminal coloring\nwin32, win, windows, cmd, console - windows console specific coloring method"
+              )
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            umba::term::ConsoleType res;
+            auto mapper = [](int i) -> umba::term::ConsoleType
+                          {
+                              switch(i)
+                              {
+                                  case 0 : return umba::term::ConsoleType::file;
+                                  case 1 : return umba::term::ConsoleType::ansi_terminal;
+                                  case 2 : return umba::term::ConsoleType::windows_console;
+                                  default: return umba::term::ConsoleType::file;
+                              };
+                          };
+            if (!opt.getParamValue( res, errMsg, mapper ) )
+            {
+                LOG_ERR_OPT<<errMsg<<"\n";
+                return -1;
+            }
+
+            coutWriter.forceSetConsoleType(res);
+            cerrWriter.forceSetConsoleType(res);
+        }
+
+
+    Длинная опция
+    Если первый символ '!' - internal option - недокументированная опция, обрабатывается, 
+    но не выводится в генерируемой справке
+
+    Имя параметра
+    Если имя параметра начинается с символа '?' - это опциональный параметр, может быть опущен.
+
+    umba::command_line::CommandLineOption также следующие методы для задания имени, 
+    типа, деф значения и диапазона значений:
+
+
+    // Задаёт имя параметра (для отображения по --help)
+    // без задания типа и/или дефолтного значения
+    bool setParam( const std::string &p )
+    bool setParam( const char *p )
+
+    // Задаем тип опции без дефолтного параметра
+    bool setParam( const std::string &p, OptionType optType )
+
+    // Не уверен, вроде добавляет булевское дефолтное значение
+    bool setParam( bool defVal )
+
+
+    // Опциональный параметр задается символом '?' перед именем параметра
+    // Для обязательного параметра defVal не используется, но он используется для задания типа опции
+    bool setParam( const std::string &p, bool defVal )
+
+    //---
+
+    // Задаёт параметр и int значение по умолчанию
+    bool setParam( const std::string &p, int defVal )
+
+    // Задаёт параметр и int значение по умолчанию, а также диапазон
+    bool setParam( const std::string &p, int defVal, int minVal, int maxVal )
+
+    bool setParam( const std::string &p, size_t defVal )
+    bool setParam( const std::string &p, size_t defVal, size_t minVal, size_t maxVal )
+
+    //---
+
+    // Задаёт параметр и строковое значение по умолчанию, а также диапазон
+    bool setParam( const std::string &p, std::string defVal )
+    bool setParam( const std::string &p, const char* defVal )
+
+    // Задаёт параметр/перечисление
+    bool setParam( const std::string &p, int defVal, std::string enumValues ) // "one|two|three"
+
+
+    // Хелперы для получения значения параметра
+    bool getParamValue( bool &val, std::string &errMsg )
+    bool getParamValue( int &val, std::string &errMsg )
+    bool getParamValue( size_t &val, std::string &errMsg )
+    bool getParamValue( std::string &val, std::string &errMsg )
+
+    template<typename EnumType, typename EnumMapper >
+    bool getParamValue( EnumType &val, std::string &errMsg, const EnumMapper &mapper )
+
+
+ */
+
+
+
 // umba::command_line::
 namespace umba{
 namespace command_line{
@@ -901,6 +1137,15 @@ struct CommandLineOption
         if (pCollector)
         {
             pCollector->setOptionParam( p );
+        }
+        return false;
+    }
+
+    bool setParam( const char *p )
+    {
+        if (pCollector)
+        {
+            pCollector->setOptionParam( std::string(p) );
         }
         return false;
     }
@@ -2038,6 +2283,9 @@ bool updateAutocompletionBashScripts( ICommandLineOptionCollector *pCol, bool si
 inline
 bool updateAutocompletionCLinkScripts( ICommandLineOptionCollector *pCol, bool simpleRemoveLine, std::string clinkPathFile )
 {
+    // CLink - чисто виндовая штука
+    #if defined(WIN32) || defined(_WIN32)
+
     std::string pathName = "d:/clink/";
     std::string fileName = "clink.lua";
 
@@ -2112,6 +2360,8 @@ bool updateAutocompletionCLinkScripts( ICommandLineOptionCollector *pCol, bool s
         if (!updateRcScriptFile( clinkPathFile, text, pref, suf, simpleRemoveLine ))
             return false;
     #endif
+
+    #endif // WIN32
 
     return true;
 
@@ -2266,6 +2516,28 @@ struct ArgsParser
 
     ArgParser                             argParser;
     OptionsCollector                      optionsCollector;
+              
+
+    int callArgParser( std::string a, bool fBuiltin, bool ignoreInfos )
+    {
+        umba::string_plus::trim(a);
+
+        if (a.empty())
+        {
+            // throw std::runtime_error("invalid (empty) argument");
+            // return -1;
+
+            return 0; // Просто игнорим
+        }
+
+        ICommandLineOptionCollector *pCol = &optionsCollector;
+
+        umba::command_line::CommandLineOption opt(a, pCol);
+
+        pCol->setCollectMode( opt.isHelpOption() );
+
+        return argParser( a, opt, *this,  /* ctx,  */ pCol, fBuiltin, ignoreInfos );
+    }
 
 
     //! Must return: 0 - ok, 1 normal stop, -1 - error
@@ -2289,7 +2561,7 @@ struct ArgsParser
             if (umba::command_line::isComment( optLine ))
                 continue;
 
-            int paRes = argParser( optLine, *this, &optionsCollector, true, true ); // bool fBuiltin, bool ignoreInfos
+            int paRes = callArgParser(optLine, true, true); // argParser( optLine, *this, &optionsCollector, true, true ); // bool fBuiltin, bool ignoreInfos
             if (paRes)
             {
                 /* ctx. */ mustExit = true;
@@ -2321,10 +2593,10 @@ struct ArgsParser
     bool parse()
     {
         // std::vector<StringType>   args;
-        for(const auto &a : args)
+        for( const auto &a : args)
         {
-            // 0 - ok, 1 normal stop, -1 - error
-            int paRes = argParser( a, *this,  /* ctx,  */ &optionsCollector, false, false );
+            int paRes = callArgParser(a, false, false);
+            //int paRes = argParser( a, opt, *this,  /* ctx,  */ pCol, false, false );
             if (paRes)
             {
                /* ctx. */ mustExit = true;
