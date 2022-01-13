@@ -20,9 +20,8 @@
 //#include "splits.h"
 //#include "isa.h"
 
-#if defined(WIN32) || defined(_WIN32)
-    #include <windows.h>
-#endif
+#include "zz_inc_windows.h"
+
 
 // umba::filename::
 namespace umba

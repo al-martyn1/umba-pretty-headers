@@ -524,11 +524,8 @@
     #endif
 #endif
 
+#include "zz_inc_windows.h"
 
-#if defined(_WIN32) || defined(WIN32)
-    #include <winsock2.h>
-    #include <windows.h>
-#endif
 
 #if defined(UMBA_USE_QT)
     #include <QObject>

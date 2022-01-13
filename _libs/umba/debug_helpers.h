@@ -11,8 +11,12 @@
 #include "umba.h"
 #include "assert.h"
 
+#include "zz_inc_windows.h"
+
 #if defined(UMBA_WIN32_USED)
-    #include "windows.h"
+
+    #include <debugapi.h>
+
 #endif
 
 

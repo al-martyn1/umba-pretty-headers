@@ -1,20 +1,6 @@
 #pragma once
 
-#if defined(WIN32) || defined(_WIN32)
-
-#ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN
-#endif
-
-#ifndef STRICT
-    #define STRICT
-#endif
-
-    #include <winsock2.h>
-    #include <windows.h>
-
-#endif
-
+#include "zz_inc_windows.h"
 
 #include "string_plus.h"
 #include "filename.h"

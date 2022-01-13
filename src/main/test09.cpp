@@ -2,7 +2,7 @@
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"
 
-#include "dbghlp.h"
+#include "umba/debug_helpers.h"
 
 #include <iostream>
 #include <iomanip>
