@@ -52,4 +52,4 @@
 
 # Qt private (or other private folders and files) and other stuff
 -X=*\private\*
--X=*_p.h
+-X=*_p.h^

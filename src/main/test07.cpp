@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     {
         argsParser.args.clear();
         argsParser.args.push_back("--help");
-        // argsParser.args.push_back("@..\\test_data\\umba-pretty-headers.rsp");
+        // argsParser.args.push_back("@..\\tests\\data\\umba-pretty-headers.rsp");
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
@@ -153,7 +153,8 @@ int main(int argc, char* argv[])
                                        );
     
 
-    std::vector<std::string> generatedFiles;
+    std::vector<std::string> generatedCompileFlagsTxtFiles;
+    std::map< std::string, std::vector<std::string> > generatedCompileFlagsIncPaths;
 
     for(auto compileFlagsTxt : appConfig.clangCompileFlagsTxtFilename)
     {
@@ -161,25 +162,28 @@ int main(int argc, char* argv[])
         std::vector<std::string>                         commonLines;
 
         if (!parseCompileFlags(compileFlagsTxt, cflags, commonLines))
+        {
             return 1;
+        }
 
+        std::vector<std::string> tmpGeneratedCompileFlagsTxtFiles;
+        std::map< std::string, std::vector<std::string> > tmpIncludePaths;
 
-        std::vector<std::string> tmpGeneratedFiles;
+        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, tmpGeneratedCompileFlagsTxtFiles, tmpIncludePaths);
 
-        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, tmpGeneratedFiles);
+        generatedCompileFlagsTxtFiles.insert(generatedCompileFlagsTxtFiles.end(), tmpGeneratedCompileFlagsTxtFiles.begin(), tmpGeneratedCompileFlagsTxtFiles.end());
 
-        generatedFiles.insert(generatedFiles.end(), tmpGeneratedFiles.begin(), tmpGeneratedFiles.end());
-        
+        generatedCompileFlagsIncPaths.insert(tmpIncludePaths.begin(), tmpIncludePaths.end());
     }
 
-    allCompileFlagFiles.insert(generatedFiles.begin(), generatedFiles.end());
+    allCompileFlagFiles.insert(generatedCompileFlagsTxtFiles.begin(), generatedCompileFlagsTxtFiles.end());
 
 
     if (!appConfig.getOptQuet())
     {
-        if (!generatedFiles.empty())
+        if (!generatedCompileFlagsTxtFiles.empty())
             printInfoLogSectionHeader(logMsg, "Generated Files");
-        for(const auto & name : generatedFiles)
+        for(const auto & name : generatedCompileFlagsTxtFiles)
         {
             logMsg << name << endl;
         }

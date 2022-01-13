@@ -78,8 +78,8 @@ int main(int argc, char* argv[])
 
         if (IsDebuggerPresent())
         {
-            cdbFilename = "..\\test_data\\compile_flags.txt";
-            inputFiles.push_back("..\\test_data\\test_data_02.cpp");
+            cdbFilename = "..\\tests\\data\\compile_flags.txt";
+            inputFiles.push_back("..\\tests\\data\\test_data_02.cpp");
             //outputFilename = "test01.cpp.txt";
         }
         else

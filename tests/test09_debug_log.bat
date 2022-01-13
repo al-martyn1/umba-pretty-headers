@@ -1,0 +1,1 @@
+call test09_debug.bat >test09_debug.txt 2>&1

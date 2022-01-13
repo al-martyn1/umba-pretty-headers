@@ -1,0 +1,38 @@
+/MP 
+/ifcOutput "E:\_github\umba_pretty_headers\\.out\msvc2019\x64\Debug\_test09\" 
+/GS /W1 /Zc:wchar_t 
+/I"E:\_github\umba_pretty_headers\vcxproj_msvc2019\\..\_libs\mem_pools\inc" 
+/I"." /I"D:\Qt\5.15.2\msvc2019_64\include" 
+/I"D:\llvm-project\llvm\include" 
+/I"D:\llvm-project\clang\include" 
+/I"D:\LLVM\msvc2019\x64\include" 
+/I"D:\LLVM\msvc2019\x64\tools\clang\include" 
+/I".\GeneratedFiles\Debug" 
+/I"E:\_github\umba_pretty_headers\vcxproj_msvc2019\\..\_libs" 
+/I"E:\_github\umba_pretty_headers\vcxproj_msvc2019\\..\src" 
+/I"E:\_github\umba_pretty_headers\vcxproj_msvc2019\\..\_libs\sfmt\inc" 
+/I"D:\Qt\5.15.2\msvc2019_64\include\QtCore" 
+/I"D:\Qt\5.15.2\msvc2019_64\include\QtSerialPort" 
+/I"D:\Qt\5.15.2\msvc2019_64\include\QtTest" 
+/I"D:\Qt\5.15.2\msvc2019_64\include\QtSerialBus" 
+/I"D:\Qt\5.15.2\msvc2019_64\include\QtWebSockets" 
+/Zi /Gm- /Od 
+/Fd"E:\_github\umba_pretty_headers\\.out\msvc2019\x64\Debug\_test09\vc142.pdb" 
+/Zc:inline /fp:precise 
+/D "USE_LOUT" 
+/D "UNICODE" 
+/D "_UNICODE" 
+/D "WIN32" 
+/D "WIN64" 
+/errorReport:prompt 
+/WX- 
+/Zc:forScope 
+/Gd /MDd 
+/std:c++17 
+/FC 
+/Fa"E:\_github\umba_pretty_headers\\.out\msvc2019\x64\Debug\_test09\" 
+/EHsc 
+/nologo 
+/Fo"E:\_github\umba_pretty_headers\\.out\msvc2019\x64\Debug\_test09\" 
+/Fp"E:\_github\umba_pretty_headers\\.out\msvc2019\x64\Debug\_test09\test09.pch" 
+/diagnostics:column 

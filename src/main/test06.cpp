@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     std::cout << "Test Subfolder NameExt          : " << programLocationInfo.getAppRootSubName("include","user") << "\n";
     std::cout << "Test Subfolder ExtOnly          :" << programLocationInfo.getAppRootSubName("","user") << "\n";
     std::cout << "---\n";
-    std::cout << "Test makeAbsPath                : " << programLocationInfo.makeAbsPath("..\\test_data\\compile_flags.txt") << "\n";
+    std::cout << "Test makeAbsPath                : " << programLocationInfo.makeAbsPath("..\\tests\\data\\compile_flags.txt") << "\n";
     std::cout << "-------------\n";
 
     std::cout << "\n";

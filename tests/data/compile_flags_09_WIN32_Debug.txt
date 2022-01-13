@@ -1,0 +1,17 @@
+-D_CRT_SECURE_NO_WARNINGS
+-D_CRT_NON_CONFORMING_SWPRINTFS
+-Wno-unused-variable
+-Wno-unused-value
+-Wno-inconsistent-missing-override
+-Wno-pragma-once-outside-header
+-xc++
+-std=c++14
+-I..\..\_libs\mem_pools\inc
+-I..\..\_libs
+-I..\..\_src
+-I..\..\_libs\sfmt\inc
+-DUMBA_VSLANG=1033
+-DUMBA_MACRO_TEST=SomeTest
+-DWIN32
+-D_DEBUG
+-DUMBA_USE_WIN32

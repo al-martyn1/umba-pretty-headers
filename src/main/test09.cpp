@@ -20,6 +20,9 @@
 #include "umba/time_service.h"
 
 
+#include "clang.h"
+#include "marty_clang_helpers.h"
+
 
 umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
@@ -39,6 +42,7 @@ bool logSourceInfo = false;
 #include "utils.h"
 #include "scan_folders.h"
 
+#include "scan_sources.h"
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
@@ -78,7 +82,7 @@ int main(int argc, char* argv[])
     if (umba::isDebuggerPresent())
     {
         argsParser.args.clear();
-        argsParser.args.push_back("@..\\test_data\\umba-pretty-headers-09.rsp");
+        argsParser.args.push_back("@..\\tests\\data\\umba-pretty-headers-09.rsp");
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
@@ -108,16 +112,16 @@ int main(int argc, char* argv[])
 
 
 
-    printInfoLogSectionHeader(logMsg, "App Config");
-    appConfig.print(logMsg) << "\n";
-
-    appConfig = appConfig.getAdjustedConfig(programLocationInfo);
-
-    // printInfoLogSectionHeader(logMsg, "Adjusted App Config") << appConfig << "\n";
-    printInfoLogSectionHeader(logMsg, "Adjusted App Config");
-    appConfig.print(logMsg) << "\n";
-
-    printInfoLogSectionHeader(logMsg, "### Normal Output") << "\n";
+    // printInfoLogSectionHeader(logMsg, "App Config");
+    // appConfig.print(logMsg) << "\n";
+    //  
+    // appConfig = appConfig.getAdjustedConfig(programLocationInfo);
+    //  
+    // // printInfoLogSectionHeader(logMsg, "Adjusted App Config") << appConfig << "\n";
+    // printInfoLogSectionHeader(logMsg, "Adjusted App Config");
+    // appConfig.print(logMsg) << "\n";
+    //  
+    // printInfoLogSectionHeader(logMsg, "### Normal Output") << "\n";
 
     std::set<std::string> allCompileFlagFiles;
     auto compileFlagFilesAutoDeleter = umba::makeLeaveScopeExec
@@ -137,7 +141,8 @@ int main(int argc, char* argv[])
 
 
 
-    std::vector<std::string> generatedFiles;
+    std::vector<std::string> generatedCompileFlagsTxtFiles;
+    std::map< std::string, std::vector<std::string> > generatedCompileFlagsIncPaths;
 
     for(auto compileFlagsTxt : appConfig.clangCompileFlagsTxtFilename)
     {
@@ -145,25 +150,28 @@ int main(int argc, char* argv[])
         std::vector<std::string>                         commonLines;
 
         if (!parseCompileFlags(compileFlagsTxt, cflags, commonLines))
+        {
             return 1;
+        }
 
+        std::vector<std::string> tmpGeneratedCompileFlagsTxtFiles;
+        std::map< std::string, std::vector<std::string> > tmpIncludePaths;
 
-        std::vector<std::string> tmpGeneratedFiles;
+        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, tmpGeneratedCompileFlagsTxtFiles, tmpIncludePaths);
 
-        generateCompileFlags(appConfig, compileFlagsTxt, cflags, commonLines, tmpGeneratedFiles);
+        generatedCompileFlagsTxtFiles.insert(generatedCompileFlagsTxtFiles.end(), tmpGeneratedCompileFlagsTxtFiles.begin(), tmpGeneratedCompileFlagsTxtFiles.end());
 
-        generatedFiles.insert(generatedFiles.end(), tmpGeneratedFiles.begin(), tmpGeneratedFiles.end());
-        
+        generatedCompileFlagsIncPaths.insert(tmpIncludePaths.begin(), tmpIncludePaths.end());
     }
 
-    allCompileFlagFiles.insert(generatedFiles.begin(), generatedFiles.end());
+    allCompileFlagFiles.insert(generatedCompileFlagsTxtFiles.begin(), generatedCompileFlagsTxtFiles.end());
 
 
     if (!appConfig.getOptQuet())
     {
-        if (!generatedFiles.empty())
+        if (!generatedCompileFlagsTxtFiles.empty())
             printInfoLogSectionHeader(logMsg, "Generated Files");
-        for(const auto & name : generatedFiles)
+        for(const auto & name : generatedCompileFlagsTxtFiles)
         {
             logMsg << name << endl;
         }
@@ -217,15 +225,57 @@ int main(int argc, char* argv[])
 
     if (!appConfig.getOptQuet())
     {
-        if (!foundFiles.empty())
+        printInfoLogSectionHeader(logMsg, "Scaning completed");
+        auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
+        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        startTick = umba::time_service::getCurTimeMs();
+    }
+
+
+    for(auto compileFlagsTxtFile: generatedCompileFlagsTxtFiles)
+    {
+    
+        // std::vector<std::string> foundFiles
+        std::string errRecipientStr;
+       
+        auto pcdb = clang::tooling::FixedCompilationDatabase::loadFromFile(compileFlagsTxtFile, errRecipientStr);
+         
+        if (pcdb==0 || !errRecipientStr.empty())
         {
-            printInfoLogSectionHeader(logMsg, "Scaning completed");
-            auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-            logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
-            startTick = umba::time_service::getCurTimeMs();
+            marty::clang::helpers::printError( llvm::errs(), errRecipientStr );
+            return -1;
+        }
+       
+       
+        auto pActionFactory = clang::tooling::newFrontendActionFactory
+                                  < marty::clang::helpers::DeclFindingActionTemplate
+                                      < marty::clang::helpers::DeclFinderTemplate
+                                          < DeclVisitor
+                                          , true // handleExplicitSourcesOnly
+                                          >
+                                      > 
+                                  >(); // std::unique_ptr
+       
+        auto pActionFactoryRawPtr = pActionFactory.get();
+
+        for(auto file : foundFiles)
+        {
+            std::vector<std::string> inputFiles;
+            inputFiles.push_back(file);
+
+            clang::tooling::ClangTool clangTool(*pcdb, inputFiles);
+           
+            auto res = clangTool.run( pActionFactoryRawPtr ); // pass raw ptr
+
+            if (res)
+            {
+                LOG_ERR_OPT << "Clang returns error: " << res << endl;
+                return res;
+            }
         }
     }
 
     return 0;
 }
+
 

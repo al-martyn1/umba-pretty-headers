@@ -120,7 +120,10 @@ bool parseCompileFlags( const std::string &fileName, std::map<std::string, std::
 {
     std::ifstream optFile(fileName.c_str());
     if (!optFile)
+    {
+        LOG_ERR_OPT << "failed to open file: '" << fileName << "'\n";
         return false; // resVec;
+    }
 
     return parseCompileFlags( fileName, optFile, cflags, commonLines );
 }
@@ -163,6 +166,7 @@ bool generateCompileFlags( const AppConfig &appConfig
                          , const std::map<std::string, std::vector<std::string> > &cflags
                          , const std::vector<std::string> &commonLines
                          , std::vector<std::string> &generatedFiles
+                         , std::map< std::string, std::vector<std::string> > &includePaths
                          )
 {
     std::string basePath = umba::filename::getPath(baseFileName);
