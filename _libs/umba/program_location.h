@@ -310,7 +310,7 @@ struct ProgramLocation
         auto names = getBuiltinOptionsFilenames(flag, _useUserFolder);
         if (names.empty())
             return StringType();
-         return names[0];
+         return umba::filename::normalizePathSeparators(names[0],'/');
     }
 
     StringType getBuiltinOptionsFilename( unsigned flag ) const

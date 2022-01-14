@@ -64,7 +64,7 @@
 
 
 
-#--keep-compile-flags
+#--keep-generated-files
 --set=Test:SomeTest
 compile_flags.txt
 -P=..\..\_libs

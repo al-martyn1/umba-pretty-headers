@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
                               < marty::clang::helpers::DeclFindingActionTemplate
                                   < marty::clang::helpers::DeclFinderTemplate
                                       < DeclVisitor
-                                      , true // handleExplicitSourcesOnly
+                                      , marty::clang::helpers::DeclFinderMode::handleExplicitTakenOnly // true // handleExplicitSourcesOnly
                                       >
                                   > 
                               >(); // std::unique_ptr

@@ -24,6 +24,12 @@ template< typename Context, typename Object > inline
     return Context->getFullLoc(pObject->getBeginLoc());
 }
 
+template< typename Context, typename Object > inline
+::clang::FullSourceLoc getFullSourceLoc( Context &context, Object *pObject )
+{
+    return context->getFullLoc(pObject->getBeginLoc());
+}
+
 
 template< typename Stream, typename StringType > inline
 Stream& printError( Stream &stream, StringType msg )

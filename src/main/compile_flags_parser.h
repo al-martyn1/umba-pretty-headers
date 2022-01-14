@@ -161,11 +161,30 @@ std::string filterFilenameForbiddenChars( std::string s )
 
 //----------------------------------------------------------------------------
 inline
+void extractIncludePathsFromCompileFlagsTxtLines( const std::string              basePath
+                                                , const std::vector<std::string> &lines
+                                                , std::vector<std::string>       &incPaths
+                                                )
+{
+    for(auto line: lines)
+    {
+        umba::string_plus::trim(line);
+        if (umba::string_plus::starts_with_and_strip( line, "-I=" ) || umba::string_plus::starts_with_and_strip( line, "-I" ))
+        {
+            umba::string_plus::trim(line);
+            auto incPath = umba::filename::makeAbsPath( line, basePath );
+            incPaths.push_back(incPath);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------
+inline
 bool generateCompileFlags( const AppConfig &appConfig
                          , const std::string &baseFileName
                          , const std::map<std::string, std::vector<std::string> > &cflags
                          , const std::vector<std::string> &commonLines
-                         , std::vector<std::string> &generatedFiles
+                         , std::vector<std::string> &generatedCompileFlagsFiles
                          , std::map< std::string, std::vector<std::string> > &includePaths
                          )
 {
@@ -193,7 +212,15 @@ bool generateCompileFlags( const AppConfig &appConfig
             if (!optFile)
                 return  /* false */ ; // resVec;
              
-            generatedFiles.push_back(fileName);
+            generatedCompileFlagsFiles.push_back(fileName);
+
+            std::vector<std::string> curIncPaths;
+            extractIncludePathsFromCompileFlagsTxtLines( umba::filename::getPath(fileName)
+                                                       , lines
+                                                       , curIncPaths
+                                                       );
+
+            includePaths[fileName] = curIncPaths;
              
             auto text = umba::string_plus::merge<std::string>(lines,"\n");
              
@@ -212,26 +239,6 @@ bool generateCompileFlags( const AppConfig &appConfig
         auto lines = commonLines;
         lines.insert(lines.end(), val.begin(), val.end());
         generateFilenameAndSave(key, lines);
-
-        // auto configName = filterFilenameForbiddenChars(key);
-        //  
-        // auto fileName = umba::filename::appendPath(basePath, umba::filename::appendExt( baseName+std::string("_")+configName, baseExt));
-        //  
-        // auto lines = commonLines;
-        //  
-        // lines.insert(lines.end(), val.begin(), val.end());
-        //  
-        // std::ofstream optFile(fileName.c_str());
-        // if (!optFile)
-        //     return false; // resVec;
-        //  
-        // generatedFiles.push_back(fileName);
-        //  
-        // auto text = umba::string_plus::merge<std::string>(lines,"\n");
-        //  
-        // text = umba::macros::substMacros(text,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
-        //  
-        // optFile << text << "\n";
     }
 
     if (!generatedCount)

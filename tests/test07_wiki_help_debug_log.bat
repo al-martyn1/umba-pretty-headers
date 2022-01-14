@@ -1,0 +1,1 @@
+@call test07_wiki_help_debug.bat >test07_wiki_help_debug.txt 2>&1

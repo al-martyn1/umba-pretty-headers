@@ -41,19 +41,8 @@ int operator()( const std::string                               &a           //!
               , bool ignoreInfos
               )
 {
-    //const GeneratorOptions &gopts = generatorOptions; // stub for log
 
-    // umba::string_plus::trim(a);
-    //  
-    // if (a.empty())
-    // {
-    //     LOG_ERR_OPT<<"invalid (empty) argument\n";
-    //     return -1;
-    // }
-    //  
-    // umba::command_line::CommandLineOption opt(a, pCol);
-
-    // pCol->setCollectMode( opt.isHelpOption() );
+    std::string dppof = "Don't parse predefined options from ";
 
     if (opt.isOption())
     {
@@ -71,6 +60,19 @@ int operator()( const std::string                               &a           //!
             argsParser.quet = true;
             appConfig.setOptQuet(true);
         }
+
+        else if ( opt.isBuiltinsDisableOptionMain  () 
+               || opt.setDescription( dppof + "main distribution options file '" + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::appGlobal   ) + "'"))
+        { } // simple skip - обработка уже сделана
+
+        else if ( opt.isBuiltinsDisableOptionCustom() 
+               || opt.setDescription( dppof + "custom global options file '"     + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::customGlobal) + "'"))
+        { } // simple skip - обработка уже сделана
+
+        else if ( opt.isBuiltinsDisableOptionUser  () 
+               || opt.setDescription( dppof + "user local options file '"        + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::userLocal   ) + "'"))
+        { } // simple skip - обработка уже сделана
+
         else if (opt.isOption("version") || opt.isOption('v') || opt.setDescription("Show version info"))
         {
             if (argsParser.hasHelpOption) return 0;
@@ -81,6 +83,7 @@ int operator()( const std::string                               &a           //!
                 return 1;
             }
         }
+
         else if (opt.isOption("where") || opt.setDescription("Show where the executable file is"))
         {
             if (argsParser.hasHelpOption) return 0;
@@ -88,15 +91,6 @@ int operator()( const std::string                               &a           //!
             LOG_MSG_OPT << programLocationInfo.exeFullName << "\n";
             return 0;
         }
-
-        else if (opt.isBuiltinsDisableOptionMain  () || opt.setDescription("Don't parse predefined options from main distribution options file '" + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::appGlobal   ) + "'"))
-        { } // simple skip - обработка уже сделана
-
-        else if (opt.isBuiltinsDisableOptionCustom() || opt.setDescription("Don't parse predefined options from custom global options file '"     + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::customGlobal) + "'"))
-        { } // simple skip - обработка уже сделана
-
-        else if (opt.isBuiltinsDisableOptionUser  () || opt.setDescription("Don't parse predefined options from user local options file '"        + argsParser.getBuiltinsOptFileName(umba::program_location::BuiltinOptionsLocationFlag::userLocal   ) + "'"))
-        { } // simple skip - обработка уже сделана
 
         else if (opt.setParam("CLR", 0, "no/none/file|" 
                                         "ansi/term|" 
@@ -134,12 +128,12 @@ int operator()( const std::string                               &a           //!
 
         //------------
 
-        else if ( opt.isOption("keep-compile-flags") || opt.isOption('K') 
+        else if ( opt.isOption("keep-generated-files") || opt.isOption('K') 
                // || opt.setParam("VAL",true)
-               || opt.setDescription("Keep generated 'compile_flags_*.txt'"))
+               || opt.setDescription("Do not delete generated files"))
         {
             if (argsParser.hasHelpOption) return 0;
-            appConfig.keepCompileFlags = true;
+            appConfig.keepGeneratedFiles = true;
             return 0;
         }
 

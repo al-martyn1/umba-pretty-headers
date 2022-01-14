@@ -1,0 +1,1 @@
+@call test07_help_debug.bat >test07_help.txt 2>&1

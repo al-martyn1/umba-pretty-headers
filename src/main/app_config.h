@@ -20,7 +20,7 @@ struct AppConfig
 
     std::map<std::string,std::string>    macros;
 
-    bool                                 keepCompileFlags = false;
+    bool                                 keepGeneratedFiles = false;
     std::vector<std::string>             clangCompileFlagsTxtFilename; // compile_flags.txt
 
     std::vector<std::string>             excludeFilesList;
@@ -50,7 +50,7 @@ struct AppConfig
     template<typename StreamType>
     StreamType& print( StreamType &s ) const
     {
-        s << "Keep CLang option files: " << (keepCompileFlags ? "true" : "false") << "\n";
+        s << "Keep generated files: " << (keepGeneratedFiles ? "true" : "false") << "\n";
         for(auto inputFilename: clangCompileFlagsTxtFilename)
         {
             s << "CLang options file: " << inputFilename << "\n";
@@ -78,9 +78,9 @@ struct AppConfig
     {
         AppConfig appConfig;
 
-        appConfig.macros           = macros;
-        appConfig.keepCompileFlags = keepCompileFlags;
-        appConfig.scanPaths        = scanPaths;
+        appConfig.macros             = macros;
+        appConfig.keepGeneratedFiles = keepGeneratedFiles;
+        appConfig.scanPaths          = scanPaths;
 
         for(auto inputFilename: clangCompileFlagsTxtFilename)
         {
