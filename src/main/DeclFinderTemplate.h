@@ -22,6 +22,7 @@ std::set<std::string> explicitProcessedHeaders;
 enum class DeclFinderMode
 {
     handleAll,
+    handleAllAndPrintFilename,
     handleExplicitTakenOnly,
     handleExplicitHeadersOnly,
     printSourceFilename
@@ -47,6 +48,7 @@ public:
     void HandleTranslationUnit(::clang::ASTContext &Context) final
     {
         using namespace umba::omanip;
+        using namespace marty::clang::helpers;
 
         auto &SourceManager = Visitor.getSourceManager();
         
@@ -83,16 +85,11 @@ public:
             for(; it!=decls.end(); ++it)
             {
                 ::clang::Decl * pd = *it;
-
-                auto loc = Context.getFullLoc( pd->getBeginLoc() );
+                auto loc = marty::clang::helpers::getFullSourceLoc( Context, pd );
 
                 llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
-
                 std::string strFileName = fileName.str();
 
-                // if () continue;
-
-                //Visitor.TraverseDecl(Decl);
                 Visitor.TraverseDecl(pd);
             }
         }
@@ -100,41 +97,45 @@ public:
         else if (handleMode==DeclFinderMode::printSourceFilename)
         {
 
-            // ::clang::FullSourceLoc loc = getFullSourceLoc( Context *pContext, Object *pObject )
-
             auto decls = Decls->decls();
 
-            //for (auto &Decl : decls)
             ::clang::DeclContext::decl_iterator it = decls.begin();
             for(; it!=decls.end(); ++it)
             {
-                // auto d = *it;
-
                 ::clang::Decl * pd = *it;
+                auto loc = marty::clang::helpers::getFullSourceLoc( Context, pd );
 
-                // ::clang::FullSourceLoc loc = marty::clang::helpers::getFullSourceLoc( Context, pd );
-
-                auto loc = Context.getFullLoc( pd->getBeginLoc() );
-
-                //auto 
                 llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
+                std::string strFileName = fileName.str();
 
+                //logMsg << strFileName << endl;
+                std::cout << strFileName << std::endl;
+            }
+
+        }
+
+        else if (handleMode==DeclFinderMode::handleAllAndPrintFilename)
+        {
+
+            auto decls = Decls->decls();
+
+            ::clang::DeclContext::decl_iterator it = decls.begin();
+            for(; it!=decls.end(); ++it)
+            {
+                ::clang::Decl * pd = *it;
+                auto loc = marty::clang::helpers::getFullSourceLoc( Context, pd );
+
+                // https://clang.llvm.org/doxygen/classclang_1_1SourceManager.html#aecbed88c199b46a1cfcf2a2da61a7f52
+                // StringRef getFilename(SourceLocation SpellingLoc) 
+                llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
                 std::string strFileName = fileName.str();
 
                 //logMsg << strFileName << endl;
                 std::cout << strFileName << std::endl;
 
-                // https://clang.llvm.org/doxygen/classclang_1_1SourceManager.html#aecbed88c199b46a1cfcf2a2da61a7f52
-                // StringRef getFilename(SourceLocation SpellingLoc) 
+                // auto declSrcLocInfo = pd->getLocation();
 
-                // ::clang::SourceLocation loc = Decl.getLocation();
-
-                // const auto& FileID = SourceManager.getFileID(Decl->getLocation());
-                // const auto& fileManager = SourceManager.getFileManager();
-                //  
-                // if (FileID != SourceManager.getMainFileID())
-                //     continue;
-                // Visitor.TraverseDecl(Decl);
+                Visitor.TraverseDecl(pd);
             }
 
         }

@@ -6,5 +6,8 @@
  */
 
 
-#include "global_macros/global_macros.h"
+#ifdef UMBA_MCU_USED
 
+    #include "global_macros/global_macros.h"
+
+#endif

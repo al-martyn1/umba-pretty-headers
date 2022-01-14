@@ -3,7 +3,7 @@
                                        (
                                            [&]()
                                            {
-                                               if (appConfig.keepGeneratedFiles) return;
+                                               if (appConfig.getOptKeepGenerated()) return;
 
                                                for( auto f: allGeneratedFiles)
                                                {
@@ -47,7 +47,7 @@
             printInfoLogSectionHeader(logMsg, "Generated 'CompileFlags' Files");
         }
 
-        for(const auto & name : generatedCompileFlagsTxtFiles)
+        for(auto & name : generatedCompileFlagsTxtFiles)
         {
             logMsg << endl;
             logMsg << name << endl;
@@ -66,7 +66,9 @@
                 const auto &paths = pit->second;
                 for( const auto &p : paths)
                 {
-                    logMsg << "  " << p << endl;
+                    logMsg << "  " << p; // << endl;
+                    auto cp = umba::filename::makeCanonical(p,'/');
+                    logMsg << " - " << cp << endl;
                 }
             }
         }
@@ -76,3 +78,18 @@
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         startTick = umba::time_service::getCurTimeMs();
     }
+
+    // Make canonical include paths
+    {
+        std::map< std::string, std::vector<std::string> >::iterator pit = generatedCompileFlagsIncPaths.begin();
+        for(; pit!=generatedCompileFlagsIncPaths.end(); ++pit)
+        {
+            auto &paths = pit->second;
+            for( auto &p : paths)
+            {
+                p = umba::filename::makeCanonical(p,'/');
+            }
+        }
+    }
+
+

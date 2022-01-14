@@ -110,6 +110,10 @@ int main(int argc, char* argv[])
         return 0;
 
 
+    appConfig = appConfig.getAdjustedConfig(programLocationInfo);
+    pAppConfig = &appConfig;
+
+
     #include "zz_generation.h"
 
 
@@ -175,34 +179,92 @@ int main(int argc, char* argv[])
             marty::clang::helpers::printError( llvm::errs(), errRecipientStr );
             return -1;
         }
-       
-       
+
+        std::string srcPath = umba::filename::getPath(compileFlagsTxtFile);
+        std::string srcName = umba::filename::getName(compileFlagsTxtFile);
+        std::string srcFullName = umba::filename::appendPath( srcPath, umba::filename::appendExt(srcName, std::string("cpp")) );
+
+        std::ofstream cppStream(srcFullName.c_str());
+        if (!cppStream)
+        {
+            LOG_ERR_OPT << "failed to create C++ source file: " << srcFullName; // << endl;
+            continue;
+        }
+
+        allGeneratedFiles.insert(srcFullName);
+
+        currentSourceFullName = srcFullName;
+        currentSourcePath     = umba::filename::getPath(srcFullName);
+
+
+        if (!appConfig.getOptQuet())
+        {
+            logMsg << "Generating C++ source: " << srcFullName << endl;
+        }
+
+
+        std::vector<std::string> incPaths;
+        std::map< std::string, std::vector<std::string> >::const_iterator pit = generatedCompileFlagsIncPaths.find(compileFlagsTxtFile);
+        if (pit!=generatedCompileFlagsIncPaths.end())
+        {
+            incPaths = pit->second;
+        }
+
+
+        processingFiles.clear();
+
+        for(auto file : foundFiles)
+        {
+            std::string incName = file;
+
+            processingFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем сначала полное имя файла
+
+            for(const auto &incPath : incPaths)
+            {
+                if (umba::filename::isSubPathName(incPath, incName, &incName, '/'))
+                    break;
+            }
+
+            cppStream << "#include \"" << incName << "\"\n";
+
+            processingFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем имя файла, как оно инклудится
+        }
+
+
+
+
+
+        cppStream << "\n";
+        cppStream.close();
+
+        // Now we are ready to process source
+
+        std::vector<std::string> inputFiles;
+        inputFiles.push_back(srcFullName);
+
+
+
         auto pActionFactory = clang::tooling::newFrontendActionFactory
                                   < marty::clang::helpers::DeclFindingActionTemplate
                                       < marty::clang::helpers::DeclFinderTemplate
                                           < DeclVisitor
-                                          , marty::clang::helpers::DeclFinderMode::printSourceFilename
+                                          , marty::clang::helpers::DeclFinderMode::handleAll // handleAllAndPrintFilename // printSourceFilename
                                           >
                                       > 
                                   >(); // std::unique_ptr
        
         auto pActionFactoryRawPtr = pActionFactory.get();
 
-        for(auto file : foundFiles)
+        clang::tooling::ClangTool clangTool(*pcdb, inputFiles);
+        
+        auto res = clangTool.run( pActionFactoryRawPtr ); // pass raw ptr
+
+        if (res)
         {
-            std::vector<std::string> inputFiles;
-            inputFiles.push_back(file);
-
-            clang::tooling::ClangTool clangTool(*pcdb, inputFiles);
-           
-            auto res = clangTool.run( pActionFactoryRawPtr ); // pass raw ptr
-
-            if (res)
-            {
-                LOG_ERR_OPT << "Clang returns error: " << res << endl;
-                return res;
-            }
+            LOG_ERR_OPT << "Clang returns error: " << res << endl;
+            return res;
         }
+
     }
 
     return 0;

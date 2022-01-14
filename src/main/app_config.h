@@ -13,14 +13,16 @@ struct AppConfig
 {
 
     static const unsigned                ofEmptyOptionFlags      = 0x0000;
-    static const unsigned                ofQuet                  = 0x0001; // remove '.' and '..' entries. Al
-    static const unsigned                ofNormalizeFilenames    = 0x0002; // remove '.' and '..' entries. Al
+    static const unsigned                ofQuet                  = 0x0001; // 
+    static const unsigned                ofKeepGenerated         = 0x0002; // 
+    static const unsigned                ofVerbose               = 0x0004; // 
+    static const unsigned                ofSuperVerbose          = 0x0008; // 
 
 
 
     std::map<std::string,std::string>    macros;
 
-    bool                                 keepGeneratedFiles = false;
+    // bool                                 keepGeneratedFiles = false;
     std::vector<std::string>             clangCompileFlagsTxtFilename; // compile_flags.txt
 
     std::vector<std::string>             excludeFilesList;
@@ -28,7 +30,7 @@ struct AppConfig
     std::vector<std::string>             scanPaths;
 
 
-    unsigned                             optionFlags = ofNormalizeFilenames; // ofEmptyOptionFlags;
+    unsigned                             optionFlags = 0; // ofNormalizeFilenames; // ofEmptyOptionFlags;
 
 
     void ofSet  ( unsigned ofFlags )       { optionFlags |=  ofFlags; }
@@ -43,14 +45,23 @@ struct AppConfig
     void setOptQuet( bool q ) { ofSet(ofQuet,q);      }
     bool getOptQuet( )  const { return ofGet(ofQuet); }
 
-    void setOptNormalizeFilenames( bool q ) { ofSet(ofNormalizeFilenames,q);      }
-    bool getOptNormalizeFilenames( )  const { return ofGet(ofNormalizeFilenames); }
+    void setOptVerbose( bool q ) { ofSet(ofVerbose,q);      }
+    bool getOptVerbose( )  const { return ofGet(ofVerbose); }
+
+    void setOptSuperVerbose( bool q ) { ofSet(ofSuperVerbose,q);      }
+    bool getOptSuperVerbose( )  const { return ofGet(ofSuperVerbose); }
+
+    void setOptKeepGenerated( bool q ) { ofSet(ofKeepGenerated,q);      }
+    bool getOptKeepGenerated( )  const { return ofGet(ofKeepGenerated); }
+
+    // void setOptNormalizeFilenames( bool q ) { ofSet(ofNormalizeFilenames,q);      }
+    // bool getOptNormalizeFilenames( )  const { return ofGet(ofNormalizeFilenames); }
 
 
     template<typename StreamType>
     StreamType& print( StreamType &s ) const
     {
-        s << "Keep generated files: " << (keepGeneratedFiles ? "true" : "false") << "\n";
+        s << "Keep generated files: " << (getOptKeepGenerated() ? "true" : "false") << "\n";
         for(auto inputFilename: clangCompileFlagsTxtFilename)
         {
             s << "CLang options file: " << inputFilename << "\n";
@@ -79,8 +90,9 @@ struct AppConfig
         AppConfig appConfig;
 
         appConfig.macros             = macros;
-        appConfig.keepGeneratedFiles = keepGeneratedFiles;
+        //appConfig.keepGeneratedFiles = keepGeneratedFiles;
         appConfig.scanPaths          = scanPaths;
+        appConfig.optionFlags        = optionFlags;
 
         for(auto inputFilename: clangCompileFlagsTxtFilename)
         {

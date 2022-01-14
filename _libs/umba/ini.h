@@ -428,7 +428,7 @@ protected:
 public:
 
     //! Если парсим из массива строк, то какое-то базовое имя надо задать руками
-    bool setFileName( const std::string &fileName )
+    void setFileName( const std::string &fileName )
     {
         //m_fileName = fileName;
         m_fileNames.clear();

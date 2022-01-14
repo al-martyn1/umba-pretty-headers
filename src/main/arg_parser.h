@@ -133,7 +133,24 @@ int operator()( const std::string                               &a           //!
                || opt.setDescription("Do not delete generated files"))
         {
             if (argsParser.hasHelpOption) return 0;
-            appConfig.keepGeneratedFiles = true;
+            appConfig.setOptKeepGenerated(true);
+            return 0;
+        }
+
+        else if ( opt.isOption("verbose") || opt.isOption('V') 
+               || opt.setDescription("Detailed log for the all entities found in user files"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            appConfig.setOptVerbose(true);
+            return 0;
+        }
+
+        else if ( opt.isOption("super-verbose") // || opt.isOption('V') 
+               || opt.setDescription("Detailed log for the all found entities"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            appConfig.setOptVerbose(true);
+            appConfig.setOptSuperVerbose(true);
             return 0;
         }
 

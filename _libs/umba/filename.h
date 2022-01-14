@@ -390,6 +390,46 @@ StringType makeAbsPath( const StringType &path
 
     return appendPath(cwd, path);
 }
+
+//-----------------------------------------------------------------------------
+//! Удаляет префикс пути - делает имя относительным
+template<typename StringType> inline 
+bool isSubPathName( StringType commonPath
+                  , StringType fullName
+                  , StringType *pResName = 0
+                  , typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>()
+                  )
+{
+    commonPath = makeCanonical(commonPath, pathSep);
+    fullName   = makeCanonical(fullName  , pathSep);
+
+    appendPathSepInline(commonPath, pathSep);
+    if (umba::string_plus::starts_with_and_strip(fullName, commonPath))
+    {
+        if (pResName)
+           *pResName = fullName;
+
+        return true;
+    }
+
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+//! Удаляет префикс пути - делает имя относительным
+template<typename StringType> inline 
+StringType makeRelPath( StringType commonPath
+                      , StringType fullName
+                      , typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>()
+                      )
+{
+    StringType res;
+    if (isSubPathName(commonPath, fullName, &res, pathSep))
+        return res;
+
+    return fullName;
+}
+
 //-----------------------------------------------------------------------------
 //! Добавляет путь (или имя файла) к другому пути
 template<typename StringType> inline

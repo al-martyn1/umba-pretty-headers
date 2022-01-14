@@ -65,11 +65,17 @@ const CharType* getLineFeedTypeDebugPresentationPChar(LineFeedType lineFeedType)
 //----------------------------------------------------------------------------
 //! \ingroup UMBA_INTERNALS
 /*! Кишочное */
-#define UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS( prefix, charType )      \
-                static const charType *crlf = prefix ## "<CR><LF>";              \
-                static const charType *lfcr = prefix ## "<LF><CR>";              \
-                static const charType *cr   = prefix ## "<CR>"    ;              \
-                static const charType *lf   = prefix ## "<LF>"    /* oops */
+#define UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS()               \
+                static const char *crlf =  "<CR><LF>";                  \
+                static const char *lfcr =  "<LF><CR>";                  \
+                static const char *cr   =  "<CR>"    ;                  \
+                static const char *lf   =  "<LF>"    /* oops */
+
+#define UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS_L( charType )   \
+                static const wchar_t *crlf =  L"<CR><LF>";              \
+                static const wchar_t *lfcr =  L"<LF><CR>";              \
+                static const wchar_t *cr   =  L"<CR>"    ;              \
+                static const wchar_t *lf   =  L"<LF>"    /* oops */
 
 //! \ingroup UMBA_INTERNALS
 /*! Кишочное */
@@ -88,7 +94,7 @@ const CharType* getLineFeedTypeDebugPresentationPChar(LineFeedType lineFeedType)
 template<> inline
 const char* getLineFeedTypeDebugPresentationPChar<char>(LineFeedType lineFeedType)
 {
-    UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS("", char );
+    UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS();
     UMBA_LINEFEEDTYPE_MAKELINEFEEDTYPEDEBUGPRESENTATIONSTR_SWITCH( char );
 }
 
@@ -97,7 +103,7 @@ const char* getLineFeedTypeDebugPresentationPChar<char>(LineFeedType lineFeedTyp
 template<> inline
 const wchar_t* getLineFeedTypeDebugPresentationPChar<wchar_t>(LineFeedType lineFeedType)
 {
-    UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS( L, wchar_t );
+    UMBA_LINEFEEDTYPE_DEFINE_ALL_CRLF_STATIC_CONSTS_L();
     UMBA_LINEFEEDTYPE_MAKELINEFEEDTYPEDEBUGPRESENTATIONSTR_SWITCH( wchar_t );
 }
 

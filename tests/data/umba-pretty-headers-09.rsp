@@ -6,9 +6,31 @@
 # Keil C++11 support
 -X=*umba/stl_*
 
+# Лишнее отбрасываем, чтобы долго не тупило, для тестов достаточно нескольких файлов
+#-X=*_libs\umba\a*
+-X=*_libs\umba\b*
+-X=*_libs\umba\c*
+-X=*_libs\umba\d*
+-X=*_libs\umba\e*
+-X=*_libs\umba\f*
+-X=*_libs\umba\h*
+-X=*_libs\umba\i*
+-X=*_libs\umba\l*
+-X=*_libs\umba\m*
+-X=*_libs\umba\n*
+-X=*_libs\umba\o*
+-X=*_libs\umba\p*
+-X=*_libs\umba\q*
+-X=*_libs\umba\r*
+-X=*_libs\umba\s*
+-X=*_libs\umba\t*
+-X=*_libs\umba\u*
+-X=*_libs\umba\v*
+-X=*_libs\umba\w*
 
 
 --keep-generated-files
+--verbose
 --set=Test:SomeTest
 compile_flags_09.txt
 -P=..\..\_libs

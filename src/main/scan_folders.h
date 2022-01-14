@@ -109,10 +109,7 @@ void scanFolders( const AppConfig &appConfig
             }
 
             //------------------------------
-            if (appConfig.getOptNormalizeFilenames())
-            {
-                entryName = umba::filename::makeCanonical(entryName);
-            }
+            entryName = umba::filename::makeCanonical(entryName);
 
             if (!bFound)
             {

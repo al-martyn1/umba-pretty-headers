@@ -1759,7 +1759,7 @@ void split_against_braces( std::vector<StringType> &splits      //!< [out] Вы�
                          , bool strictOrder = false             //!< Строгий порядок?
                          )
 {
-    split_against_braces_impl<StringType, StringType::value_type>( splits, str, braces, sep, fileName, lineNumber, linePos, strictOrder );
+    split_against_braces_impl<StringType, typename StringType::value_type>( splits, str, braces, sep, fileName, lineNumber, linePos, strictOrder );
 }
 
 //------------------------------
@@ -1775,7 +1775,7 @@ void split_against_braces( std::vector<StringType>                &splits  //!< 
                          , bool strictOrder = false                        //!< Строгий порядок?     
                          )
 {
-    split_against_braces_impl<StringType, StringType::value_type>( splits, str, braces, sep, fileName, lineNumber, linePos, strictOrder );
+    split_against_braces_impl<StringType, typename StringType::value_type>( splits, str, braces, sep, fileName, lineNumber, linePos, strictOrder );
 }
 
 //------------------------------

@@ -1072,8 +1072,8 @@ struct CommandLineOption
             return false;
 
         //if (optLongName)
-        umba::string_plus::ltrim( optLongName, umba::string_plus::is_one_of(",+-?!") );
-        umba::string_plus::rtrim( optLongName, umba::string_plus::is_one_of(",+-") );
+        umba::string_plus::ltrim( optLongName, umba::string_plus::is_one_of<char>(",+-?!") );
+        umba::string_plus::rtrim( optLongName, umba::string_plus::is_one_of<char>(",+-") );
 
         return name==optLongName;
     }

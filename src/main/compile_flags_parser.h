@@ -194,7 +194,7 @@ bool generateCompileFlags( const AppConfig &appConfig
 
     // https://en.cppreference.com/w/cpp/language/range-for
 
-    auto generateFilenameAndSave = [&](std::string configName, const std::vector<std::string> &lines)
+    auto generateFilenameAndSave = [&](std::string configName, std::vector<std::string> lines)
         {
             configName = filterFilenameForbiddenChars(configName);
 
@@ -214,6 +214,16 @@ bool generateCompileFlags( const AppConfig &appConfig
              
             generatedCompileFlagsFiles.push_back(fileName);
 
+            // Нужно добавить отсканированные пути в инклуды
+            for( const auto &path : appConfig.scanPaths)
+            {
+                lines.push_back(std::string("-I") + path);
+            }
+
+            lines.push_back(std::string("-xc++")); // force C++
+            
+
+            // Извлекаем все инклуды - нужно, чтобы потом сгенерить сорц с корректно проинклуженными входными файлами
             std::vector<std::string> curIncPaths;
             extractIncludePathsFromCompileFlagsTxtLines( umba::filename::getPath(fileName)
                                                        , lines
@@ -221,6 +231,7 @@ bool generateCompileFlags( const AppConfig &appConfig
                                                        );
 
             includePaths[fileName] = curIncPaths;
+            
              
             auto text = umba::string_plus::merge<std::string>(lines,"\n");
              

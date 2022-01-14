@@ -27,7 +27,7 @@ template< typename Context, typename Object > inline
 template< typename Context, typename Object > inline
 ::clang::FullSourceLoc getFullSourceLoc( Context &context, Object *pObject )
 {
-    return context->getFullLoc(pObject->getBeginLoc());
+    return context.getFullLoc(pObject->getBeginLoc());
 }
 
 

@@ -316,7 +316,7 @@ splitToLineViews( const CharType *pData         //!< Указатель на д�
     \returns Вектор LineView's, содержащий результат разбора
 
  */
-template<typename CharType, typename SizeType  /* = std::size_t */ > inline
+template<typename CharType, typename SizeType, typename FileIdType  /* = std::size_t */ > inline
 std::vector< umba::LineView< SizeType > >
 splitToLineViews( const CharType *pData         //!< Указатель на данные
                 , SizeType sz                   //!< Размер данных
@@ -809,25 +809,25 @@ public:
     //! Сравнение на равенство
     bool operator==( const LineViewLinePosInfoExIterator &it )
     {
-        return LineViewSymbolIteratorBaseImpl::operator==(it);
+        return BaseImpl::operator==(it);
     }
 
     //! Сравнение на неравенство
-    bool operator!=( const LineViewSymbolIteratorBaseImpl &it )
+    bool operator!=( const BaseImpl &it )
     {
-        return LineViewSymbolIteratorBaseImpl::operator!=(it);
+        return BaseImpl::operator!=(it);
     }
 
     //! Переход к следующей строке
     LineViewLinePosInfoExIterator getNextLineBegin() const
     {
-        return LineViewSymbolIteratorBaseImpl::getNextLineBegin();
+        return BaseImpl::getNextLineBegin();
     }
 
     //! Возвращает итератор конца
     LineViewLinePosInfoExIterator getEndIterator() const
     {
-        return LineViewSymbolIteratorBaseImpl::getEndIterator();
+        return BaseImpl::getEndIterator();
     }
 
 
@@ -900,36 +900,35 @@ public:
     //! Сравнение на равенство
     bool operator==( const LineViewSymbolIterator &it )
     {
-        return LineViewSymbolIteratorBaseImpl::operator==(it);
+        return BaseImpl::operator==(it);
     }
 
     //! Сравнение на неравенство
-    bool operator!=( const LineViewSymbolIteratorBaseImpl &it )
+    bool operator!=( const BaseImpl &it )
     {
-        return LineViewSymbolIteratorBaseImpl::operator!=(it);
+        return BaseImpl::operator!=(it);
     }
 
     //! Переход к следующей строке
     LineViewSymbolIterator getNextLineBegin() const
     {
-        return LineViewSymbolIteratorBaseImpl::getNextLineBegin();
+        return BaseImpl::getNextLineBegin();
     }
 
     //! Возвращает итератор конца
     LineViewSymbolIterator getEndIterator() const
     {
-        return LineViewSymbolIteratorBaseImpl::getEndIterator();
+        return BaseImpl::getEndIterator();
     }
 
 
 }; // class LineViewSymbolIterator
 
 
-inline
-template< typename CharType, typename SizeType, typename DataGetter, typename LineViewIterator >
-LineViewLinePosInfoExIterator::LineViewLinePosInfoExIterator( const LineViewSymbolIterator<CharType, SizeType, DataGetter, LineViewIterator> &livsi )
-: LineViewLinePosInfoExIterator::BaseImpl(livsi) {}
-
+template< typename CharType, typename SizeType, typename DataGetter, typename LineViewIterator > inline
+LineViewLinePosInfoExIterator<CharType, SizeType, DataGetter, LineViewIterator>::LineViewLinePosInfoExIterator( const LineViewSymbolIterator<CharType, SizeType, DataGetter, LineViewIterator> &livsi )
+: LineViewLinePosInfoExIterator<CharType, SizeType, DataGetter, LineViewIterator>::BaseImpl(livsi) {}
+//<CharType, SizeType, DataGetter, LineViewIterator>
 
 
 
@@ -954,6 +953,8 @@ makeLineViewSymbolIterator( DataGetter dataGetter, LineViewIterator cur, LineVie
     return res;
 }
 
+#if 0
+// Дубликат? Откуда взялся?
 //! Хелпер для создания итератора LineViewSymbolIterator. Возвращает базовый тип итератора, который преобразуется к нужному
 template< typename CharType, typename SizeType, typename DataGetter, typename LineViewIterator > inline
 LineViewSymbolIteratorBaseImpl< CharType, SizeType, DataGetter, LineViewIterator >
@@ -971,7 +972,7 @@ makeLineViewSymbolIterator( DataGetter dataGetter, LineViewIterator cur, LineVie
     res.initWithLviIterator(cur);
     return res;
 }
-
+#endif
 
 
 //! Хелпер для создания итератора LineViewSymbolIterator. Возвращает базовый тип итератора, который преобразуется к нужному

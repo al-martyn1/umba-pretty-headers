@@ -5,6 +5,14 @@
 #include "DeclFinderTemplate.h"
 
 
+#include "app_config.h"
+
+const AppConfig           *pAppConfig = 0;
+std::set<std::string>      processingFiles;
+std::string                currentSourceFullName;
+std::string                currentSourcePath;
+
+
 std::map< clang::Decl::Kind, unsigned > declUsageMap         = marty::clang::helpers::makeClangDeclKindUsageMap();
 std::map< clang::Decl::Kind, unsigned > declUsageMapUnknowns;
 
@@ -22,32 +30,58 @@ public:
       {}
 
       template< typename StreamType >
-      StreamType& printDecl(StreamType &stream, clang::NamedDecl *NamedDecl, int extraLfCount = 1, std::string kindStr = "") const
+      StreamType& printDeclarationInfo(StreamType &stream, clang::NamedDecl *NamedDecl, int extraLfCount = 1, std::string kindStr = "") const
       {
-          // Habitat   - естественная среда
-          // Hobbiton  - https://en.wikipedia.org/wiki/Hobbiton_Movie_Set
-          //             https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B1%D0%B1%D0%B8%D1%82%D0%BE%D0%BD_(%D0%B4%D0%BE%D1%81%D1%82%D0%BE%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%87%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%8C)
 
-          // if (kindStr.isEmpty()) // Fucking Qt hobbiton/habitat
+          if (!pAppConfig || !pAppConfig->getOptVerbose()) 
+              return stream;
+
+
           if (kindStr.empty())
               kindStr = NamedDecl->getDeclKindName();
 
-          // stream << "Found " << NamedDecl->getQualifiedNameAsString() 
-          //        << " at "
-          //        //<< getDeclLocation(NamedDecl->getLocStart()) << "\n";
-          //        << getDeclLocation(NamedDecl->getBeginLoc()) << "\n" // https://clang.llvm.org/doxygen/classclang_1_1Decl.html
-          //        << "Kind                      : " << kindStr << "\n"
-          //        << "IdentifierNamespace       : " << NamedDecl->getIdentifierNamespace() << "\n"
-          //        << "IdentifierNamespaceForKind: " << NamedDecl->getIdentifierNamespaceForKind(NamedDecl->getKind()) << "\n"
-          //        << "\n"
-          //        //<< "\n"
-          //        ;
-          //  
-          // for(int i=0; i<extraLfCount; ++i)
-          //    stream<<"\n";
+          /*
+          makeAbsPath( const StringType &path
+                      , const StringType &cwd  = umba::filesys::getCurrentDirectory<StringType>()
+                      , typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>()
+                      )
+          */
+
+          ::clang::FullSourceLoc loc;
+          llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
+          std::string strFileName = fileName.str();
+
+          using namespace umba::filename;
+
+          if (strFileName!="<INVALID_LOCATION>")
+              strFileName = makeCanonicalForCompare(makeAbsPath(currentSourcePath, strFileName));
+
+          stream << "Found " << NamedDecl->getQualifiedNameAsString() 
+                 << " at "
+                 //<< getDeclLocation(NamedDecl->getLocStart()) << "\n";
+                 << getDeclLocation(NamedDecl->getBeginLoc()) << "\n" // https://clang.llvm.org/doxygen/classclang_1_1Decl.html
+                 << "In File                   : " << strFileName << "\n"
+                 << "Kind                      : " << kindStr << "\n"
+                 << "IdentifierNamespace       : " << NamedDecl->getIdentifierNamespace() << "\n"
+                 << "IdentifierNamespaceForKind: " << NamedDecl->getIdentifierNamespaceForKind(NamedDecl->getKind()) << "\n"
+                 << "\n"
+                 //<< "\n"
+                 ;
+           
+          for(int i=0; i<extraLfCount; ++i)
+             stream<<"\n";
 
           return stream;
       }
+
+
+      void processDeclaration(clang::NamedDecl *NamedDecl, int extraLfCount = 1, std::string kindStr = "") const
+      {
+          auto &stream = llvm::outs();
+          printDeclarationInfo(stream, NamedDecl, extraLfCount, kindStr);
+      }
+
+    
 
 
       bool VisitNamedDecl(clang::NamedDecl *NamedDecl)
@@ -79,7 +113,7 @@ public:
           // clang::Decl::Kind::;
 
           #define HANDLE_DECL_IMPL(k) \
-                      case k : declUsageMap[k]++; printDecl(stream, NamedDecl, 1, marty::clang::helpers::getClangDeclKindName(k) /* #k */  ); break
+                      case k : declUsageMap[k]++; processDeclaration(NamedDecl, 1, marty::clang::helpers::getClangDeclKindName(k) /* #k */  ); break
 
           #define HANDLE_DECL_EX(k) \
                       HANDLE_DECL_IMPL(k)
@@ -181,7 +215,7 @@ public:
               default:
                    stream << "UnsignedKind: " << (unsigned)kind << "\n";
                    declUsageMapUnknowns[kind]++;
-                   printDecl(stream, NamedDecl);
+                   printDeclarationInfo(stream, NamedDecl);
           };
           
 
@@ -194,8 +228,8 @@ public:
           //              << "\n"
           //              ;
 
-          // printDecl(stream, NamedDecl);
-          // StreamType& printDecl(StreamType &stream, clang::NamedDecl *NamedDecl, int extraLfCount = 1, std::string kindStr = "") const
+          // processDeclaration(stream, NamedDecl);
+          // StreamType& processDeclaration(StreamType &stream, clang::NamedDecl *NamedDecl, int extraLfCount = 1, std::string kindStr = "") const
 
           return true;
       }

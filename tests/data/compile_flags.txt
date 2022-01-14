@@ -4,9 +4,10 @@
 -Wno-unused-variable
 -Wno-unused-value
 -Wno-inconsistent-missing-override
--Wno-pragma-once-outside-header
+-Wno-switch
+-Wno-pragma-pack
+-Wno-microsoft-template-shadow
 
--xc++
 -std=c++14
 
 
@@ -18,8 +19,21 @@
 -DUMBA_VSLANG=$(VSLANG)
 -DUMBA_MACRO_TEST=$(Test)
 
-## WIN32
+## WIN32_Debug
+-I$(MSVC2019_QTROOT)\msvc2019\include
+-I$(MSVC2019_QTROOT)\msvc2019\include\QtCore
+-I$(MSVC2019_QTROOT)\msvc2019\include\QtWidgets
 -DWIN32
+-D_DEBUG
+-DUMBA_USE_WIN32
+
+## WIN32_Release
+-I$(MSVC2019_QTROOT)\msvc2019\include
+-I$(MSVC2019_QTROOT)\msvc2019\include\QtCore
+-I$(MSVC2019_QTROOT)\msvc2019\include\QtWidgets
+-DWIN32
+-DNDEBUG
+-DUMBA_USE_WIN32
 
 ##MCU_STM32_F1xx
 -DSTM32F103RB

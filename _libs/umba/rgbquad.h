@@ -255,7 +255,7 @@ public:
     //! Конвертирует из строки std::wstring
     bool fromString( const std::wstring &s )
     {
-        return fromString(umba::cpp::make_string<std::string>( s ));
+        return fromString(umba::string_plus::make_string<std::string>( s ));
     }
 
     //! Конвертирует в строку
@@ -264,7 +264,7 @@ public:
     {
         char buf[ max_name_buf_size ];
         toString( &buf[0] );
-        return umba::cpp::make_string<std::string>( &buf[0] );
+        return umba::string_plus::make_string<std::string>( &buf[0] );
     }
 
     #endif
