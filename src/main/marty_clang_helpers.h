@@ -38,10 +38,12 @@ enum class DeclKindOfKind
     cEnum          = 0x0020, // Enum                          - enums - Old good plain "C" and new C++ enum classes
     ppDefine       = 0x0040, // defines                       - preprocessor defines
 
-    all            = 0x003F,
-    allWithDefine  = 0x007F,
+    all            = cxxClass|freeFunction|cTypedef|cxxTypeAlias|cxxVarTemplate|cEnum,
+    allWithDefine  = all|ppDefine,
 
-    exactAll       = 0x007F
+    exactAll       = allWithDefine,
+
+    type           = cxxClass | cTypedef | cxxTypeAlias | cEnum
 
 };
 
@@ -52,14 +54,21 @@ std::string DeclKindOfKind_flagToStdString(DeclKindOfKind k)
 {
     switch(k)
     {
-        case DeclKindOfKind::cxxClass      : return std::string("cxxClass"      );
-        case DeclKindOfKind::freeFunction  : return std::string("freeFunction"  );
-        case DeclKindOfKind::cTypedef      : return std::string("cTypedef"      );
-        case DeclKindOfKind::cxxTypeAlias  : return std::string("cxxTypeAlias"  );
-        case DeclKindOfKind::cxxVarTemplate: return std::string("cxxVarTemplate");
-        case DeclKindOfKind::cEnum         : return std::string("cEnum"         );
-        case DeclKindOfKind::ppDefine      : return std::string("ppDefine"      );
-        default                            : return std::string("invalid"       );
+        // case DeclKindOfKind::cxxClass      : return std::string("cxxClass"      );
+        // case DeclKindOfKind::freeFunction  : return std::string("freeFunction"  );
+        // case DeclKindOfKind::cTypedef      : return std::string("cTypedef"      );
+        // case DeclKindOfKind::cxxTypeAlias  : return std::string("cxxTypeAlias"  );
+        // case DeclKindOfKind::cxxVarTemplate: return std::string("cxxVarTemplate");
+        // case DeclKindOfKind::cEnum         : return std::string("cEnum"         );
+        // case DeclKindOfKind::ppDefine      : return std::string("ppDefine"      );
+        case DeclKindOfKind::cxxClass      : return std::string("class"        );
+        case DeclKindOfKind::freeFunction  : return std::string("function"     );
+        case DeclKindOfKind::cTypedef      : return std::string("typedef"      );
+        case DeclKindOfKind::cxxTypeAlias  : return std::string("type-alias"   );
+        case DeclKindOfKind::cxxVarTemplate: return std::string("var-template" );
+        case DeclKindOfKind::cEnum         : return std::string("enum"         );
+        case DeclKindOfKind::ppDefine      : return std::string("define"       );
+        default                            : return std::string("invalid"      );
     }
 }
 

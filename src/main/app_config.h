@@ -114,6 +114,18 @@ struct AppConfig
 
     bool getOptShowConfig( )  const { return testVerbosity(VerbosityLevel::config); }
 
+    void addDeclKind( marty::clang::helpers::DeclKindOfKind k )
+    {
+        allowedKinds |= k;
+    }
+
+    bool isDeclKindAllowed( marty::clang::helpers::DeclKindOfKind k ) const
+    {
+        return (allowedKinds & k) == 0;
+    }
+
+    bool declKindAllowed( marty::clang::helpers::DeclKindOfKind k ) const { return isDeclKindAllowed(k); }
+
 
     template<typename StreamType>
     StreamType& printVerbosity( StreamType &s ) const
@@ -149,7 +161,7 @@ struct AppConfig
 
         //------------------------------
 
-        s << "Output kinds: " << marty::clang::helpers::DeclKindOfKind_toStdString(allowedKinds) << "\n"; // endl;
+        s << "Output kinds   : " << marty::clang::helpers::DeclKindOfKind_toStdString(allowedKinds) << "\n"; // endl;
 
         s << "Options (Flags):\n";
         s << "    " << getOptNameString(ofKeepGenerated) << ": " << getOptValAsString(optionFlags&ofKeepGenerated) << "\n";
