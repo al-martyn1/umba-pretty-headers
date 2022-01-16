@@ -180,20 +180,15 @@ StringType appendPathSepCopy( const StringType &p, typename StringType::value_ty
 //-----------------------------------------------------------------------------
 //! Нормализует разделители путей
 template<typename StringType> inline
-StringType normalizePathSeparators( const StringType &fileName, typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>() )
+StringType normalizePathSeparators( StringType fileName, typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>() )
 {
-    StringType res;
-
-    res.reserve(fileName.size());
-
-    for(auto ch : fileName)
+    for(auto &ch : fileName)
     {
         if (isPathSep(ch))
             ch = pathSep;
-        res.push_back(ch);
     }
 
-    return res;
+    return fileName;
 }
 
 //-----------------------------------------------------------------------------

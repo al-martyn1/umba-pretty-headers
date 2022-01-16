@@ -16,7 +16,7 @@
 #include <set>
 
 #include "umba/filename.h"
-#include "umba/std_regex_helpers.h"
+#include "regex_helpers.h"
 
 #include "utils.h"
 #include "app_config.h"
@@ -48,7 +48,7 @@ void scanFolders( const AppConfig &appConfig
     for(auto excludeFileMask : appConfig.excludeFilesList)
     {
         //auto normalizedName = StringType normalizePathSeparators( const StringType &fileName, typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>() )
-        auto regexStr = umba::regex_helpers::expandSimpleMaskToEcmaRegex(excludeFileMask, true);
+        auto regexStr = expandSimpleMaskToEcmaRegex(excludeFileMask);
         regexes      [regexStr] = std::regex(regexStr);
         originalMasks[regexStr] = excludeFileMask;
     }
@@ -156,7 +156,7 @@ void scanFolders( const AppConfig &appConfig
                 excludedFiles.push_back(entryName);
 
                 if (!appConfig.getOptQuet())
-                    logMsg << notice << "Skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                    logMsg << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
             }
 
 // error

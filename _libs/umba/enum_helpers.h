@@ -31,111 +31,204 @@
 // umba::enum_helpers::
 
 
+
+// umba::enum_helpers::toUnderlyingType
+// umba::enum_helpers::fromUnderlyingType
+
+
+//----------------------------------------------------------------------------
+namespace umba {
+namespace enum_helpers {
+
+
+//----------------------------------------------------------------------------
+//! Конвертирует enum в подлежащий тип. Версия для 'честных' enum'ов.
+template< typename FlagType, typename std::enable_if<std::is_enum<FlagType>{}, bool>::type = true > inline
+typename std::underlying_type< FlagType >::type toUnderlyingType( FlagType flagsVal )
+{
+    typedef typename std::underlying_type< FlagType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)flagsVal;
+}
+
+//----------------------------------------------------------------------------
+//! Конвертирует enum в подлежащий тип. Версия для интегральных типов.
+/*! Часто неохота разбираться, является ли значение int'ом, unsigned'ом, или другим интегральным типом,
+    или же является enum'ом.
+ */ 
+template< typename FlagType, typename std::enable_if<!std::is_enum<FlagType>{} && std::is_integral< FlagType >{} /* ::value */ , bool>::type = true > inline
+FlagType toUnderlyingType( FlagType flagsVal )
+{
+    return flagsVal;
+}
+
+//----------------------------------------------------------------------------
+//! Конвертирует в enum из подлежащего типа. Версия для 'честных' enum'ов.
+template< typename FlagType, typename std::enable_if<std::is_enum<FlagType>{}, bool>::type = true > inline
+FlagType fromUnderlyingType( typename std::underlying_type< FlagType >::type flagsVal )
+{
+    return (FlagType)flagsVal;
+}
+
+//----------------------------------------------------------------------------
+//! Конвертирует в enum из подлежащего типа. Версия для интегральных типов.
+/*! Часто неохота разбираться, является ли значение int'ом, unsigned'ом, или другим интегральным типом,
+    или же является enum'ом.
+ */ 
+template< typename FlagType, typename std::enable_if<!std::is_enum<FlagType>{} && std::is_integral< FlagType >{} /* ::value */ , bool>::type = true > inline
+FlagType fromUnderlyingType( FlagType flagsVal )
+{
+    return flagsVal;
+}
+
+//----------------------------------------------------------------------------
+
+
+} // namespace enum_helpers
+} // namespace umba
+
+//----------------------------------------------------------------------------
+
+
+
+
+
+
+//----------------------------------------------------------------------------
+#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_UNARY_OPERATOR_IMPL(EnumType, operatorSign)                              \
+            inline                                                                                              \
+            EnumType operator##operatorSign( EnumType e )                                                        \
+            {                                                                                                   \
+                return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
+                                           operatorSign                                                         \
+                                           umba::enum_helpers::toUnderlyingType<EnumType>(e)                    \
+                );                                                                                              \
+            }
+
+//------------------------------
+#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType, operatorSign)                             \
+            inline                                                                                              \
+            EnumType operator##operatorSign( EnumType e1, EnumType e2)                                           \
+            {                                                                                                   \
+                return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
+                                           umba::enum_helpers::toUnderlyingType<EnumType>(e1)                   \
+                                           operatorSign                                                         \
+                                           umba::enum_helpers::toUnderlyingType<EnumType>(e2)                   \
+                );                                                                                              \
+            }                                                                                                   \
+            inline                                                                                              \
+            EnumType& operator##operatorSign##=( EnumType &e1, EnumType e2)                                      \
+            {                                                                                                   \
+                e1 = e1 operatorSign e2;                                                                        \
+                return e1;                                                                                      \
+            }
+
+//------------------------------
+#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_SHIFT_OPERATOR_IMPL(EnumType, operatorSign)                              \
+            inline                                                                                              \
+            EnumType operator##operatorSign( EnumType e, unsigned sh )                                           \
+            {                                                                                                   \
+                return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
+                                           umba::enum_helpers::toUnderlyingType<EnumType>(e)                    \
+                                           operatorSign                                                         \
+                                           sh                                                                   \
+                );                                                                                              \
+            }                                                                                                   \
+            inline                                                                                              \
+            EnumType& operator##operatorSign##=( EnumType &e, unsigned sh )                                      \
+            {                                                                                                   \
+                e = e operatorSign sh;                                                                          \
+                return e;                                                                                       \
+            }
+
+//----------------------------------------------------------------------------
+
+
+
+
 //----------------------------------------------------------------------------
 //! Реализует битовые операции для enum-типа
 #define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_OPERATORS( EnumType )                                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_UNARY_OPERATOR_IMPL (EnumType,~)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType,|)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType,&)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType,^)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_SHIFT_OPERATOR_IMPL (EnumType,<<)                                   \
+             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_SHIFT_OPERATOR_IMPL (EnumType,>>)                                   \
                                                                                                                 \
-inline                                                                                                          \
-EnumType operator~( EnumType e )                                                                                \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
+             template<typename IntType> inline                                                                  \
+             bool operator==(EnumType e, IntType i)                                                             \
+             {                                                                                                  \
+                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)==i;                                   \
+             }                                                                                                  \
                                                                                                                 \
-    return static_cast<EnumType>( ~ static_cast<EnumUnderlyingType>(e) );                                       \
-}                                                                                                               \
+             template<typename IntType> inline                                                                  \
+             bool operator!=(EnumType e, IntType i)                                                             \
+             {                                                                                                  \
+                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)!=i;                                   \
+             }                                                                                                  \
                                                                                                                 \
-inline                                                                                                          \
-EnumType operator|( EnumType e1, EnumType e2 )                                                                  \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
+             template<typename IntType> inline                                                                  \
+             bool operator==(IntType i, EnumType e)                                                             \
+             {                                                                                                  \
+                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)==i;                                   \
+             }                                                                                                  \
                                                                                                                 \
-    return static_cast<EnumType>(static_cast<EnumUnderlyingType>(e1) | static_cast<EnumUnderlyingType>(e2));    \
-}                                                                                                               \
+             template<typename IntType> inline                                                                  \
+             bool operator!=(IntType i, EnumType e)                                                             \
+             {                                                                                                  \
+                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)!=i;                                   \
+             }                                                                                                  \
                                                                                                                 \
-inline                                                                                                          \
-EnumType operator&( EnumType e1, EnumType e2 )                                                                  \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
+             inline                                                                                             \
+             bool operator!(EnumType e)                                                                         \
+             {                                                                                                  \
+                 return e==0;                                                                                   \
+             }
+
+
+
+//----------------------------------------------------------------------------
+
+
+
+
+
+//----------------------------------------------------------------------------
+#define UMBA_ENUM_CLASS_IMPLEMENT_RELATION_OPERATORS( EnumType )                                                \
                                                                                                                 \
-    return static_cast<EnumType>(static_cast<EnumUnderlyingType>(e1) & static_cast<EnumUnderlyingType>(e2));    \
-}                                                                                                               \
+    inline                                                                                                      \
+    bool operator<(EnumType e1, EnumType e2)                                                                    \
+    {                                                                                                           \
+        return umba::enum_helpers::enumLessImpl(e1, e2);                                                        \
+    }                                                                                                           \
                                                                                                                 \
-inline                                                                                                          \
-EnumType operator^( EnumType e1, EnumType e2 )                                                                  \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
+    inline                                                                                                      \
+    bool operator<=(EnumType e1, EnumType e2)                                                                   \
+    {                                                                                                           \
+        return umba::enum_helpers::enumLessEqualImpl(e1, e2);                                                   \
+    }                                                                                                           \
                                                                                                                 \
-    return static_cast<EnumType>(static_cast<EnumUnderlyingType>(e1) ^ static_cast<EnumUnderlyingType>(e2));    \
-}                                                                                                               \
+    inline                                                                                                      \
+    bool operator>(EnumType e1, EnumType e2)                                                                    \
+    {                                                                                                           \
+        return umba::enum_helpers::enumGreaterImpl(e1, e2);                                                     \
+    }                                                                                                           \
                                                                                                                 \
-inline                                                                                                          \
-EnumType operator<<( EnumType e, unsigned n )                                                                   \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    return static_cast<EnumType>(static_cast<EnumUnderlyingType>(e) << n );                                     \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-EnumType operator>>( EnumType e, unsigned n )                                                                   \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    return static_cast<EnumType>(static_cast<EnumUnderlyingType>(e) << n );                                     \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-EnumType& operator|=( EnumType &e1, EnumType e2 )                                                               \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    e1 = static_cast<EnumType>(static_cast<EnumUnderlyingType>(e1) | static_cast<EnumUnderlyingType>(e2));      \
-    return e1;                                                                                                  \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-EnumType& operator&=( EnumType &e1, EnumType e2 )                                                               \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    e1 = static_cast<EnumType>(static_cast<EnumUnderlyingType>(e1) & static_cast<EnumUnderlyingType>(e2));      \
-    return e1;                                                                                                  \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-EnumType& operator^=( EnumType &e1, EnumType e2 )                                                               \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    e1 = static_cast<EnumType>(static_cast<EnumUnderlyingType>(e1) ^ static_cast<EnumUnderlyingType>(e2));      \
-    return e1;                                                                                                  \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-EnumType& operator<<=( EnumType &e, unsigned n )                                                                \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    e = static_cast<EnumType>(static_cast<EnumUnderlyingType>(e) << n );                                        \
-    return e;                                                                                                   \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-EnumType& operator>>=( EnumType &e, unsigned n )                                                                \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    e = static_cast<EnumType>(static_cast<EnumUnderlyingType>(e) << n );                                        \
-    return e;                                                                                                   \
-}                                                                                                               \
-                                                                                                                \
-inline                                                                                                          \
-bool operator!(EnumType e)                                                                                      \
-{                                                                                                               \
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;                              \
-                                                                                                                \
-    return static_cast<EnumUnderlyingType>(e)==0;                                                               \
-}                                                                                                               \
-                                                                                                                \
+    inline                                                                                                      \
+    bool operator>=(EnumType e1, EnumType e2)                                                                   \
+    {                                                                                                           \
+        return umba::enum_helpers::enumGreaterEqualImpl(e1, e2);                                                \
+    }
+
+//----------------------------------------------------------------------------
+
+
+
+
+
+
+#if 0
+
 inline                                                                                                          \
 bool operator==(EnumType e, std::underlying_type< EnumType >::type i)                                           \
 {                                                                                                               \
@@ -151,6 +244,7 @@ bool operator==(std::underlying_type< EnumType >::type i, EnumType e)           
                                                                                                                 \
     return i==(EnumUnderlyingType)e;                                                                            \
 }
+#endif
 
 //----------------------------------------------------------------------------
 
@@ -211,6 +305,12 @@ std::vector<EnumType> enumValuesToVector( EnumType eb, EnumType ee, bool inclusi
 #endif // !UMBA_MCU_USED
 
 
+
+
+
+
+//----------------------------------------------------------------------------
+
 } // namespace umba
 
 //----------------------------------------------------------------------------
@@ -223,6 +323,34 @@ std::vector<EnumType> enumValuesToVector( EnumType eb, EnumType ee, bool inclusi
 namespace umba {
 namespace enum_helpers {
 
+
+template< typename EnumType > inline
+bool enumLessImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 < (EnumUnderlyingType)e2;
+}
+
+template< typename EnumType > inline
+bool enumLessEqualImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 <= (EnumUnderlyingType)e2;
+}
+
+template< typename EnumType > inline
+bool enumGreaterImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 > (EnumUnderlyingType)e2;
+}
+
+template< typename EnumType > inline
+bool enumGreaterEqualImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 >= (EnumUnderlyingType)e2;
+}
 
 
 
@@ -393,10 +521,26 @@ const char* toEnumName( const char *s )
 
 //----------------------------------------------------------------------------
 //! Генерирует функцию-хелпер для преобразования значения enum'а в строку. Реализация.
-/*! stringType      - тип строки - std::string, QString, const char*, ...
+/*! 
+    storageDuration - static / inline
+    stringType      - тип строки - std::string, QString, const char*, ...
     enumType        - тип enum'а
     fnNamePrefix    - префикс имени функции, обычно задаётся равным имени enum'а, но для каких-то кривых случаев или во избежание коллизий можно задать что-то иное
     stringTypeName  - имя типа строки, такое, чтобы могло бы быть частью имени функции: std::string -> StdString
+
+    Генерирует функции
+
+       const char** fnNamePrefixTo##stringTypeName##GetNamesImpl( std::size_t *pCount ) - Возвращает указатель на массив имён и его размер (через OUT параметр)
+       stringType   fnNamePrefix##To##stringTypeName##ImplHelper( enumType t )          - Хелпер, возвращает имя по значению enum'а (вернее, не имя, а строку с альтернативами, перечисленными через символ '|')
+       stringType   fnNamePrefix##To##stringTypeName( enumType t )                      - Возвращает возвращает имя по значению enum'а (первое из списка альтернатив)
+       const char** fnNamePrefix##To##stringTypeName##GetNames()                        - Возвращает указатель на массив имён
+       std::size_t  fnNamePrefix##To##stringTypeName##GetNamesNumber()                  - Возвращает размер массива имён
+       stringType   fnNamePrefix##_##to##stringTypeName( enumType t )                   - Возвращает возвращает имя по значению enum'а (первое из списка альтернатив) - версия с подчёркиванием после имени enum'а
+       const char** fnNamePrefix##_##to##stringTypeName##GetNames( )                    - Возвращает указатель на массив имён - версия с подчёркиванием после имени enum'а
+       std::size_t  fnNamePrefix##_##to##stringTypeName##GetNamesNumber( )              - Возвращает размер массива имён - версия с подчёркиванием после имени enum'а
+
+
+
  */
 #define UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS_IMPL_TO_STRING_IMPL( storageDuration, stringType, enumType, fnNamePrefix, stringTypeName, ... ) \
                                                                                                               \
@@ -689,6 +833,13 @@ enumType fnNamePrefix##_##From##stringTypeName( stringType t )                  
 
 #define UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS( stringType, enumType, ... ) \
             UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS_EX2( stringType, enumType, enumType, stringType, __VA_ARGS__ )
+
+
+#define UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS_EX_MEMBER( stringType, enumType, fnNamePrefix, ... ) \
+            UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS_EX2_MEMBER( stringType, enumType, fnNamePrefix, stringType, __VA_ARGS__ )
+
+#define UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS_MEMBER( stringType, enumType, ... ) \
+            UMBA_ENUM_CLASS_IMPLEMENT_STRING_CONVERTERS_EX2_MEMBER( stringType, enumType, enumType, stringType, __VA_ARGS__ )
 
 
 

@@ -2152,8 +2152,16 @@ std::string format_print<std::string>( const std::string fmt, ... )
 {
     std::size_t bufSize = calc_buf_char_size_for_format_print (fmt.size());
 
-    char *pBuf = (char*)alloca(bufSize*sizeof(*pBuf));
-    if (!pBuf) return fmt;
+    char *pBuf = 0;
+    try
+    {
+        pBuf = (char*)alloca(bufSize*sizeof(*pBuf));
+        if (!pBuf) return fmt;
+    }
+    catch(...)
+    {
+        return fmt;
+    }
 
     va_list args;
     va_start (args, fmt);
@@ -2172,8 +2180,16 @@ std::wstring format_print<std::wstring>( const std::wstring fmt, ... )
 {
     std::size_t bufSize = calc_buf_char_size_for_format_print (fmt.size());
 
-    wchar_t *pBuf = (wchar_t*)alloca(bufSize*sizeof(*pBuf));
-    if (!pBuf) return fmt;
+    wchar_t *pBuf = 0;
+    try
+    {
+        (wchar_t*)alloca(bufSize*sizeof(*pBuf));
+        if (!pBuf) return fmt;
+    }
+    catch(...)
+    {
+        return fmt;
+    }
 
     va_list args;
     va_start (args, fmt);

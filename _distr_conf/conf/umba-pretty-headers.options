@@ -1,9 +1,16 @@
 # umba-pretty-headers default options
 
+## Ignore generated pretty headers
+-X=*\pretty_headers\*
+-X=^pretty_headers\*
+
+
 ## Standard ignored types
 
 # .c .cpp .cxx .c++ etc
--X=*.c*^
+-X={*?regex?*}.*\.c.*$
+#-X=*.c*^
+
 
 # Config files
 -X=*.cfg^

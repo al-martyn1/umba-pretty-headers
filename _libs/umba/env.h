@@ -49,6 +49,8 @@ bool putVar(const ::std::string &varName, const ::std::string &val)
     // а запоминают непосредственно переданное значение, поэтому передача
     // автоматических переменных вызовет крах.
     char *ptmp = (char*)malloc(tmp.size()+1);
+    if (!ptmp)
+        return false;
     tmp.copy(ptmp, tmp.size());
     ptmp[tmp.size()] = 0;
     #ifdef _MSC_VER
@@ -109,6 +111,8 @@ bool putVar(const ::std::wstring &varName, const ::std::wstring &val)
    {
     ::std::wstring tmp = varName + ::std::wstring(L"=") + val;
     wchar_t *ptmp = (wchar_t*)malloc((tmp.size()+1)*sizeof(wchar_t));
+    if (!ptmp)
+        return false;
     tmp.copy(ptmp, tmp.size());
     ptmp[tmp.size()] = 0;
     if (::_wputenv(ptmp)<0) return false;

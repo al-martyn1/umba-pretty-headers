@@ -3,6 +3,9 @@
 
 #include "clang.h"
 
+#include "umba/enum_helpers.h"
+#include "umba/flag_helpers.h"
+
 #define LLVM_ERROR(__Context, __Object, __File, __Message) \
 do { \
     marty::clang::helpers::printError( llvm::errs(), marty::clang::helpers::getFullSourceLoc(__Context, __Object), __Message ); \
@@ -11,13 +14,85 @@ do { \
 
 
 
-// marty::clang::helpers
+// marty::clang::helpers::
 namespace marty{
 namespace clang{
 namespace helpers
 {
 
 
+
+//----------------------------------------------------------------------------
+enum class DeclKindOfKind
+{
+    invalid        = -1,
+
+    none           = 0,
+                             // clang::Decl::Kind
+
+    cxxClass       = 0x0001, // ClassTemplate, CXXRecord      - classes and structs?
+    freeFunction   = 0x0002, // FunctionTemplate, Function    - non-member functions and function templates
+    cTypedef       = 0x0004, // Typedef                       - Old good Toby (typedef)
+    cxxTypeAlias   = 0x0008, // TypeAlias, TypeAliasTemplate  - C++ usings
+    cxxVarTemplate = 0x0010, // VarTemplate                   - C++ usings for var templates
+    cEnum          = 0x0020, // Enum                          - enums - Old good plain "C" and new C++ enum classes
+    ppDefine       = 0x0040, // defines                       - preprocessor defines
+
+    all            = 0x003F,
+    allWithDefine  = 0x007F,
+
+    exactAll       = 0x007F
+
+};
+
+UMBA_ENUM_CLASS_IMPLEMENT_FLAG_OPERATORS(DeclKindOfKind)
+
+inline
+std::string DeclKindOfKind_flagToStdString(DeclKindOfKind k)
+{
+    switch(k)
+    {
+        case DeclKindOfKind::cxxClass      : return std::string("cxxClass"      );
+        case DeclKindOfKind::freeFunction  : return std::string("freeFunction"  );
+        case DeclKindOfKind::cTypedef      : return std::string("cTypedef"      );
+        case DeclKindOfKind::cxxTypeAlias  : return std::string("cxxTypeAlias"  );
+        case DeclKindOfKind::cxxVarTemplate: return std::string("cxxVarTemplate");
+        case DeclKindOfKind::cEnum         : return std::string("cEnum"         );
+        case DeclKindOfKind::ppDefine      : return std::string("ppDefine"      );
+        default                            : return std::string("invalid"       );
+    }
+}
+
+inline
+std::map<DeclKindOfKind, std::string>
+getAllDeclKindOfKindMap()
+{
+    std::map<DeclKindOfKind, std::string> res;
+
+    res[DeclKindOfKind::cxxClass      ] = DeclKindOfKind_flagToStdString(DeclKindOfKind::cxxClass      );
+    res[DeclKindOfKind::freeFunction  ] = DeclKindOfKind_flagToStdString(DeclKindOfKind::freeFunction  );
+    res[DeclKindOfKind::cTypedef      ] = DeclKindOfKind_flagToStdString(DeclKindOfKind::cTypedef      );
+    res[DeclKindOfKind::cxxTypeAlias  ] = DeclKindOfKind_flagToStdString(DeclKindOfKind::cxxTypeAlias  );
+    res[DeclKindOfKind::cxxVarTemplate] = DeclKindOfKind_flagToStdString(DeclKindOfKind::cxxVarTemplate);
+    res[DeclKindOfKind::cEnum         ] = DeclKindOfKind_flagToStdString(DeclKindOfKind::cEnum         );
+    res[DeclKindOfKind::ppDefine      ] = DeclKindOfKind_flagToStdString(DeclKindOfKind::ppDefine      );
+
+    return res;
+}
+
+inline
+std::string DeclKindOfKind_toStdString(DeclKindOfKind kFlags)
+{
+    static auto m = getAllDeclKindOfKindMap();
+    return umba::flag::util::toStringImpl(m,kFlags);
+}
+
+//----------------------------------------------------------------------------
+
+
+
+
+//----------------------------------------------------------------------------
 template< typename Context, typename Object > inline
 ::clang::FullSourceLoc getFullSourceLoc( Context *pContext, Object *pObject )
 {
@@ -28,6 +103,21 @@ template< typename Context, typename Object > inline
 ::clang::FullSourceLoc getFullSourceLoc( Context &context, Object *pObject )
 {
     return context.getFullLoc(pObject->getBeginLoc());
+}
+
+inline
+llvm::StringRef getSourceLocName( const ::clang::FullSourceLoc &loc )
+{
+    if (!loc.isValid())
+        return llvm::StringRef();
+
+    if (!loc.getFileEntry())
+        return llvm::StringRef();
+
+    return loc.getFileEntry()->getName();
+
+//  llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
+
 }
 
 
@@ -271,4 +361,4 @@ std::string getClangDeclKindName(::clang::Decl::Kind kind)
 } // namespace clang
 } // namespace marty
 
-
+// marty::clang::helpers::

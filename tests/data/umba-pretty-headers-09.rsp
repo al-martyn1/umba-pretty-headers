@@ -28,9 +28,10 @@
 -X=*_libs\umba\v*
 -X=*_libs\umba\w*
 
-
 --keep-generated-files
---verbose
+#--verbose=extra
+--verbose=detailed
+#--verbose=config
 --set=Test:SomeTest
 compile_flags_09.txt
 -P=..\..\_libs

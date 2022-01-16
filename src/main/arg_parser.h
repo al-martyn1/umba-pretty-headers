@@ -55,10 +55,50 @@ int operator()( const std::string                               &a           //!
             return -1;
         }
 
-       if (opt.isOption("quet") || opt.isOption('q') || opt.setDescription("Operate quetly"))
+       if (opt.isOption("quet") || opt.isOption('q') || opt.setDescription("Operate quetly. Short alias for '--verbose=quet'"))
         {
             argsParser.quet = true;
             appConfig.setOptQuet(true);
+        }
+
+        else if (opt.setParam("LEVEL", 1, "0/quet/no/q|" 
+                                          "1/normal/n|" 
+                                          "2/config/c|" 
+                                          "3/detailed/detail/d|" 
+                                          "4/extra/high/e" 
+                             )
+              || opt.setInitial(1) || opt.isOption("verbose") || opt.isOption('V')
+              || opt.setDescription("Set verbosity level. LEVEL can be one of the next values:\n"
+                                    "quet - maximum quet mode (same as --quet).\n"
+                                    "normal - print common details.\n"
+                                    "config - print common details and app config.\n"
+                                    "detailed - print common details, app config and all declarations, which are found in user files.\n"
+                                    "extra - print common details, app config and all found declarations (from all files)." // "\n"
+                                   )
+              )
+        {
+            if (argsParser.hasHelpOption) return 0;
+
+            auto mapper = [](int i) -> VerbosityLevel
+                          {
+                              //return AppConfig::VerbosityLevel_fromStdString((VerbosityLevel)i);
+                              switch(i)
+                              {
+                                  case  0: case  1: case  2: case  3: case  4: return (VerbosityLevel)i;
+                                  default: return VerbosityLevel::begin;
+                              }
+                          };
+
+            VerbosityLevel lvl;
+            if (!opt.getParamValue( lvl, errMsg, mapper ) )
+            {
+                LOG_ERR_OPT<<errMsg<<"\n";
+                return -1;
+            }
+
+            appConfig.setVerbosityLevel(lvl);
+            if (lvl==VerbosityLevel::quet)
+                argsParser.quet = true;
         }
 
         else if ( opt.isBuiltinsDisableOptionMain  () 
@@ -137,25 +177,16 @@ int operator()( const std::string                               &a           //!
             return 0;
         }
 
-        else if ( opt.isOption("verbose") || opt.isOption('V') 
-               || opt.setDescription("Detailed log for the all entities found in user files"))
-        {
-            if (argsParser.hasHelpOption) return 0;
-            appConfig.setOptVerbose(true);
-            return 0;
-        }
-
-        else if ( opt.isOption("super-verbose") // || opt.isOption('V') 
-               || opt.setDescription("Detailed log for the all found entities"))
-        {
-            if (argsParser.hasHelpOption) return 0;
-            appConfig.setOptVerbose(true);
-            appConfig.setOptSuperVerbose(true);
-            return 0;
-        }
-
         else if ( opt.isOption("exclude-files") || opt.isOption('X') || opt.setParam("MASK")
-               || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' means any number of any chars, and '?' means exact one any char. In addition, symbol '^' in front and/or back of mask means that mask will be bound to beginning/ending of the tested file name"))
+               || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' "
+                                     "means any number of any chars, and '?' means exact one of any char. In addition, "
+                                     "symbol '^' in front and/or back of the mask means that the mask will be bound to beginning/ending "
+                                     "of the tested file name.\n"
+                                     "Also, regular expresion syntax allowed in form '" + 
+                                     umba::regex_helpers::getRawEcmaRegexPrefix<std::string>() + "YOURREGEX'. The regular expresions supports\n"
+                                     "See also: C++ Modified ECMA Script regular expression grammar - https://en.cppreference.com/w/cpp/regex/ecmascript"
+                                    )
+                )
         {
             if (argsParser.hasHelpOption) return 0;
             
@@ -190,7 +221,7 @@ int operator()( const std::string                               &a           //!
             return 0;
         }
 
-        else if ( opt.isOption("path") || opt.isOption('P') || opt.setParam("PATH")
+        else if ( opt.isOption("path") || opt.isOption("scan") || opt.isOption('P') || opt.setParam("PATH")
                || opt.setDescription("Add path to scan path list"))
         {
             if (argsParser.hasHelpOption) return 0;
@@ -210,14 +241,26 @@ int operator()( const std::string                               &a           //!
 
         //------------
 
-        else if (opt.isOption("autocomplete-install") || opt.setDescription("Install autocompletion to bash/clink(cmd)"))
+        else if ( opt.isOption("autocomplete-install") 
+               || opt.setDescription("Install autocompletion to bash"
+                                     #if defined(WIN32) || defined(_WIN32)
+                                         "/clink(cmd)"
+                                     #endif
+                                    )
+               )
         {
             if (argsParser.hasHelpOption) return 0;
 
             //return autocomplete(opt, true);
             return umba::command_line::autocompletionInstaller( pCol, opt, pCol->getPrintHelpStyle(), true, [&]( bool bErr ) -> decltype(auto) { return bErr ? LOG_ERR_OPT : LOG_MSG_OPT; } );
         }
-        else if (opt.isOption("autocomplete-uninstall") || opt.setDescription("Remove autocompletion from bash/clink(cmd)"))
+        else if ( opt.isOption("autocomplete-uninstall") 
+               || opt.setDescription("Remove autocompletion from bash"
+                                     #if defined(WIN32) || defined(_WIN32)
+                                         "/clink(cmd)"
+                                     #endif
+                                    )
+                )
         {
             if (argsParser.hasHelpOption) return 0;
 

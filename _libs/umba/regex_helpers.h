@@ -23,6 +23,13 @@ namespace regex_helpers{
 
 
 
+//----------------------------------------------------------------------------
+//! Возвращает префикс, который можно использовать, если нужно передать "сырой" regexp
+template< typename StringType > inline
+StringType getRawEcmaRegexPrefix( )
+{
+    return umba::string_plus::make_string<StringType>("{*?regex?*}");
+}
 
 //----------------------------------------------------------------------------
 //! Легким движением руки простая маска превращается в регэксп
@@ -30,13 +37,20 @@ namespace regex_helpers{
                              - если последний символ маски - привязывает маску к концу текста
  */
 template< typename StringType > inline
-StringType expandSimpleMaskToEcmaRegex( StringType s, bool useAnchoring = false )
+StringType expandSimpleMaskToEcmaRegex( StringType s, bool useAnchoring = false, bool allowRawRegexes = true )
 {
+    if (allowRawRegexes)
+    {
+        if (umba::string_plus::starts_with_and_strip<StringType>(s,getRawEcmaRegexPrefix<StringType>()))
+            return s;
+    }
+
     StringType res; res.reserve(s.size());
 
     typedef typename StringType::value_type    CharType;
 
 
+    // https://docs.microsoft.com/en-us/previous-versions/windows/desktop/indexsrv/ms-dos-and-windows-wildcard-characters
     // https://en.cppreference.com/w/cpp/regex/ecmascript
 
     // The assertion ^ (beginning of line) matches
@@ -122,6 +136,10 @@ StringType expandSimpleMaskToEcmaRegex( StringType s, bool useAnchoring = false 
 }
 
 //----------------------------------------------------------------------------
+// https://en.cppreference.com/w/cpp/regex/match_results
+// Хз, что быстрее, match_results или regex_match
+
+#if 0
 template< typename StringType > inline
 bool regexMatch(const StringType &text, const std::basic_regex<typename StringType::value_type> &r)
 {
@@ -135,6 +153,21 @@ bool regexMatch(const StringType &text, const std::basic_regex<typename StringTy
 
     return true;
 }
+#endif
+
+template< typename StringType > inline
+bool regexMatch(const StringType &text, const std::basic_regex<typename StringType::value_type> &r)
+{
+    try
+    {
+        return std::regex_match( text, r );
+    }
+    catch(...)
+    {}
+
+    return false;
+}
+
 
 //----------------------------------------------------------------------------
 template< typename StringType > inline

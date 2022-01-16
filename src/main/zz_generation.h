@@ -44,7 +44,8 @@
     {
         if (!generatedCompileFlagsTxtFiles.empty())
         {
-            printInfoLogSectionHeader(logMsg, "Generated 'CompileFlags' Files");
+            //printInfoLogSectionHeader(logMsg, "Generated 'CompileFlags' Files");
+            printInfoLogSectionHeader(logMsg, "Generated 'compile_flags.txt' Files");
         }
 
         for(auto & name : generatedCompileFlagsTxtFiles)

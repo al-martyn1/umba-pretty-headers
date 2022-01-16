@@ -1,1 +1,1 @@
-call test07_release.bat >test07_release.txt 2>&1
+@call test07_release.bat >test07_release.txt 2>&1

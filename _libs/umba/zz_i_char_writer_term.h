@@ -154,18 +154,17 @@ namespace win32
 
        switch(conColor)
        {
-           case 0                                   : clr |= colors::black;
-           case FOREGROUND_BLUE                     : clr |= colors::blue;
-           case FOREGROUND_GREEN                    : clr |= colors::green;
-           case FOREGROUND_RED                      : clr |= colors::red;
-           case (FOREGROUND_GREEN|FOREGROUND_RED  ) : clr |= colors::yellow;
-           case (FOREGROUND_BLUE |FOREGROUND_RED  ) : clr |= colors::magenta;
-           case (FOREGROUND_GREEN|FOREGROUND_BLUE ) : clr |= colors::cyan;
-           case (FOREGROUND_RED  |FOREGROUND_GREEN|FOREGROUND_BLUE) : clr |= colors::white;
-           default: clr |= colors::black;
+           case 0                                                   : return clr | colors::black;
+           case FOREGROUND_BLUE                                     : return clr | colors::blue;
+           case FOREGROUND_GREEN                                    : return clr | colors::green;
+           case FOREGROUND_RED                                      : return clr | colors::red;
+           case (FOREGROUND_GREEN|FOREGROUND_RED  )                 : return clr | colors::yellow;
+           case (FOREGROUND_BLUE |FOREGROUND_RED  )                 : return clr | colors::magenta;
+           case (FOREGROUND_GREEN|FOREGROUND_BLUE )                 : return clr | colors::cyan;
+           case (FOREGROUND_RED  |FOREGROUND_GREEN|FOREGROUND_BLUE) : return clr | colors::white;
+           default: return clr | colors::black;
        }
 
-       return clr;
    }
 
    //! Преобразование Win32-атрибута текста консоли в colors::SgrColor 

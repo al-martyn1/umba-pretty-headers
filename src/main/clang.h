@@ -2,12 +2,16 @@
 
 #include <string>
 #include <memory>
-#include <map>
 #include <vector>
+#include <map>
 #include <set>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <regex>
+#include <exception>
+#include <stdexcept>
+#include <iterator>
 
 
 #include "clang/AST/ASTConsumer.h"
@@ -27,44 +31,6 @@
 
 
 #if defined(_MSC_VER)
-
-/*
-#pragma comment(lib, "LLVMBitstreamReader")
-#pragma comment(lib, "LLVMBitReader")
-#pragma comment(lib, "LLVMBitWriter")
-#pragma comment(lib, "LLVMRemarks")
-#pragma comment(lib, "LLVMSupport")
-#pragma comment(lib, "LLVMAnalysis")
-#pragma comment(lib, "LLVMCore")
-#pragma comment(lib, "LLVMOption")
-#pragma comment(lib, "LLVMFrontendOpenMP")
-#pragma comment(lib, "LLVMDebugInfoDWARF")
-#pragma comment(lib, "LLVMAsmPrinter")
-#pragma comment(lib, "LLVMAsmParser")
-#pragma comment(lib, "LLVMBinaryFormat")
-#pragma comment(lib, "LLVMMC")
-#pragma comment(lib, "LLVMCoverage")
-#pragma comment(lib, "LLVMInstrumentation")
-#pragma comment(lib, "LLVMProfileData")
-#pragma comment(lib, "LLVMMCParser")
-#pragma comment(lib, "LLVMSupport")
-
-#pragma comment(lib, "clangSerialization")
-#pragma comment(lib, "clangLex")
-#pragma comment(lib, "clangParse")
-#pragma comment(lib, "clangCodeGen")
-#pragma comment(lib, "clangSema")
-#pragma comment(lib, "clangTidyOpenMPModule")
-#pragma comment(lib, "clangTooling")
-#pragma comment(lib, "clangFrontendTool")
-#pragma comment(lib, "clangFrontend")
-#pragma comment(lib, "clangDriver")
-#pragma comment(lib, "clangASTMatchers")
-#pragma comment(lib, "clangAST")
-#pragma comment(lib, "clangBasic")
-#pragma comment(lib, "clangEdit")
-#pragma comment(lib, "clangFormat")
-*/
 
 #pragma comment(lib, "clangAnalysis")
 #pragma comment(lib, "clangAPINotes")

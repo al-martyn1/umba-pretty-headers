@@ -75,7 +75,7 @@ void testMacro( const std::string &text, const MacroGetter &getter, int flags )
 
 void testMask(const std::string &testRegexText, const std::string &testMaskStr, bool useAnchors)
 {
-    std::string testRegexStr      = umba::regex_helpers::expandSimpleMaskToEcmaRegex( testMaskStr, useAnchors );
+    std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr, useAnchors );
     std::string testRegexTextNorm = umba::filename::normalizePathSeparators(testRegexText,'/');
 
     std::cout << "Regex test\n";

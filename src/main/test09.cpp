@@ -1,3 +1,9 @@
+#include "clang.h"
+
+#if defined(_MSC_VER)
+    #pragma hdrstop
+#endif
+
 #include "umba/umba.h"
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"
@@ -20,6 +26,7 @@
 #include "umba/time_service.h"
 
 
+#include "utils.h"
 #include "clang.h"
 #include "marty_clang_helpers.h"
 
@@ -113,6 +120,14 @@ int main(int argc, char* argv[])
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
     pAppConfig = &appConfig;
 
+    if (appConfig.getOptShowConfig())
+    {
+        printInfoLogSectionHeader(logMsg, "Actual Config");
+        // logMsg << appConfig;
+        appConfig.print(logMsg) << "\n";
+    }
+
+
 
     #include "zz_generation.h"
 
@@ -165,6 +180,12 @@ int main(int argc, char* argv[])
         startTick = umba::time_service::getCurTimeMs();
     }
 
+    if (foundFiles.empty())
+    {
+        LOG_WARN_OPT("input-empty") << "no files for processing";
+    }
+
+
 
     for(auto compileFlagsTxtFile: generatedCompileFlagsTxtFiles)
     {
@@ -199,8 +220,18 @@ int main(int argc, char* argv[])
 
         if (!appConfig.getOptQuet())
         {
-            logMsg << "Generating C++ source: " << srcFullName << endl;
+            printInfoLogSectionHeader(logMsg, "Generating C++ source");
+            // logMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
+            logMsg << "File: " << srcFullName << endl << endl;
+            logMsg << "Processing..." << endl << endl;
         }
+        
+
+        // if (!appConfig.getOptQuet())
+        // {
+        //     logMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
+        //     //printInfoLogSectionHeader(logMsg, "Generating C++ source");
+        // }
 
 
         std::vector<std::string> incPaths;
@@ -211,13 +242,13 @@ int main(int argc, char* argv[])
         }
 
 
-        processingFiles.clear();
+        curProcessedFiles.clear();
 
         for(auto file : foundFiles)
         {
             std::string incName = file;
 
-            processingFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем сначала полное имя файла
+            curProcessedFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем сначала полное имя файла
 
             for(const auto &incPath : incPaths)
             {
@@ -225,9 +256,10 @@ int main(int argc, char* argv[])
                     break;
             }
 
-            cppStream << "#include \"" << incName << "\"\n";
+            //cppStream << "#include \"" << incName << "\"\n";
+            cppStream << "#include <" << incName << ">\n";
 
-            processingFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем имя файла, как оно инклудится
+            curProcessedFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем имя файла, как оно инклудится
         }
 
 
@@ -266,6 +298,70 @@ int main(int argc, char* argv[])
         }
 
     }
+
+    auto printDeclStat = [&]( const std::map< clang::Decl::Kind, unsigned > &m, const char *title )
+    {
+        //if (!appConfig.getOptVerbose())
+        if (!appConfig.testVerbosity(VerbosityLevel::normal))
+            return;
+
+        if (m.empty())
+            return;
+
+        using namespace umba::omanip;
+
+        printInfoLogSectionHeader(logMsg, title);
+
+        for( auto [key,val] : m )
+        {
+            logMsg << width(36) << marty::clang::helpers::getClangDeclKindName(key) << ": " << val <<endl;
+        }
+
+    };
+
+    printDeclStat( declUsageMapHandled  , "Handled Declaration Types"   );
+    printDeclStat( declUsageMapSkipped  , "Skipped Declaration Types"   );
+    printDeclStat( declUsageMapUnhandled, "Unhandled Declaration Types" );
+    printDeclStat( declUsageMapUnknowns , "Unknown Declaration Types"   );
+
+
+    if (!foundDeclarations.empty() && appConfig.testVerbosity(VerbosityLevel::detailed))
+    {
+        {
+            std::ostringstream oss;
+            oss << "Found User Declarations (Total: " << foundDeclarations.size() << ")";
+            printInfoLogSectionHeader(logMsg, oss.str());
+        }
+
+        for(const auto& [name, info] : foundDeclarations)
+        {
+            logMsg << endl;
+
+            auto fileNameForCppName = cppNameToFileName(name);
+            logMsg << name << " (" << fileNameForCppName << ")"; // << endl;
+            if (isCppSpecialName(name))
+                logMsg << " - C++ special name";
+            logMsg << endl;
+
+            logMsg << "Kinds:" << endl;
+            for( auto kind : info.nameKinds )
+            {
+                logMsg << "    " << marty::clang::helpers::getClangDeclKindName(kind) << endl;
+            }
+
+            logMsg << "Files:" << endl;
+            for( const auto & [filenameKey, locFileInfo]: info.locationFiles )
+            {
+                logMsg << "    " << marty::clang::helpers::getClangDeclKindName(locFileInfo.kind)
+                       <<   ": " << locFileInfo.locationFilename
+                       <<  " - " << locFileInfo.fullFilename
+                       << endl;
+            }
+
+        }
+        
+    }
+
 
     return 0;
 }
