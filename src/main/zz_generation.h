@@ -40,7 +40,7 @@
     allGeneratedFiles.insert(generatedCompileFlagsTxtFiles.begin(), generatedCompileFlagsTxtFiles.end());
 
 
-    if (!appConfig.getOptQuet())
+    if (appConfig.testVerbosity(VerbosityLevel::detailed))
     {
         if (!generatedCompileFlagsTxtFiles.empty())
         {

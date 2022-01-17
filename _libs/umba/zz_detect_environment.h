@@ -1015,16 +1015,7 @@
 
 #if defined(UMBA_WIN32_USED)
 
-    // Подключаем WinSock2.h перед подключением Windows.h.
-    // Если так не сделать, и потом захочется использовать сокеты,
-    // то будет конфликт с WinSock.h, который подключается из Windows.h
-    #if !defined(_WINSOCK2API_)
-        #include <WinSock2.h>
-    #endif
-    
-    #if !defined(_WINDOWS_)
-        #include <Windows.h>
-    #endif
+    #include "zz_inc_windows.h"
 
 #elif defined(UMBA_QT_USED)
 

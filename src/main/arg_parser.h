@@ -183,15 +183,26 @@ int operator()( const std::string                               &a           //!
                || opt.setDescription("By default, the '#include' directive in generated files uses angle brackets '<>'. This option turns on generating quoted includes with '\"\"' quotation")
                 )
         {
-            //!!!
+            if (argsParser.hasHelpOption) return 0;
+            appConfig.setOptQuotedIncludes(true);
             return 0;
         }
 
-        else if ( opt.isOption("exclude-names") || opt.isOption('N') || opt.setParam("MASK")
+        else if ( opt.isOption("exclude-names") || opt.isOption('N') || opt.setParam("MASK,...")
                || opt.setDescription("Exclude C/C++ names from output. For details about 'MASK' parameter see '--exclude-files' option description.")
                 )
         {
-            //!!! Add exclude name mask here
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"exclude names mask not taken (--exclude-names)\n";
+                return -1;
+            }
+
+            std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
+            appConfig.excludeNamesMaskList.insert(appConfig.excludeNamesMaskList.end(), lst.begin(), lst.end());
+
             return 0;
         }
 
@@ -199,11 +210,20 @@ int operator()( const std::string                               &a           //!
                || opt.setDescription("Set output root path")
                 )
         {
-            //!!! 
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"output path not taken (--output-path)\n";
+                return -1;
+            }
+
+            auto optArg = umba::macros::substMacros(opt.optArg,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
+            appConfig.outputPath = makeAbsPath(optArg);
             return 0;
         }
 
-        else if ( opt.isOption("exclude-files") || opt.isOption('X') || opt.setParam("MASK")
+        else if ( opt.isOption("exclude-files") || opt.isOption('X') || opt.setParam("MASK,...")
                || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' "
                                      "means any number of any chars, and '?' means exact one of any char. In addition, "
                                      "symbol '^' in front and/or back of the mask means that the mask will be bound to beginning/ending "
@@ -223,8 +243,7 @@ int operator()( const std::string                               &a           //!
             }
 
             std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
-            appConfig.excludeFilesList.insert(appConfig.excludeFilesList.end(), lst.begin(), lst.end());
-
+            appConfig.excludeFilesMaskList.insert(appConfig.excludeFilesMaskList.end(), lst.begin(), lst.end());
 
             return 0;
         }

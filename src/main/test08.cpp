@@ -66,7 +66,7 @@ void testMacro( const std::string &text, const MacroGetter &getter, int flags )
 {
     std::cout << "Text   : [" << text << "], "
               << "getter: " << getter.getName() << ", "
-              << "flags: " << umba::flag::util::toStringImpl(getUmbaMacrosFlagsStringMap(), flags ) //<< ""
+              << "flags: " << umba::flag_helpers::util::toStringImpl(getUmbaMacrosFlagsStringMap(), flags ) //<< ""
               << "\n";
     std::cout << "Substed: [" << umba::macros::substMacros(text,getter,flags) << "]\n";
     std::cout << "---\n\n";
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 
     std::cout << "Flags test\n";
     auto flagsNameMap = getUmbaMacrosFlagsStringMap();
-    auto flagsStr = umba::flag::util::toStringImpl(flagsNameMap, argsAllowed|changeDot );
+    auto flagsStr = umba::flag_helpers::util::toStringImpl(flagsNameMap, argsAllowed|changeDot );
     std::cout << flagsStr << "\n";
     std::cout << "-------\n";
 

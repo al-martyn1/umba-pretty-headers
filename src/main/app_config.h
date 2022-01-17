@@ -45,17 +45,19 @@ struct AppConfig
 {
 
     static const unsigned                    ofEmptyOptionFlags      = 0x0000;
-    static const unsigned                    ofKeepGenerated         = 0x0002; // 
+    static const unsigned                    ofKeepGenerated         = 0x0001; // 
+    static const unsigned                    ofQuotedIncludes        = 0x0002; // 
 
 
     std::map<std::string,std::string>        macros;
 
     std::vector<std::string>                 clangCompileFlagsTxtFilename; // compile_flags.txt
 
-    std::vector<std::string>                 excludeFilesList;
+    std::vector<std::string>                 excludeFilesMaskList;
+    std::vector<std::string>                 excludeNamesMaskList;
 
     std::vector<std::string>                 scanPaths;
-
+    std::string                              outputPath;
 
     unsigned                                 optionFlags = 0; // ofNormalizeFilenames; // ofEmptyOptionFlags;
 
@@ -102,6 +104,7 @@ struct AppConfig
         switch(ofFlag)
         {
             case ofKeepGenerated         : return "Keep Generated Files";
+            case ofQuotedIncludes        : return "Quoted Includes";
             default                      : return "Multiple flags taken!!!";
         }
     }
@@ -109,8 +112,12 @@ struct AppConfig
     void setOptKeepGenerated( bool q ) { ofSet(ofKeepGenerated,q);      }
     bool getOptKeepGenerated( )  const { return ofGet(ofKeepGenerated); }
 
+    void setOptQuotedIncludes( bool q ) { ofSet(ofQuotedIncludes,q);      }
+    bool getOptQuotedIncludes( )  const { return ofGet(ofQuotedIncludes); }
+
+
     void setOptQuet( bool q ) { setVerbosityLevel(VerbosityLevel::quet);  }
-    bool getOptQuet( )  const { return testVerbosity(VerbosityLevel::quet); }
+    //bool getOptQuet( )  const { return testVerbosity(VerbosityLevel::quet); }
 
     bool getOptShowConfig( )  const { return testVerbosity(VerbosityLevel::config); }
 
@@ -121,10 +128,21 @@ struct AppConfig
 
     bool isDeclKindAllowed( marty::clang::helpers::DeclKindOfKind k ) const
     {
-        return (allowedKinds & k) == 0;
+        return (allowedKinds & k) != 0;
     }
 
     bool declKindAllowed( marty::clang::helpers::DeclKindOfKind k ) const { return isDeclKindAllowed(k); }
+
+    std::string getQuotedName(const std::string &n) const
+    {
+        std::string res;
+        res.reserve(n.size()+2);
+        res.append(1,getOptQuotedIncludes()?'\"':'<');
+        res.append(n);
+        res.append(1,getOptQuotedIncludes()?'\"':'>');
+        return res;
+    }
+     
 
 
     template<typename StreamType>
@@ -161,12 +179,17 @@ struct AppConfig
 
         //------------------------------
 
-        s << "Output kinds   : " << marty::clang::helpers::DeclKindOfKind_toStdString(allowedKinds) << "\n"; // endl;
+        s << "Output Path    : " << outputPath << "\n"; // endl;
+
+        s << "\n";
+
+        s << "Output Kinds   : " << marty::clang::helpers::DeclKindOfKind_toStdString(allowedKinds) << "\n"; // endl;
 
         s << "\n";
 
         s << "Option Flags   :\n";
-        s << "    " << getOptNameString(ofKeepGenerated) << ": " << getOptValAsString(optionFlags&ofKeepGenerated) << "\n";
+        s << "    " << getOptNameString(ofKeepGenerated)  << ": " << getOptValAsString(optionFlags&ofKeepGenerated) << "\n";
+        s << "    " << getOptNameString(ofQuotedIncludes) << ": " << getOptValAsString(optionFlags&ofQuotedIncludes) << "\n";
 
         s << "\n";
 
@@ -207,7 +230,7 @@ struct AppConfig
         //------------------------------
 
         s << "Exclude File Masks:\n";
-        for(auto excludeFileMask : excludeFilesList)
+        for(auto excludeFileMask : excludeFilesMaskList)
 	    {
             auto regexStr = expandSimpleMaskToEcmaRegex(excludeFileMask);
             s << "    '" << excludeFileMask;
@@ -226,6 +249,36 @@ struct AppConfig
             }
         }
 
+        s << "\n";
+        
+        //------------------------------
+
+        s << "Exclude File Masks:\n";
+        for(auto excludeNameMask : excludeNamesMaskList)
+	    {
+            auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+            s << "    '" << excludeNameMask;
+
+            bool isRaw = false;
+            if (umba::string_plus::starts_with<std::string>(excludeNameMask,umba::regex_helpers::getRawEcmaRegexPrefix<std::string>()))
+                isRaw = true;
+
+            if (regexStr==excludeNameMask || isRaw)
+                s << "'\n";
+            else
+            {
+                s << "', corresponding mECMA regexp: '"
+                  << regexStr
+                  << "'\n";
+            }
+        }
+
+        s << "\n";
+        
+        //------------------------------
+
+        
+
         return s;
     }
 
@@ -237,8 +290,11 @@ struct AppConfig
         appConfig.macros             = macros;
         //appConfig.keepGeneratedFiles = keepGeneratedFiles;
         appConfig.scanPaths          = scanPaths;
+        appConfig.outputPath         = outputPath;
         appConfig.optionFlags        = optionFlags;
         appConfig.verbosityLevel     = verbosityLevel;
+
+        appConfig.excludeNamesMaskList = excludeNamesMaskList;
 
 
         appConfig.allowedKinds       = allowedKinds;
@@ -251,12 +307,12 @@ struct AppConfig
             appConfig.clangCompileFlagsTxtFilename.push_back( programLocation.makeAbsPath(inputFilename) );
         }
 
-        for(auto excludeFileMask: excludeFilesList)
+        for(auto excludeFileMask: excludeFilesMaskList)
         {
             if (umba::string_plus::starts_with(excludeFileMask,umba::regex_helpers::getRawEcmaRegexPrefix<std::string>()))
-                appConfig.excludeFilesList.push_back(excludeFileMask); // keep regex as is
+                appConfig.excludeFilesMaskList.push_back(excludeFileMask); // keep regex as is
             else
-                appConfig.excludeFilesList.push_back( umba::filename::normalizePathSeparators(excludeFileMask,'/') );
+                appConfig.excludeFilesMaskList.push_back( umba::filename::normalizePathSeparators(excludeFileMask,'/') );
         }
 
         return appConfig;

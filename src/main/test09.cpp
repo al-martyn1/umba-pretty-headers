@@ -127,6 +127,12 @@ int main(int argc, char* argv[])
         appConfig.print(logMsg) << "\n";
     }
 
+    if (appConfig.outputPath.empty())
+    {
+        LOG_ERR_OPT << "output path not taken (--output-path)" << endl;
+        return 1;
+    }
+
 
 
     #include "zz_generation.h"
@@ -138,7 +144,7 @@ int main(int argc, char* argv[])
 
 
 
-    if (!appConfig.getOptQuet())
+    if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
         if (!foundFiles.empty())
             printInfoLogSectionHeader(logMsg, "Files for Processing");
@@ -172,12 +178,12 @@ int main(int argc, char* argv[])
 
     // Phases: Init, Scaning, Processing, Generating
 
-    if (!appConfig.getOptQuet())
+    if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
-        printInfoLogSectionHeader(logMsg, "Scaning completed");
+        printInfoLogSectionHeader(logMsg, "Scaning for input files completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
-        startTick = umba::time_service::getCurTimeMs();
+        //startTick = umba::time_service::getCurTimeMs();
     }
 
     if (foundFiles.empty())
@@ -205,10 +211,10 @@ int main(int argc, char* argv[])
         std::string srcName = umba::filename::getName(compileFlagsTxtFile);
         std::string srcFullName = umba::filename::appendPath( srcPath, umba::filename::appendExt(srcName, std::string("cpp")) );
 
-        std::ofstream cppStream(srcFullName.c_str());
+        std::ofstream cppStream(srcFullName);
         if (!cppStream)
         {
-            LOG_ERR_OPT << "failed to create C++ source file: " << srcFullName; // << endl;
+            LOG_ERR_OPT << "failed to create C++ source file: " << srcFullName << endl;
             continue;
         }
 
@@ -218,7 +224,7 @@ int main(int argc, char* argv[])
         currentSourcePath     = umba::filename::getPath(srcFullName);
 
 
-        if (!appConfig.getOptQuet())
+        if (appConfig.testVerbosity(VerbosityLevel::normal))
         {
             printInfoLogSectionHeader(logMsg, "Generating C++ source");
             // logMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
@@ -261,10 +267,6 @@ int main(int argc, char* argv[])
 
             curProcessedFiles.insert(umba::filename::makeCanonicalForCompare( incName, '/' )); // Вставляем имя файла, как оно инклудится
         }
-
-
-
-
 
         cppStream << "\n";
         cppStream.close();
@@ -362,6 +364,158 @@ int main(int argc, char* argv[])
 
         }
         
+    }
+
+    if (appConfig.testVerbosity(VerbosityLevel::normal))
+    {
+        printInfoLogSectionHeader(logMsg, "Scaning C++ headers completed");
+        auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
+        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        //startTick = umba::time_service::getCurTimeMs();
+    }
+
+
+    std::map<std::string,std::regex>  regexes;
+    std::map<std::string,std::string> originalMasks;
+
+    for(auto excludeNameMask : appConfig.excludeNamesMaskList)
+    {
+        auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+        regexes      [regexStr] = std::regex(regexStr);
+        originalMasks[regexStr] = excludeNameMask;
+    }
+
+
+    for(const auto& [cxxName, info] : foundDeclarations)
+    {
+        if (isCppSpecialName(cxxName))
+        {
+            continue; // skip operatorXX etc
+        }
+
+        bool validKindFound = false;
+
+        //std::string kindsStr;
+        marty::clang::helpers::DeclKindOfKind allNameKinds = marty::clang::helpers::DeclKindOfKind::none;
+
+        for( auto kind : info.nameKinds )
+        {
+            auto kindOfKind = marty::clang::helpers::declKind_toKindOfKind(kind);
+            allNameKinds |= kindOfKind;
+            // if (!kindsStr.empty())
+            //      kindsStr.append(1,',');
+            // kindsStr.append(marty::clang::helpers::DeclKindOfKind_toStdString(kindOfKind));
+
+            if (appConfig.isDeclKindAllowed(kindOfKind))
+            {
+                validKindFound = true;
+                break;
+            }
+        }
+
+        if (!validKindFound)
+        {
+            if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                logMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due kind of name - " << marty::clang::helpers::DeclKindOfKind_toStdString(allNameKinds) << normal << endl;
+            continue;
+        }
+
+        std::string regexStr;
+        if (umba::regex_helpers::regexMatch(cxxName,regexes,&regexStr))
+        {
+            if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                logMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+            continue;
+        }
+
+        auto fileName = cppNameToFileName(cxxName);
+
+        auto fullName = umba::filename::appendPath(appConfig.outputPath, fileName);
+
+        auto canonicalFullName = umba::filename::makeCanonical(fullName);
+
+        auto path = umba::filename::getPath(canonicalFullName);
+
+        auto createDirectory = [](std::string p) -> bool
+        {
+            std::vector<std::string> pathList;
+            pathList.reserve(8);
+            while(p.size()>3)
+            {
+                pathList.push_back(p);
+                p = umba::filename::getPath(p);
+            }
+
+            for(std::vector<std::string>::const_reverse_iterator it=pathList.rbegin(); it!=pathList.rend(); ++it)
+            {
+                std::error_code ec;
+                // Хз, как проверять результат сэтого вызова - для существующего каталога возвращает false с кодом 0, хотя должен вроде бы true возвращать
+
+                std::filesystem::create_directory(*it, ec); // Игнорим ошибки
+
+                // if (!std::filesystem::create_directory(*it, ec) && ec.value()!=0) 
+                // {
+                //     LOG_ERR_OPT << "failed to create directory: " << *it 
+                //                 << ", reason: " << ec.message() 
+                //                 << ", ec.value: " << ec.value() 
+                //                 //<< ", category: " << ec.category().message(ec.default_error_condition()) 
+                //                 << endl;
+                //     return false;
+                // }
+            
+            }
+
+            // return true;
+            return std::filesystem::exists(p);
+        };
+
+
+        if (!createDirectory(path))
+        {
+            LOG_ERR_OPT << "failed to create directory: " << path << endl;
+            continue;
+        }
+
+        //;
+
+        std::ofstream hdrStream(canonicalFullName);
+        if (!hdrStream)
+        {
+            LOG_ERR_OPT << "failed to create C++ header file: " << canonicalFullName /* fullName */  << endl;
+            continue;
+        }
+
+        // Generate file content here
+
+        hdrStream << "#pragma once\n\n";
+
+        for(const auto& [fileName, locInfo] : info.locationFiles)
+        {
+            hdrStream << "// " << marty::clang::helpers::DeclKindOfKind_toStdString(marty::clang::helpers::declKind_toKindOfKind(locInfo.kind)) << "\n";
+
+            std::string incName = locInfo.fullFilename;
+            for(const auto &path : appConfig.scanPaths)
+            {
+                if (umba::filename::isSubPathName(path, incName, &incName, '/'))
+                    break;
+            }
+
+            hdrStream << "#include " << appConfig.getQuotedName(incName) << "\n\n";
+
+        }
+
+        if (appConfig.testVerbosity(VerbosityLevel::detailed))
+            logMsg << cxxName << " - " << canonicalFullName /* fullName */  << " - generated" << endl;
+
+    }
+
+
+    if (appConfig.testVerbosity(VerbosityLevel::normal))
+    {
+        printInfoLogSectionHeader(logMsg, "Job done");
+        auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
+        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        //startTick = umba::time_service::getCurTimeMs();
     }
 
 

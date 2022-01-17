@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------
 // umba::flag::
 namespace umba{
-namespace flag{
+namespace flag_helpers{
 
 
 
@@ -101,6 +101,6 @@ StringType toStringImpl( const std::map<FlagType,StringType> &flagsMap, FlagType
 //----------------------------------------------------------------------------
 
 
-} // namespace flag
+} // namespace flag_helpers
 } // namespace umba
 

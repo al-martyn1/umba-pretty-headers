@@ -45,7 +45,7 @@ void scanFolders( const AppConfig &appConfig
     std::map<std::string,std::regex>  regexes;
     std::map<std::string,std::string> originalMasks;
 
-    for(auto excludeFileMask : appConfig.excludeFilesList)
+    for(auto excludeFileMask : appConfig.excludeFilesMaskList)
     {
         //auto normalizedName = StringType normalizePathSeparators( const StringType &fileName, typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>() )
         auto regexStr = expandSimpleMaskToEcmaRegex(excludeFileMask);
@@ -115,7 +115,7 @@ void scanFolders( const AppConfig &appConfig
             {
                 bFound = true;
 
-                if (!appConfig.getOptQuet())
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
                 {
                     printInfoLogSectionHeader(logMsg, "Found Files");
                     // logMsg << "---------------------\nFound Files:" << endl << "------------" << endl;
@@ -123,7 +123,7 @@ void scanFolders( const AppConfig &appConfig
             }
 
 
-            if (!appConfig.getOptQuet())
+            if (appConfig.testVerbosity(VerbosityLevel::detailed))
             {
                 logMsg << entryName << " - ";
             }
@@ -139,7 +139,7 @@ void scanFolders( const AppConfig &appConfig
 
                 foundExtentions.insert(ext);
 
-                if (!appConfig.getOptQuet())
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
                 {
                     if (ext.empty())
                         ext = "<EMPTY>";
@@ -155,7 +155,7 @@ void scanFolders( const AppConfig &appConfig
             {
                 excludedFiles.push_back(entryName);
 
-                if (!appConfig.getOptQuet())
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
                     logMsg << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
             }
 

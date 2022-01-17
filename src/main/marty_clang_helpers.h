@@ -119,7 +119,7 @@ inline
 std::string DeclKindOfKind_toStdString(DeclKindOfKind kFlags)
 {
     static auto m = getAllDeclKindOfKindMap();
-    return umba::flag::util::toStringImpl(m,kFlags);
+    return umba::flag_helpers::util::toStringImpl(m,kFlags);
 }
 
 //----------------------------------------------------------------------------

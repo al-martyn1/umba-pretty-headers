@@ -44,7 +44,7 @@ StreamType& printInfoLogSectionHeader( StreamType &s, const char* secCaption )
 //----------------------------------------------------------------------------
 bool isCppSpecialName( const std::string &s )
 {
-    return s.find_first_of( "<=>?!~[]&|+-/*%." )!=s.npos;
+    return s.find_first_of( "<=>?!~[]&|+-/*%.(){}" )!=s.npos;
 }
 
 //----------------------------------------------------------------------------

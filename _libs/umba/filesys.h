@@ -493,7 +493,7 @@ template<typename StringType, typename DataType> inline
 bool readFile( const StringType &filename       //!< Имя файла
              , std::vector<DataType> &filedata  //!< Вектор для данных
              , FileStat *pFileStat = 0          //!< [out] Статистика файла
-             , bool ignoreSizeErrors = true     //!< Игнорировать разночтения изменениястатистики файла и реально прочитанного размера
+             , bool ignoreSizeErrors = true     //!< Игнорировать разночтения из статистики файла и реально прочитанного размера
              )
 {
     filedata.clear();
@@ -604,7 +604,10 @@ bool isFileReadable( const StringType &filename )
     \return Возвращает true, если файл был прочитан
  */
 template<typename StringType, typename DataType> inline
-bool readFile( const StringType &filename, std::vector<DataType> &filedata )
+bool readFile( const StringType &filename, std::vector<DataType> &filedata
+             , FileStat *pFileStat = 0          //!< [out] Статистика файла
+             , bool ignoreSizeErrors = true     //!< Игнорировать разночтения из статистики файла и реально прочитанного размера
+             )
 {
     filedata.clear();
 
