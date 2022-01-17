@@ -32,6 +32,7 @@
 #--verbose=extra
 --verbose=detailed
 #--verbose=config
+--type
 --set=Test:SomeTest
 compile_flags_09.txt
 -P=..\..\_libs

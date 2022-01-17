@@ -47,6 +47,32 @@ enum class DeclKindOfKind
 
 };
 
+
+inline
+DeclKindOfKind declKind_toKindOfKind( ::clang::Decl::Kind k )
+{
+    switch(k)
+    {
+        case ::clang::Decl::Kind::ClassTemplate       : return DeclKindOfKind::cxxClass;
+        case ::clang::Decl::Kind::CXXRecord           : return DeclKindOfKind::cxxClass;
+
+        case ::clang::Decl::Kind::FunctionTemplate    : return DeclKindOfKind::freeFunction;
+        case ::clang::Decl::Kind::Function            : return DeclKindOfKind::freeFunction;
+
+        case ::clang::Decl::Kind::Typedef             : return DeclKindOfKind::cTypedef;
+
+        case ::clang::Decl::Kind::TypeAlias           : return DeclKindOfKind::cxxTypeAlias;
+        case ::clang::Decl::Kind::TypeAliasTemplate   : return DeclKindOfKind::cxxTypeAlias;
+
+        case ::clang::Decl::Kind::VarTemplate         : return DeclKindOfKind::cxxVarTemplate;
+
+        case ::clang::Decl::Kind::Enum                : return DeclKindOfKind::cEnum;
+
+        default                                       : return DeclKindOfKind::invalid;
+
+    }
+}
+
 UMBA_ENUM_CLASS_IMPLEMENT_FLAG_OPERATORS(DeclKindOfKind)
 
 inline

@@ -157,13 +157,15 @@ struct AppConfig
     StreamType& print( StreamType &s ) const
     {
         s << "\n";
-        printVerbosity(s);
+        printVerbosity(s) << "\n";
 
         //------------------------------
 
         s << "Output kinds   : " << marty::clang::helpers::DeclKindOfKind_toStdString(allowedKinds) << "\n"; // endl;
 
-        s << "Options (Flags):\n";
+        s << "\n";
+
+        s << "Option Flags   :\n";
         s << "    " << getOptNameString(ofKeepGenerated) << ": " << getOptValAsString(optionFlags&ofKeepGenerated) << "\n";
 
         s << "\n";

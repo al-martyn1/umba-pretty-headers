@@ -338,7 +338,7 @@ int main(int argc, char* argv[])
             logMsg << endl;
 
             auto fileNameForCppName = cppNameToFileName(name);
-            logMsg << name << " (" << fileNameForCppName << ")"; // << endl;
+            logMsg << name <<  " - (" << fileNameForCppName << ")"; // << endl;
             if (isCppSpecialName(name))
                 logMsg << " - C++ special name";
             logMsg << endl;
@@ -346,7 +346,9 @@ int main(int argc, char* argv[])
             logMsg << "Kinds:" << endl;
             for( auto kind : info.nameKinds )
             {
-                logMsg << "    " << marty::clang::helpers::getClangDeclKindName(kind) << endl;
+                logMsg << "    " << marty::clang::helpers::getClangDeclKindName(kind) 
+                       << " - "  << marty::clang::helpers::DeclKindOfKind_toStdString(marty::clang::helpers::declKind_toKindOfKind(kind))
+                       << endl;
             }
 
             logMsg << "Files:" << endl;

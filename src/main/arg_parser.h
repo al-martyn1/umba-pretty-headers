@@ -70,7 +70,7 @@ int operator()( const std::string                               &a           //!
                                           "4/extra/high/e" 
                              )
               || opt.setInitial(1) || opt.isOption("verbose") || opt.isOption('V')
-              || opt.setDescription("Set verbosity level. LEVEL can be one of the next values:\n"
+              || opt.setDescription("Set verbosity level. LEVEL parameter can be one of the next values:\n"
                                     "quet - maximum quet mode (same as --quet).\n"
                                     "normal - print common details.\n"
                                     "config - print common details and app config.\n"
@@ -179,6 +179,30 @@ int operator()( const std::string                               &a           //!
             return 0;
         }
 
+        else if ( opt.isOption("quoted-include") || opt.isOption('U')
+               || opt.setDescription("By default, the '#include' directive in generated files uses angle brackets '<>'. This option turns on generating quoted includes with '\"\"' quotation")
+                )
+        {
+            //!!!
+            return 0;
+        }
+
+        else if ( opt.isOption("exclude-names") || opt.isOption('N') || opt.setParam("MASK")
+               || opt.setDescription("Exclude C/C++ names from output. For details about 'MASK' parameter see '--exclude-files' option description.")
+                )
+        {
+            //!!! Add exclude name mask here
+            return 0;
+        }
+
+        else if ( opt.isOption("output-path") || opt.isOption("output-root") ||  /* opt.isOption("output") ||  */ opt.isOption('O') || opt.setParam("PATH")
+               || opt.setDescription("Set output root path")
+                )
+        {
+            //!!! 
+            return 0;
+        }
+
         else if ( opt.isOption("exclude-files") || opt.isOption('X') || opt.setParam("MASK")
                || opt.setDescription("Exclude files from parsing. The 'MASK' parameter is a simple file mask, where '*' "
                                      "means any number of any chars, and '?' means exact one of any char. In addition, "
@@ -219,34 +243,31 @@ int operator()( const std::string                               &a           //!
                                 }
         #endif
 
-        else if (opt.isOption("class") || opt.setDescription("Allow to generate class/struct includes"))
+        else if (opt.isOption("class") || opt.isOption('C')        || opt.setDescription("Allow to generate class/struct includes"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(cxxClass)
 
-        else if (opt.isOption("function") || opt.setDescription("Allow to generate free function includes"))
+        else if (opt.isOption("function") || opt.isOption('F')     || opt.setDescription("Allow to generate free function includes"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(freeFunction)
 
-        else if (opt.isOption("typedef") || opt.setDescription("Allow to generate typedef includes"))
+        else if (opt.isOption("typedef") || opt.isOption('T')      || opt.setDescription("Allow to generate typedef includes"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(cTypedef)
 
-        else if (opt.isOption("type-alias") || opt.setDescription("Allow to generate type alias includes"))
+        else if (opt.isOption("type-alias") || opt.isOption('L')   || opt.setDescription("Allow to generate type alias includes"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(cxxTypeAlias)
 
-        else if (opt.isOption("var-template") || opt.setDescription("Allow to generate variable template includes"))
+        else if (opt.isOption("var-template") || opt.isOption('M') || opt.setDescription("Allow to generate variable template includes"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(cxxVarTemplate)
 
-        else if (opt.isOption("enum") || opt.setDescription("Allow to generate enum includes"))
+        else if (opt.isOption("enum") || opt.isOption('E')         || opt.setDescription("Allow to generate enum includes (both enum and enum class)"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(cEnum)
 
-        else if (opt.isOption("enum") || opt.setDescription("Allow to generate enum includes (both enum and enum class)"))
-            UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(cEnum)
-
-        else if (opt.isOption("define") || opt.setDescription("Allow to generate preprocessor define includes"))
+        else if (opt.isOption("define") || opt.isOption('D')       || opt.setDescription("Allow to generate preprocessor define includes"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(ppDefine)
 
-        else if (opt.isOption("type") || opt.setDescription("Allow to generate all type includes (equivalent to --class --typedef --type-alias --enum)"))
+        else if (opt.isOption("type") || opt.isOption('Y')         || opt.setDescription("Allow to generate all type includes (equivalent to --class --typedef --type-alias --enum)"))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(type)
 
-        else if (opt.isOption("all") || opt.setDescription("Allow to generate includes for all kinds of declaration, except to --define option.\n--all is the default option."))
+        else if (opt.isOption("all") || opt.isOption('A')          || opt.setDescription("Allow to generate includes for all kinds of declaration, except to --define option.\n--all is the default option."))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(all)
 
         // else if (opt.isOption("XXX") || opt.setDescription("Allow to generate XXX includes"))
