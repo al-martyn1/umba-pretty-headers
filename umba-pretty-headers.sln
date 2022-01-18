@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test09", "_prj_msvc2019\tes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test10", "_prj_msvc2019\test10.vcxproj", "{50AD788B-9947-419E-9EDB-C280970D0E3C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "umba-pretty-headers", "_prj_msvc2019\umba-pretty-headers.vcxproj", "{3825DE06-1F52-47E6-B01D-59857A33647E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -131,6 +133,14 @@ Global
 		{50AD788B-9947-419E-9EDB-C280970D0E3C}.Release|x64.Build.0 = Release|x64
 		{50AD788B-9947-419E-9EDB-C280970D0E3C}.Release|x86.ActiveCfg = Release|Win32
 		{50AD788B-9947-419E-9EDB-C280970D0E3C}.Release|x86.Build.0 = Release|Win32
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Debug|x64.ActiveCfg = Debug|x64
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Debug|x64.Build.0 = Debug|x64
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Debug|x86.ActiveCfg = Debug|Win32
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Debug|x86.Build.0 = Debug|Win32
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Release|x64.ActiveCfg = Release|x64
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Release|x64.Build.0 = Release|x64
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Release|x86.ActiveCfg = Release|Win32
+		{3825DE06-1F52-47E6-B01D-59857A33647E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

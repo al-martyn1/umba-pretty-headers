@@ -6,26 +6,26 @@
 @set DISTR_ROOT=.distr
 @if not exist %DISTR_ROOT% mkdir %DISTR_ROOT%
 
-@set MAIN_EXE=test09.exe
+@set MAIN_EXE_NAME=umba-pretty-headers
 @set BUILD_OUTPUT_ROOT=.out\msvc2019
 
 
 :TRY_X64_DEBUG
-@if not exist %BUILD_OUTPUT_ROOT%\x64\Debug\%MAIN_EXE% goto TRY_X64_RELEASE
+@if not exist %BUILD_OUTPUT_ROOT%\x64\Debug\%MAIN_EXE_NAME%.exe goto TRY_X64_RELEASE
 @call :MK_DISTR x64 Debug msvc2019_64
 
 
 :TRY_X64_RELEASE
-@if not exist %BUILD_OUTPUT_ROOT%\x64\Release\%MAIN_EXE% goto TRY_X86_DEBUG
+@if not exist %BUILD_OUTPUT_ROOT%\x64\Release\%MAIN_EXE_NAME%.exe goto TRY_X86_DEBUG
 @call :MK_DISTR x64 Release msvc2019_64
 
 
 :TRY_X86_DEBUG
-@if not exist %BUILD_OUTPUT_ROOT%\x86\Debug\%MAIN_EXE% goto TRY_X86_RELEASE
+@if not exist %BUILD_OUTPUT_ROOT%\x86\Debug\%MAIN_EXE_NAME%.exe goto TRY_X86_RELEASE
 @call :MK_DISTR x86 Debug msvc2019
 
 :TRY_X86_RELEASE
-@if not exist %BUILD_OUTPUT_ROOT%\x86\Release\%MAIN_EXE% goto END
+@if not exist %BUILD_OUTPUT_ROOT%\x86\Release\%MAIN_EXE_NAME%.exe goto END
 @call :MK_DISTR x86 Release msvc2019
 
 goto END
@@ -46,7 +46,7 @@ goto END
 @set TARGET_ROOT=%DISTR_ROOT%\%PLATFORM%\%CONFIGURATION%\umba-pretty-headers
 @mkdir %TARGET_ROOT%\bin
 @xcopy /Y /S /E /I /F /R _distr_conf\conf\* %TARGET_ROOT%\conf
-@copy %BUILD_OUTPUT%\%MAIN_EXE% %TARGET_ROOT%\bin\%MAIN_EXE%
+@copy %BUILD_OUTPUT%\%MAIN_EXE_NAME%.exe %TARGET_ROOT%\bin\%MAIN_EXE_NAME%.exe
 @set WINDEPLOYQT=%MSVC2019_QTROOT%\%QTSUBPATH%\bin\windeployqt.exe
 @rem %WINDEPLOYQT% >windeployqt.txt
 @rem %WINDEPLOYQT% --%WINDEPLOYQTRELOPT% --compiler-runtime %TARGET_ROOT%\bin\  > windeployqt-%PLATFORM%-%CONFIGURATION%.log 2>&1
