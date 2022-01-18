@@ -754,6 +754,9 @@ int main(int argc, char* argv[])
     for( auto name : createdFiles )
     {
         name = appConfig.getOutputRelativePath(name);
+        if (name.empty())
+           continue;
+
         if (umba::filename::getPath(name).empty())
             createdFilesSet.insert(name);
     }
