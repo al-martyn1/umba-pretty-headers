@@ -1,3 +1,6 @@
+/*! \file
+    \brief Проба CLang Tooling'а, получаем AST
+*/
 
 #include "umba/umba.h"
 #include "umba/debug_helpers.h"

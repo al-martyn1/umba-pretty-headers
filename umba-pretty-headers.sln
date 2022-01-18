@@ -3,29 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test00", "vcxproj_msvc2019\test00.vcxproj", "{58237497-39C6-4B2B-AD9A-1F265CB02A43}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test00", "_prj_msvc2019\test00.vcxproj", "{58237497-39C6-4B2B-AD9A-1F265CB02A43}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test01", "vcxproj_msvc2019\test01.vcxproj", "{0681199F-D7BD-47E5-AE43-CE856D22E49E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test01", "_prj_msvc2019\test01.vcxproj", "{0681199F-D7BD-47E5-AE43-CE856D22E49E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test02", "vcxproj_msvc2019\test02.vcxproj", "{B0F3B050-3648-417E-98D3-4FEB11D50697}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test02", "_prj_msvc2019\test02.vcxproj", "{B0F3B050-3648-417E-98D3-4FEB11D50697}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test02_test_data_02", "vcxproj_msvc2019\test02_test_data_02.vcxproj", "{BE5D54CC-41DD-4DB0-A87F-178F30A3056D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test02_test_data_02", "_prj_msvc2019\test02_test_data_02.vcxproj", "{BE5D54CC-41DD-4DB0-A87F-178F30A3056D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test03", "vcxproj_msvc2019\test03.vcxproj", "{553F618F-F26F-4E68-AEFD-9ACF9D1C969F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test03", "_prj_msvc2019\test03.vcxproj", "{553F618F-F26F-4E68-AEFD-9ACF9D1C969F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test04", "vcxproj_msvc2019\test04.vcxproj", "{7481195A-6B13-4B0A-80E5-2EC85B34D67F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test04", "_prj_msvc2019\test04.vcxproj", "{7481195A-6B13-4B0A-80E5-2EC85B34D67F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test05", "vcxproj_msvc2019\test05.vcxproj", "{0E352482-3B5D-48E8-ABF0-067BFA6F9610}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test05", "_prj_msvc2019\test05.vcxproj", "{0E352482-3B5D-48E8-ABF0-067BFA6F9610}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test06", "vcxproj_msvc2019\test06.vcxproj", "{67F43480-D9E4-4107-B112-F5990773223E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test06", "_prj_msvc2019\test06.vcxproj", "{67F43480-D9E4-4107-B112-F5990773223E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test07", "vcxproj_msvc2019\test07.vcxproj", "{D5180F48-2481-4205-B5D8-ED7924A225D7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test07", "_prj_msvc2019\test07.vcxproj", "{D5180F48-2481-4205-B5D8-ED7924A225D7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test08", "vcxproj_msvc2019\test08.vcxproj", "{61AD275B-93B7-4F77-A51F-45741D2999A0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test08", "_prj_msvc2019\test08.vcxproj", "{61AD275B-93B7-4F77-A51F-45741D2999A0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test09", "vcxproj_msvc2019\test09.vcxproj", "{49DEF8DE-A6E7-4EA3-ADAB-2FB3777BD912}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test09", "_prj_msvc2019\test09.vcxproj", "{49DEF8DE-A6E7-4EA3-ADAB-2FB3777BD912}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test10", "vcxproj_msvc2019\test10.vcxproj", "{50AD788B-9947-419E-9EDB-C280970D0E3C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test10", "_prj_msvc2019\test10.vcxproj", "{50AD788B-9947-419E-9EDB-C280970D0E3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

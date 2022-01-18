@@ -1,3 +1,7 @@
+/*! \file
+    \brief Проверка подстановки макросов и хелперов для регэкспов.
+*/
+
 #include "umba/umba.h"
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"

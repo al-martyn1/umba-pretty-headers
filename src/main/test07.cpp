@@ -1,3 +1,7 @@
+/*! \file
+    \brief Реализация и проверка базовых функций сборка данных для сканирования хидеров
+*/
+
 #include "umba/umba.h"
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"

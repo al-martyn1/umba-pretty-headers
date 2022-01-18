@@ -1,3 +1,7 @@
+/*! \file
+    \brief РўРµСЃС‚РёРєРё umba::filename - РЅРµРјРЅРѕРіРѕ РїРѕРґРїРёР»РёРІР°Р» РµС‘
+*/
+
 #include "umba/umba.h"
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"
@@ -34,7 +38,7 @@ umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 int main(int argc, char* argv[])
 {
 
-    // Тестики по случаю - операции с извлечением частей из полного имени
+    // РўРµСЃС‚РёРєРё РїРѕ СЃР»СѓС‡Р°СЋ - РѕРїРµСЂР°С†РёРё СЃ РёР·РІР»РµС‡РµРЅРёРµРј С‡Р°СЃС‚РµР№ РёР· РїРѕР»РЅРѕРіРѕ РёРјРµРЅРё
     auto testUmbaFilename = [](std::string testPathName)
     {
         std::cout << "Full path: " << testPathName << "\n";

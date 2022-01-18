@@ -1,3 +1,6 @@
+/*! \file
+    \brief Проба CLang Tooling'а, потрогал DeclarationMatcher
+*/
 
 #include "umba/umba.h"
 #include "umba/debug_helpers.h"

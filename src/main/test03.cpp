@@ -1,3 +1,6 @@
+/*! \file
+    \brief Проба CLang Tooling'а, потрогал RecursiveASTVisitor - из test02 вынес часть в хидеры
+*/
 
 #include "umba/umba.h"
 #include "umba/debug_helpers.h"

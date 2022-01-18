@@ -1,3 +1,7 @@
+/*! \file
+    \brief Собрал всё в одну кучу, практически готовое приложение. Использовал clang::RecursiveASTVisitor и запихиваю всё собранное в глобальные переменные
+*/
+
 #include "clang.h"
 
 #if defined(_MSC_VER)

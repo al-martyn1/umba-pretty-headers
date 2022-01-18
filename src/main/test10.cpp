@@ -1,3 +1,7 @@
+/*! \file
+    \brief Проверка сканера макросов
+*/
+
 #include "umba/umba.h"
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"

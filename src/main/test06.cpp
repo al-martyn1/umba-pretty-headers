@@ -1,3 +1,8 @@
+/*! \file
+    \brief Налабал umba::program_location - классы/функции для получения основных сведений о расположении программы. Немного тестиков
+*/
+
+
 #include "umba/umba.h"
 #include "umba/simple_formatter.h"
 #include "umba/char_writers.h"
