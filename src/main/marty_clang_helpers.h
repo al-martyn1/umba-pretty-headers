@@ -93,7 +93,7 @@ std::string DeclKindOfKind_flagToStdString(DeclKindOfKind k)
         case DeclKindOfKind::cxxTypeAlias  : return std::string("type-alias"   );
         case DeclKindOfKind::cxxVarTemplate: return std::string("var-template" );
         case DeclKindOfKind::cEnum         : return std::string("enum"         );
-        case DeclKindOfKind::ppDefine      : return std::string("define"       );
+        case DeclKindOfKind::ppDefine      : return std::string("pp-macro"     );
         default                            : return std::string("invalid"      );
     }
 }

@@ -6,6 +6,17 @@
 # Keil C++11 support
 -X=*umba/stl_*
 
+# Что-то пролезло по ошибке в глобальное пространство имён - это локальные typedef'ы внутри функций
+-N=^CharType^
+-N=^StringType^
+-N=^TrimPred^
+-N=^ConditionalsCompareResult^
+-N=^NtQueryInformationProcessFnPtrT^
+#-N=^^
+
+
+
+
 # Лишнее отбрасываем, чтобы долго не тупило, для тестов достаточно нескольких файлов
 #-X=*_libs\umba\a*
 #-X=*_libs\umba\b*
@@ -29,17 +40,26 @@
 #-X=*_libs\umba\w*
 
 --keep-generated-files
+--generate-clear-script
+--used-macros
+--defined-macros
+#--no-output
+
 #--verbose=extra
 #--verbose=detailed
 #--verbose=config
 --verbose=normal
---type
---function
+
+#--type
+#--function
+--all
+--define
+
 --set=Test:SomeTest
 compile_flags_09.txt
 -P=..\..\_libs
 #-P=$(MSVC2017_QTROOT)\msvc2017\include
 
---output-root=..\..\_libs\pretty_headers
+--output-root=..\..\_libs\_pretty_headers
 
 

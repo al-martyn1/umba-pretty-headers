@@ -19,5 +19,5 @@
 -DWIN32
 -DNDEBUG
 -DUMBA_USE_WIN32
--IE:\_github\umba_pretty_headers\tests\data\..\..\_libs
+-IF:\_github\umba_pretty_headers\tests\data\..\..\_libs
 -xc++

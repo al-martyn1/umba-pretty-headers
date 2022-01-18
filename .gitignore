@@ -35,3 +35,4 @@
 /tests/*.txt
 /tests/test.bat
 /_libs/pretty_headers
+/_libs/_pretty_headers

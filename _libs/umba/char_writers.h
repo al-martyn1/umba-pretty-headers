@@ -1083,7 +1083,7 @@ struct SwvCharWritter : UMBA_IMPLEMENTS ICharWriter
 
 // UMBA_IS_IN_ISR()
 
-#define UMBA_LEGACY_UART_CHART_WRITTER_LOCK()    UMBA_CRITICAL_SECTION(globalCriticalSection)
+#define UMBA_LEGACY_UART_CHAR_WRITTER_LOCK()    UMBA_CRITICAL_SECTION(globalCriticalSection)
 
 //-----------------------------------------------------------------------------
 
@@ -1179,7 +1179,7 @@ struct LegacyUartCharWriter : UMBA_IMPLEMENTS ICharWriter
             {
                 // кладем остаток себе в буфер
                 // Защищаем момент изменения буфера и индекса
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 std::memcpy( m_buf, pBuf, len );
                 m_endIdx = len;
             }
@@ -1193,7 +1193,7 @@ struct LegacyUartCharWriter : UMBA_IMPLEMENTS ICharWriter
             size_t bufAvailSize = 0;
 
             {
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 bufAvailSize = BufSize - m_endIdx;
                 if (len>bufAvailSize)
                     len = bufAvailSize;
@@ -1402,7 +1402,7 @@ protected:
             if (!m_textMode)
             {
                 // Защищаем момент изменения буфера и индекса
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 
                 // в двоичном режиме тупо пересылаем массивами
                 size_t bufAvailSize = BufSize - m_endIdx;
@@ -1419,7 +1419,7 @@ protected:
             else
             {
                 // Защищаем момент изменения буфера и индекса
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 while( m_endIdx!=BufSize && len )
                 {
                     if (*pBuf=='\n')
@@ -1470,7 +1470,7 @@ protected:
     //! Пытается отправить свой буфер
     size_t trySendOwnBuf()
     {
-        UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+        UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
 
         if (!m_endIdx)
             return m_endIdx;
@@ -1494,7 +1494,7 @@ protected:
         if (len > getUartMaxLen())
             len = getUartMaxLen();
 
-        //UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+        //UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
         if (!m_uart.isTransmitComplete())
             return 0;
 
@@ -1604,7 +1604,7 @@ struct SwvCharWritter : UMBA_IMPLEMENTS ICharWriter
 
 // UMBA_IS_IN_ISR()
 
-#define UMBA_LEGACY_UART_CHART_WRITTER_LOCK()    UMBA_CRITICAL_SECTION(globalCriticalSection)
+#define UMBA_LEGACY_UART_CHAR_WRITTER_LOCK()    UMBA_CRITICAL_SECTION(globalCriticalSection)
 
 //-----------------------------------------------------------------------------
 
@@ -1668,7 +1668,7 @@ struct LegacyUartCharWriter : UMBA_IMPLEMENTS ICharWriter
             size_t bufAvailSize = 0;
 
             {
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 bufAvailSize = BufSize - m_endIdx;
                 if (len>bufAvailSize)
                     len = bufAvailSize;
@@ -1877,7 +1877,7 @@ protected:
             if (!m_textMode)
             {
                 // Защищаем момент изменения буфера и индекса
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 
                 // в двоичном режиме тупо пересылаем массивами
                 size_t bufAvailSize = BufSize - m_endIdx;
@@ -1894,7 +1894,7 @@ protected:
             else
             {
                 // Защищаем момент изменения буфера и индекса
-                UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+                UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
                 while( m_endIdx!=BufSize && len )
                 {
                     if (*pBuf=='\n')
@@ -1945,7 +1945,7 @@ protected:
     //! Пытается отправить свой буфер
     size_t trySendOwnBuf()
     {
-        UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+        UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
 
         if (!m_endIdx)
             return m_endIdx;
@@ -1969,7 +1969,7 @@ protected:
         if (len > getUartMaxLen())
             len = getUartMaxLen();
 
-        //UMBA_LEGACY_UART_CHART_WRITTER_LOCK();
+        //UMBA_LEGACY_UART_CHAR_WRITTER_LOCK();
         if (!m_uart.isTransmitComplete())
             return 0;
 

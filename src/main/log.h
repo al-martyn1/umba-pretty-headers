@@ -26,8 +26,9 @@ umba::SimpleFormatter& startLogError( umba::SimpleFormatter   &s
                                     , const char* srcFile = 0 , unsigned srcLineNo = 0
                                     )
 {
-    if (logEntryType==LogEntryType::warn  /* && !gopts.allowWarn(warnType) */ )
-        return logNul;
+    // if (logEntryType==LogEntryType::warn  /* && !gopts.allowWarn(warnType) */ )
+    //     return logNul;
+    //  
 
     using namespace umba::omanip;
 

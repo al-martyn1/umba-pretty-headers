@@ -289,6 +289,35 @@ int operator()( const std::string                               &a           //!
         else if (opt.isOption("all") || opt.isOption('A')          || opt.setDescription("Allow to generate includes for all kinds of declaration, except to --define option.\n--all is the default option."))
             UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG(all)
 
+
+        else if (opt.isOption("generate-clear-script") || opt.isOption('R') || opt.setDescription("Generate clear script - .bat/.sh."))
+            {
+                if (argsParser.hasHelpOption) return 0;
+                appConfig.setOptGenerateClearScript(true);
+                return 0;
+            }
+
+        else if (opt.isOption("used-macros")    || opt.setDescription("Write all found (in PP conditions) macros to file '$(OutputRoot)/__used_macros.txt'."))
+            {
+                if (argsParser.hasHelpOption) return 0;
+                appConfig.setOptUsedMacros(true);
+                return 0;
+            }
+
+        else if (opt.isOption("defined-macros") || opt.setDescription("Write all defined macros to file '$(OutputRoot)/__defined_macros.txt'."))
+            {
+                if (argsParser.hasHelpOption) return 0;
+                appConfig.setOptDefinedMacros(true);
+                return 0;
+            }
+
+        else if (opt.isOption("no-output") || opt.setDescription("Do not actually write output files."))
+            {
+                if (argsParser.hasHelpOption) return 0;
+                appConfig.setOptNoOutput(true);
+                return 0;
+            }
+
         // else if (opt.isOption("XXX") || opt.setDescription("Allow to generate XXX includes"))
         //     UMBA_PRETTY_HEADERS_HANDLE_KIND_ARG()
 

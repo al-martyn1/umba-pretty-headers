@@ -50,6 +50,7 @@ bool logSourceInfo = false;
 #include "scan_folders.h"
 
 #include "scan_sources.h"
+#include "scan_for_pp.h"
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
@@ -138,6 +139,10 @@ int main(int argc, char* argv[])
     #include "zz_generation.h"
 
 
+
+    //unsigned totalFiles = 0;
+    unsigned totalFilesCreated = 0;
+
     std::vector<std::string> foundFiles, excludedFiles;
     std::set<std::string>    foundExtentions;
     scanFolders(appConfig, foundFiles, excludedFiles, foundExtentions);
@@ -192,6 +197,9 @@ int main(int argc, char* argv[])
     }
 
 
+    std::vector<std::string>  createdFiles;
+    std::vector<std::string>  createdFolders;
+
 
     for(auto compileFlagsTxtFile: generatedCompileFlagsTxtFiles)
     {
@@ -211,12 +219,14 @@ int main(int argc, char* argv[])
         std::string srcName = umba::filename::getName(compileFlagsTxtFile);
         std::string srcFullName = umba::filename::appendPath( srcPath, umba::filename::appendExt(srcName, std::string("cpp")) );
 
+        
         std::ofstream cppStream(srcFullName);
         if (!cppStream)
         {
             LOG_ERR_OPT << "failed to create C++ source file: " << srcFullName << endl;
             continue;
         }
+
 
         allGeneratedFiles.insert(srcFullName);
 
@@ -271,6 +281,7 @@ int main(int argc, char* argv[])
         cppStream << "\n";
         cppStream.close();
 
+
         // Now we are ready to process source
 
         std::vector<std::string> inputFiles;
@@ -301,6 +312,52 @@ int main(int argc, char* argv[])
 
     }
 
+
+    if (appConfig.testVerbosity(VerbosityLevel::normal))
+    {
+        printInfoLogSectionHeader(logMsg, "Scaning C++ headers completed");
+        auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
+        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        //startTick = umba::time_service::getCurTimeMs();
+    }
+
+
+
+    auto createDirectory = [&](std::string p) -> bool
+    {
+        std::vector<std::string> pathList;
+        pathList.reserve(8);
+        while(p.size()>3)
+        {
+            pathList.push_back(p);
+            p = umba::filename::getPath(p);
+            createdFolders.push_back(p);
+        }
+
+        for(std::vector<std::string>::const_reverse_iterator it=pathList.rbegin(); it!=pathList.rend(); ++it)
+        {
+            std::error_code ec;
+            // Хз, как проверять результат сэтого вызова - для существующего каталога возвращает false с кодом 0, хотя должен вроде бы true возвращать
+
+            std::filesystem::create_directory(*it, ec); // Игнорим ошибки
+
+            // if (!std::filesystem::create_directory(*it, ec) && ec.value()!=0) 
+            // {
+            //     LOG_ERR_OPT << "failed to create directory: " << *it 
+            //                 << ", reason: " << ec.message() 
+            //                 << ", ec.value: " << ec.value() 
+            //                 //<< ", category: " << ec.category().message(ec.default_error_condition()) 
+            //                 << endl;
+            //     return false;
+            // }
+        
+        }
+
+        // return true;
+        return std::filesystem::exists(p);
+    };
+
+
     auto printDeclStat = [&]( const std::map< clang::Decl::Kind, unsigned > &m, const char *title )
     {
         //if (!appConfig.getOptVerbose())
@@ -327,6 +384,185 @@ int main(int argc, char* argv[])
     printDeclStat( declUsageMapUnknowns , "Unknown Declaration Types"   );
 
 
+    std::map<std::string,std::regex>  regexes;
+    std::map<std::string,std::string> originalMasks;
+
+    for(auto excludeNameMask : appConfig.excludeNamesMaskList)
+    {
+        auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+        regexes      [regexStr] = std::regex(regexStr);
+        originalMasks[regexStr] = excludeNameMask;
+    }
+
+
+
+    std::map<std::string, std::map<std::string,std::string> >   foundDefinitions;
+    std::map<std::string, std::map<std::string,std::string> >   foundUsages;
+
+    if (appConfig.isDeclKindAllowed(marty::clang::helpers::DeclKindOfKind::ppDefine))
+    {
+        for(auto file : foundFiles)
+        {
+            scanForPp( file, foundDefinitions, foundUsages );
+        }
+    }
+
+
+    if (!foundDefinitions.empty())
+    {
+        if (appConfig.testVerbosity(VerbosityLevel::detailed))
+            printInfoLogSectionHeader( logMsg, "Found Defined Macros" );
+       
+        std::map<std::string, std::map<std::string,std::string> >::const_iterator 
+        it = foundDefinitions.begin();
+
+
+        auto definedMacrosTxtFullName = umba::filename::makeCanonical(umba::filename::appendPath(appConfig.outputPath, std::string("__defined_macros.txt")));
+        std::ofstream definedMacrosTxtStream;
+        if (appConfig.getOptDefinedMacros())
+        {
+            auto path = umba::filename::getPath(definedMacrosTxtFullName);
+
+            if (!createDirectory(path))
+                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+            else
+            {
+                definedMacrosTxtStream.open( definedMacrosTxtFullName, std::ios_base::out | std::ios_base::trunc );
+                if (!definedMacrosTxtStream)
+                    LOG_WARN_OPT("create-file-failed") << "failed to create '__defined_macros.txt' file: " << definedMacrosTxtFullName << endl;
+                else
+                {
+                    createdFiles.push_back(definedMacrosTxtFullName);
+                    totalFilesCreated++;
+                }
+            }
+        }
+
+            //std::string incName = appConfig.getIncludeName(locInfo.fullFilename);
+            //hdrStream << "#include " << appConfig.getQuotedName(incName) << "\n\n";
+        
+        for(; it!=foundDefinitions.end(); ++it)
+        {
+            if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                logMsg << "File: " << it->first << "\n";
+
+            auto incName = appConfig.getIncludeName(it->first);
+
+            definedMacrosTxtStream << "File: " << it->first << "\n";
+       
+            const std::map<std::string,std::string> &defs = it->second;
+       
+            for( const auto &[d,l] : defs )
+            {
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                    logMsg << "    " << d ;
+
+                definedMacrosTxtStream << "    " << d ;
+
+                std::string regexStr;
+                if (umba::regex_helpers::regexMatch(d,regexes,&regexStr))
+                {
+                    if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                        logMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
+                                        << normal 
+                                        //<< " - [" << l << "]"
+                                        << endl;
+
+                    definedMacrosTxtStream << " - skipped due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
+                                        //<< " - [" << l << "]"
+                                        << "\n";
+
+                    continue;
+                }
+
+
+                auto definedMacroFullFileName = umba::filename::makeCanonical(umba::filename::appendPath(appConfig.outputPath, d));
+                std::ofstream definedMacroStream;
+
+                if (!appConfig.getOptNoOutput())
+                {
+                    auto path = umba::filename::getPath(definedMacroFullFileName);
+               
+                    if (!createDirectory(path))
+                        LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+                    else
+                    {
+                        definedMacroStream.open( definedMacroFullFileName, std::ios_base::out | std::ios_base::trunc );
+                        if (!definedMacroStream)
+                            LOG_WARN_OPT("create-file-failed") << "failed to create file: " << definedMacroFullFileName << endl;
+                        else
+                        {
+                            createdFiles.push_back(definedMacroFullFileName);
+                            totalFilesCreated++;
+                        }
+                    }
+                }
+
+                definedMacroStream << "#pragma once\n\n";
+                definedMacroStream << "// pp-macro\n\n";
+                definedMacroStream << "// " << d << "\n\n";
+                definedMacroStream << "#include " << appConfig.getQuotedName(incName) << "\n\n";
+
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                    logMsg // << " - [" << l << "]" 
+                           << endl;
+
+                definedMacrosTxtStream << "\n";
+
+                //!!! Write includes here
+            }
+        }
+    }
+
+
+    if (!foundUsages.empty())
+    {
+        if (appConfig.testVerbosity(VerbosityLevel::detailed))
+            printInfoLogSectionHeader( logMsg, "Found Macro Usage" );
+
+        auto usedMacrosTxtFullName = umba::filename::makeCanonical(umba::filename::appendPath(appConfig.outputPath, std::string("__used_macros.txt")));
+        std::ofstream usedMacrosTxtStream;
+        if (appConfig.getOptUsedMacros())
+        {
+            auto path = umba::filename::getPath(usedMacrosTxtFullName);
+
+            if (!createDirectory(path))
+                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+            else
+            {
+                usedMacrosTxtStream.open( usedMacrosTxtFullName, std::ios_base::out | std::ios_base::trunc );
+                if (!usedMacrosTxtStream)
+                    LOG_WARN_OPT("create-file-failed") << "failed to create '__used_macros.txt' file: " << usedMacrosTxtFullName << endl;
+                else
+                {
+                    createdFiles.push_back(usedMacrosTxtFullName);
+                    totalFilesCreated++;
+                }
+            }
+        }
+
+        std::map<std::string, std::map<std::string,std::string> >::const_iterator     
+        it = foundUsages.begin();
+        
+        for(; it!=foundUsages.end(); ++it)
+        {
+            if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                logMsg << it->first << "\n";
+
+            usedMacrosTxtStream << it->first << "\n";
+       
+            const std::map<std::string,std::string> &defs = it->second;
+       
+            for( const auto &[d,l] : defs )
+            {
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                    logMsg << "    " << d << " - [" << l << "]\n";
+                usedMacrosTxtStream << "    " << d << " - [" << l << "]\n";
+            }
+        }
+    }
+
+
     if (!foundDeclarations.empty() && appConfig.testVerbosity(VerbosityLevel::detailed))
     {
         {
@@ -335,14 +571,24 @@ int main(int argc, char* argv[])
             printInfoLogSectionHeader(logMsg, oss.str());
         }
 
-        for(const auto& [name, info] : foundDeclarations)
+        for(const auto& [cppName, info] : foundDeclarations)
         {
             logMsg << endl;
 
-            auto fileNameForCppName = cppNameToFileName(name);
-            logMsg << name <<  " - (" << fileNameForCppName << ")"; // << endl;
-            if (isCppSpecialName(name))
+            auto fileNameForCppName = cppNameToFileName(cppName);
+            logMsg << cppName <<  " - (" << fileNameForCppName << ")"; // << endl;
+            if (isCppSpecialName(cppName))
                 logMsg << " - C++ special name";
+
+            std::string regexStr;
+            if (umba::regex_helpers::regexMatch(cppName,regexes,&regexStr))
+            {
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                    logMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                continue;
+            }
+
+
             logMsg << endl;
 
             logMsg << "Kinds:" << endl;
@@ -366,24 +612,9 @@ int main(int argc, char* argv[])
         
     }
 
-    if (appConfig.testVerbosity(VerbosityLevel::normal))
-    {
-        printInfoLogSectionHeader(logMsg, "Scaning C++ headers completed");
-        auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
-        //startTick = umba::time_service::getCurTimeMs();
-    }
 
 
-    std::map<std::string,std::regex>  regexes;
-    std::map<std::string,std::string> originalMasks;
 
-    for(auto excludeNameMask : appConfig.excludeNamesMaskList)
-    {
-        auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
-        regexes      [regexStr] = std::regex(regexStr);
-        originalMasks[regexStr] = excludeNameMask;
-    }
 
 
     for(const auto& [cxxName, info] : foundDeclarations)
@@ -436,54 +667,30 @@ int main(int argc, char* argv[])
 
         auto path = umba::filename::getPath(canonicalFullName);
 
-        auto createDirectory = [](std::string p) -> bool
+
+        std::ofstream hdrStream;
+        if (!appConfig.getOptNoOutput())
         {
-            std::vector<std::string> pathList;
-            pathList.reserve(8);
-            while(p.size()>3)
+
+            if (!createDirectory(path))
             {
-                pathList.push_back(p);
-                p = umba::filename::getPath(p);
+                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+                continue;
             }
 
-            for(std::vector<std::string>::const_reverse_iterator it=pathList.rbegin(); it!=pathList.rend(); ++it)
+            hdrStream.open( canonicalFullName, std::ios_base::out | std::ios_base::trunc );
+            if (!hdrStream)
             {
-                std::error_code ec;
-                // Хз, как проверять результат сэтого вызова - для существующего каталога возвращает false с кодом 0, хотя должен вроде бы true возвращать
-
-                std::filesystem::create_directory(*it, ec); // Игнорим ошибки
-
-                // if (!std::filesystem::create_directory(*it, ec) && ec.value()!=0) 
-                // {
-                //     LOG_ERR_OPT << "failed to create directory: " << *it 
-                //                 << ", reason: " << ec.message() 
-                //                 << ", ec.value: " << ec.value() 
-                //                 //<< ", category: " << ec.category().message(ec.default_error_condition()) 
-                //                 << endl;
-                //     return false;
-                // }
-            
+                LOG_WARN_OPT("create-file-failed") << "failed to create C++ header file: " << canonicalFullName << endl;
+                continue;
             }
-
-            // return true;
-            return std::filesystem::exists(p);
-        };
-
-
-        if (!createDirectory(path))
-        {
-            LOG_ERR_OPT << "failed to create directory: " << path << endl;
-            continue;
+            else
+            {
+                createdFiles.push_back(canonicalFullName);
+                totalFilesCreated++;
+            }
         }
 
-        //;
-
-        std::ofstream hdrStream(canonicalFullName);
-        if (!hdrStream)
-        {
-            LOG_ERR_OPT << "failed to create C++ header file: " << canonicalFullName /* fullName */  << endl;
-            continue;
-        }
 
         // Generate file content here
 
@@ -493,13 +700,8 @@ int main(int argc, char* argv[])
         {
             hdrStream << "// " << marty::clang::helpers::DeclKindOfKind_toStdString(marty::clang::helpers::declKind_toKindOfKind(locInfo.kind)) << "\n";
 
-            std::string incName = locInfo.fullFilename;
-            for(const auto &path : appConfig.scanPaths)
-            {
-                if (umba::filename::isSubPathName(path, incName, &incName, '/'))
-                    break;
-            }
-
+            std::string incName = appConfig.getIncludeName(locInfo.fullFilename);
+            hdrStream << "// " << cxxName << "\n\n";
             hdrStream << "#include " << appConfig.getQuotedName(incName) << "\n\n";
 
         }
@@ -510,9 +712,83 @@ int main(int argc, char* argv[])
     }
 
 
+
+        // std::vector<std::string>  createdFiles;
+        // std::vector<std::string>  createdFolders;
+
+    
+    #if defined(WIN32) || defined(_WIN32)
+        std::string clearScriptSimpleName = "clear.bat";
+    #else
+        std::string clearScriptSimpleName = "clear.sh";
+    #endif
+
+    auto clearScriptFileName = appConfig.getOutputPath(clearScriptSimpleName);
+
+    std::ofstream clearScriptStream;
+    if (!appConfig.getOptNoOutput() && appConfig.getOptGenerateClearScript())
+    {
+        clearScriptStream.open( clearScriptFileName, std::ios_base::out | std::ios_base::trunc );
+        if (!clearScriptStream)
+            LOG_WARN_OPT("create-file-failed") << "failed to create '" << clearScriptSimpleName << "' file: " << clearScriptFileName << endl;
+    }
+
+
+    std::set<std::string> createdSubFoldersSet;
+    for( auto path : createdFolders )
+    {
+        path = appConfig.getOutputRelativePath(path);
+        if (path.empty())
+           continue;
+
+        auto upperPath = umba::filename::getPath(path);
+        while(!upperPath.empty())
+        {
+            path = upperPath;
+            upperPath = umba::filename::getPath(path);
+        }
+        createdSubFoldersSet.insert(path);
+    }
+
+    std::set<std::string> createdFilesSet;
+    for( auto name : createdFiles )
+    {
+        name = appConfig.getOutputRelativePath(name);
+        if (umba::filename::getPath(name).empty())
+            createdFilesSet.insert(name);
+    }
+
+    for( auto fileName : createdFilesSet )
+    {
+        #if defined(WIN32) || defined(_WIN32)
+
+            clearScriptStream << "@del " << fileName << "\n";
+
+        #else
+            
+        #endif
+    }
+
+    for( auto folderName : createdSubFoldersSet )
+    {
+        #if defined(WIN32) || defined(_WIN32)
+
+            clearScriptStream << "@rd /Q /S " << folderName << "\n";
+
+        #else
+            
+        #endif
+    }
+
+
+
+
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
         printInfoLogSectionHeader(logMsg, "Job done");
+
+        logMsg << "Total files created: " << totalFilesCreated << endl;
+
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();

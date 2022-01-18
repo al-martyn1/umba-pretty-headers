@@ -3,6 +3,20 @@
 ## Ignore generated pretty headers
 -X=*\pretty_headers\*
 -X=^pretty_headers\*
+-X=*\_pretty_headers\*
+-X=^_pretty_headers\*
+
+## Ignore generated std/qt headers
+
+-X=*\std_headers\*
+-X=^std_headers\*
+-X=*\_std_headers\*
+-X=^_std_headers\*
+
+-X=*\qt_headers\*
+-X=^qt_headers\*
+-X=*\_qt_headers\*
+-X=^_qt_headers\*
 
 
 ## Standard ignored types
@@ -60,3 +74,32 @@
 # Qt private (or other private folders and files) and other stuff
 -X=*\private\*
 -X=*_p.h^
+
+
+# Exclude macros
+
+# Include Guards
+-N=*_H^
+
+# Misc compat's macros
+-N=^_alloca^
+-N=^alloca^
+-N=^struct_file_stat^
+-N=^S_IFCHR^
+-N=^S_ISCHR^
+-N=^_fileno^
+-N=^_isatty^
+-N=^_tell^
+-N=^_write^
+
+# Misc common macros
+-N=^UNICODE^
+-N=^INT*_MAX^
+-N=^INT*_MIN^
+-N=^UINT*_MAX^
+-N=^UINT*_MIN^
+
+
+
+
+
