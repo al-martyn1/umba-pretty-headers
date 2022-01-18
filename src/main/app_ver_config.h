@@ -4,7 +4,7 @@ std::string appCommitHash;  //UNDONE
 std::string appBuildDate  = __DATE__;
 std::string appBuildTime  = __TIME__;
 
-const char *appHomeUrl    = "";
+const char *appHomeUrl    = "https://github.com/al-martyn1/umba_pretty_headers";
 const char *appistrPath   = "";
 
 #if defined(WIN32) || defined(_WIN32)

@@ -1,0 +1,1 @@
+@..\.out\msvc2019\x64\Debug\umba-pretty-headers.exe --help >help.txt

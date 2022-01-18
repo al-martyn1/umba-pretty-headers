@@ -7,6 +7,10 @@
 #include "marty_clang_helpers.h"
 
 
+#if defined(WIN32) || defined(_WIN32)
+    #include <shellapi.h>
+#endif
+
 AppConfig    appConfig;
 
 
@@ -62,6 +66,15 @@ int operator()( const std::string                               &a           //!
             argsParser.quet = true;
             appConfig.setOptQuet(true);
         }
+
+        #if defined(WIN32) || defined(_WIN32)
+        else if (opt.isOption("home") || opt.setDescription("Open homepage"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            ShellExecuteA( 0, "open", appHomeUrl, 0, 0, SW_SHOW );
+            return 1;
+        }
+        #endif
 
         else if (opt.setParam("LEVEL", 1, "0/quet/no/q|" 
                                           "1/normal/n|" 
