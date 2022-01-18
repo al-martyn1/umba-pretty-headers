@@ -75,6 +75,18 @@ const int keepUnknownVars                     = smf_KeepUnknownVars             
 
 
 
+//----------------------------------------------------------------------------
+template<typename StringType>
+struct IMacroTextGetter
+{
+
+    virtual bool operator()(const StringType &name, StringType &text) const = 0;
+};
+
+//-----------------------------------------------------------------------------
+
+
+
 //-----------------------------------------------------------------------------
 namespace util{
 
@@ -147,17 +159,18 @@ template < typename CharType
    }
 
 //-----------------------------------------------------------------------------
-template<typename StringType, typename OrgGetter>
-struct MacroTextGetterProxy
+template<typename StringType /* , typename OrgGetter */ >
+struct MacroTextGetterProxy : public IMacroTextGetter<StringType>
 {
     const std::map<StringType,StringType> &m;
-    const OrgGetter                       &orgGetter;
+    //const OrgGetter                       &orgGetter;
+    const IMacroTextGetter<StringType>    &orgGetter;
 
     MacroTextGetterProxy( const std::map<StringType,StringType> &_m
-                        , const OrgGetter                       &_orgGetter
+                        , const IMacroTextGetter<StringType>    &_orgGetter
                         ) : m(_m), orgGetter(_orgGetter) {}
 
-    bool operator()(const StringType &name, StringType &text) const
+    virtual bool operator()(const StringType &name, StringType &text) const override
     {
         if (getMacroTextFromMap(m, name, text))
             return true;
@@ -190,16 +203,15 @@ StringType toString(IntType i)
 
 
 //-----------------------------------------------------------------------------
-template < typename MacroTextGetter
-         , typename CharType
+template < typename CharType
          , typename Traits
          , typename Allocator
          >
 ::std::basic_string<CharType, Traits, Allocator>
-substMacros( const ::std::basic_string<CharType, Traits, Allocator>       &str
-           , const MacroTextGetter                                        &getMacroText
-           , int                                                          flags
-           , std::set< ::std::basic_string<CharType, Traits, Allocator> > &usedMacros
+substMacros( const ::std::basic_string<CharType, Traits, Allocator>                          &str
+           , const IMacroTextGetter< ::std::basic_string<CharType, Traits, Allocator> >      &getMacroText
+           , int                                                                             flags
+           , std::set< ::std::basic_string<CharType, Traits, Allocator> >                    &usedMacros
            )
    {
     namespace util = ::umba::macros::util;
@@ -344,10 +356,15 @@ substMacros( const ::std::basic_string<CharType, Traits, Allocator>       &str
                         StringType paramMacroName(1, (CharType)'%'); paramMacroName.append(idxStr);
                         tmpMacros[ paramMacroName ] = parts[pi];
                        }
-                    //!!! Чего-то с прокси не срослось - компилятор помирает от вложенности шаблонов
-                    // res.append(substMacros(macroText, util::MacroTextGetterProxy(tmpMacros, getMacroText), flags, usedMacrosCopy));
-                    //!!! Пока не будем ничего делать, потом разберёмся
-                    res.append(macroText);
+                    
+                    #if 1
+                        //!!! Чего-то с прокси не срослось - компилятор помирает от вложенности шаблонов
+                        // Порешал, сделав getter нешаблонным параметром с виртуальным оператором ()
+                        res.append(substMacros(macroText, util::MacroTextGetterProxy<StringType>(tmpMacros, getMacroText), flags, usedMacrosCopy));
+                    #else
+                        //!!! Пока не будем ничего делать, потом разберёмся
+                        res.append(macroText);
+                    #endif
                     continue;
                    }
                }

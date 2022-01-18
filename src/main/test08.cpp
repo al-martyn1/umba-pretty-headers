@@ -79,7 +79,7 @@ void testMacro( const std::string &text, const MacroGetter &getter, int flags )
 
 void testMask(const std::string &testRegexText, const std::string &testMaskStr, bool useAnchors)
 {
-    std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr, useAnchors );
+    std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr /* , useAnchors */  );
     std::string testRegexTextNorm = umba::filename::normalizePathSeparators(testRegexText,'/');
 
     std::cout << "Regex test\n";
@@ -115,9 +115,12 @@ int main(int argc, char* argv[])
 
     std::map<std::string,std::string>  macroTexts;
 
-    macroTexts["TestMacro" ] = "test";
+    macroTexts["TestMacro" ] = "<test>, calling $(OtherMacro)";
     macroTexts["OtherMacro"] = "other test macro";
+    macroTexts["MacroWithArgs"] = "Args - $(%0), $(%1) - $(%2)!";
 
+
+    testMacro( "$(MacroWithArgs:$(OtherMacro):$(TestMacro))", MacroTextFromMapOrEnv<std::string>(macroTexts), keepUnknownVars|argsAllowed );
 
     testMacro( "$(TestMacro) - $(OtherMacro)", MacroTextFromEnv     <std::string>(), substFlagsDefault );
     testMacro( "$(TestMacro) - $(OtherMacro)", MacroTextFromMap     <std::string>(macroTexts), substFlagsDefault );
@@ -133,6 +136,7 @@ int main(int argc, char* argv[])
     testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromMap     <std::string>(macroTexts), substFlagsDefault );
     testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromMap     <std::string>(macroTexts), keepUnknownVars );
     testMacro( "$(HOMEDRIVE)$(HOMEPATH)/$(TestMacro)", MacroTextFromMapOrEnv<std::string>(macroTexts), keepUnknownVars );
+
 
     /*
     MacroTextFromMap
