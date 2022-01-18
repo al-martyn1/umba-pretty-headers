@@ -1,5 +1,21 @@
 @SETLOCAL ENABLEDELAYEDEXPANSION
 
+@rem VS150COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\
+@rem VS160COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
+
+@rem echo %VS150COMNTOOLS%
+@rem C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\
+
+@set MSVC2017_COMNTOOLS=%VS150COMNTOOLS%\
+@set MSVC2019_COMNTOOLS=%VS160COMNTOOLS%\
+
+@set MSVC2017_VSINSTALLDIR=%MSVC2017_COMNTOOLS%\..\..\
+@set MSVC2019_VSINSTALLDIR=%MSVC2019_COMNTOOLS%\..\..\
+
+@set MSVC2017_VSIDEInstallDir=%MSVC2017_VSINSTALLDIR%\Common7\IDE\VC\
+@set MSVC2019_VSIDEInstallDir=%MSVC2019_VSINSTALLDIR%\Common7\IDE\VC\
+
+
 @call copy_distr_conf_to_msvc2019_out.bat
 
 
@@ -31,7 +47,9 @@
 goto END
 
 
+
 :MK_DISTR
+
 @set PLATFORM=%1
 @set CONFIGURATION=%2
 @set QTSUBPATH=%3
@@ -39,22 +57,55 @@ goto END
 @call :LoCase WINDEPLOYQTRELOPT
 @set LCCONFIGURATION=%CONFIGURATION%
 @call :LoCase LCCONFIGURATION
+
 @echo Make distr for %PLATFORM%-%CONFIGURATION%, Qt Config: %QTSUBPATH%, deploy opt - %WINDEPLOYQTRELOPT%
 
 @if exist %DISTR_ROOT%\%PLATFORM% rd /S /Q %DISTR_ROOT%\%PLATFORM%
+
 @set BUILD_OUTPUT=%BUILD_OUTPUT_ROOT%\%PLATFORM%\%CONFIGURATION%
 @set TARGET_ROOT=%DISTR_ROOT%\%PLATFORM%\%CONFIGURATION%\umba-pretty-headers
+@set RD_ROOT=%DISTR_ROOT%\%PLATFORM%
+@set ZIP_ROOT=%DISTR_ROOT%\%PLATFORM%\%CONFIGURATION%
+
 @mkdir %TARGET_ROOT%\bin
 @xcopy /Y /S /E /I /F /R _distr_conf\conf\* %TARGET_ROOT%\conf
-@copy %BUILD_OUTPUT%\%MAIN_EXE_NAME%.exe %TARGET_ROOT%\bin\%MAIN_EXE_NAME%.exe
+@copy %BUILD_OUTPUT%\%MAIN_EXE_NAME%.exe     %TARGET_ROOT%\bin\%MAIN_EXE_NAME%.exe
+@copy %BUILD_OUTPUT%\umba-make-headers.exe   %TARGET_ROOT%\bin\umba-make-headers.exe
+@copy %BUILD_OUTPUT%\qt_stub.exe             %TARGET_ROOT%\bin\qt_stub.exe
+
+
+set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
+@rem set "VCIDEInstallDir=%MSVC2019_VSIDEInstallDir%\VC"
+
 @set WINDEPLOYQT=%MSVC2019_QTROOT%\%QTSUBPATH%\bin\windeployqt.exe
-@rem %WINDEPLOYQT% >windeployqt.txt
-@rem %WINDEPLOYQT% --%WINDEPLOYQTRELOPT% --compiler-runtime %TARGET_ROOT%\bin\  > windeployqt-%PLATFORM%-%CONFIGURATION%.log 2>&1
+@%WINDEPLOYQT% >windeployqt.txt
+
+rem set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
+@%WINDEPLOYQT% --%WINDEPLOYQTRELOPT% --compiler-runtime %TARGET_ROOT%\bin\  > windeployqt-%PLATFORM%-%CONFIGURATION%.log 2>&1
+
+@del %TARGET_ROOT%\bin\qt_stub.exe
+@rd /S /Q   %TARGET_ROOT%\bin\translations
+@del /S /Q  %TARGET_ROOT%\bin\Qt5*.dll
+
 @set ZIPDISTRNAME=umba-pretty-headers_%PLATFORM%_%LCCONFIGURATION%.zip
 @echo Zip: %ZIPDISTRNAME%
-@rem CALL :M1 param1
+
+@set ZIP_TARGET_FOLDER=%TARGET_ROOT%\..
+@echo ZIP_TARGET_FOLDER: %ZIP_TARGET_FOLDER%
+@rem Be good zip %DISTR_ROOT%\%ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip %TARGET_ROOT%
+@rem zip %ZIP_ROOT%\%ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip %TARGET_ROOT%
+@cd %ZIP_TARGET_FOLDER%
+@zip %ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip umba-pretty-headers
+@move %ZIPDISTRNAME% ..\..
+@cd ..\..\..
+@rem echo RD_ROOT = %RD_ROOT%
+@rd /S /Q %RD_ROOT%
 
 @exit /b
+
+
+
+
 
 @rem https://www.robvanderwoude.com/battech_convertcase.php
 :LoCase
@@ -87,6 +138,8 @@ goto END
 @SET %~1=!%~1:Y=y!
 @SET %~1=!%~1:Z=z!
 @exit /b
+
+
 
 
 :END

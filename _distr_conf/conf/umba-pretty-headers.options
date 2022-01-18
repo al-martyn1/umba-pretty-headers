@@ -78,8 +78,12 @@
 
 # Exclude macros
 
-# Include Guards
+# Include guards
 -N=*_H^
+
+# "System" include guards or other system defines
+-N=^__?*^
+
 
 # Misc compat's macros
 -N=^_alloca^

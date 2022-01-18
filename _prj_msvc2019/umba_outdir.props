@@ -1,0 +1,7 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UMBA_OUTDIR>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)</UMBA_OUTDIR>
+    <!-- $(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\ -->
+    <!-- $(UMBA_OUTDIR)\ -->
+  </PropertyGroup>
+</Project>

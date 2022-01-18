@@ -24,6 +24,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(ProjectDir)\umba_msvcver.props" />
+  <Import Project="$(ProjectDir)\umba_outdir.props" />
   <Import Project="$(ProjectDir)\umba_boost.props" />
   <Import Project="$(ProjectDir)\umba_qt.props" />
   <Import Project="$(ProjectDir)\umba_llvm.props" />
@@ -45,23 +46,23 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <OutDir>$(UMBA_OUTDIR)\</OutDir>
+    <IntDir>$(UMBA_OUTDIR)\_$(ProjectName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <OutDir>$(UMBA_OUTDIR)\</OutDir>
+    <IntDir>$(UMBA_OUTDIR)\_$(ProjectName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <OutDir>$(UMBA_OUTDIR)\</OutDir>
+    <IntDir>$(UMBA_OUTDIR)\_$(ProjectName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\_$(ProjectName)\</IntDir>
+    <OutDir>$(UMBA_OUTDIR)\</OutDir>
+    <IntDir>$(UMBA_OUTDIR)\_$(ProjectName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc</IncludePath>
   </PropertyGroup>
   <ImportGroup Label="ExtensionSettings" />
