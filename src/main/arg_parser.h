@@ -311,7 +311,7 @@ int operator()( const std::string                               &a           //!
                 return 0;
             }
 
-        else if (opt.isOption("no-output") || opt.setDescription("Do not actually write output files."))
+        else if (opt.isOption("no-output") || opt.isOption("dry-run") || opt.setDescription("Do not actually write output files. Simulation mode. Behave normally, but do not copy/creater/update any files."))
             {
                 if (argsParser.hasHelpOption) return 0;
                 appConfig.setOptNoOutput(true);
