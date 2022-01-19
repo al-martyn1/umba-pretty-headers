@@ -18,6 +18,16 @@
 -X=*\_qt_headers\*
 -X=^_qt_headers\*
 
+-X=*\qt5_headers\*
+-X=^qt5_headers\*
+-X=*\_qt5_headers\*
+-X=^_qt5_headers\*
+
+-X=*\qt6_headers\*
+-X=^qt6_headers\*
+-X=*\_qt6_headers\*
+-X=^_qt6_headers\*
+
 
 ## Standard ignored types
 
