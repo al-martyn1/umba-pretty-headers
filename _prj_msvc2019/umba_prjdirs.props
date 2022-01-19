@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UMBA_OUTDIR>$(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)</UMBA_OUTDIR>
+    <!-- $(SolutionDir)\.out\$(UMBA_MSVCVER)\$(PlatformShortName)\$(Configuration)\ -->
+    <!-- $(UMBA_OUTDIR)\ -->
+
+    <UMBA_INC_DIRS>$(ProjectDir)\..\src;$(ProjectDir)\..\_libs;$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\_libs\mem_pools\inc</UMBA_INC_DIRS>
+    <!--  ;$(SolutionDir)\..\..;$(SolutionDir)\zulibs;$(SolutionDir)\src;$(SolutionDir)\zulibs\sfmt\inc -->
+    <!-- ;$(ProjectDir)\..\_libs\sfmt\inc;$(ProjectDir)\..\..;$(ProjectDir)\../src;$(ProjectDir)\../xlibs;$(ProjectDir)\..\_libs\sfmt\inc -->
+  </PropertyGroup>
+</Project>
