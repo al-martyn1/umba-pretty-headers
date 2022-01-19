@@ -22,7 +22,8 @@
 @set DISTR_ROOT=.distr
 @if not exist %DISTR_ROOT% mkdir %DISTR_ROOT%
 
-@set MAIN_EXE_NAME=umba-pretty-headers
+@set DISTR_NAME=umba-pretty-headers
+@set MAIN_EXE_NAME=%DISTR_NAME%
 @set BUILD_OUTPUT_ROOT=.out\msvc2019
 
 
@@ -87,7 +88,7 @@ rem set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
 @rd /S /Q   %TARGET_ROOT%\bin\translations
 @del /S /Q  %TARGET_ROOT%\bin\Qt5*.dll
 
-@set ZIPDISTRNAME=umba-pretty-headers_windows_%PLATFORM%_%LCCONFIGURATION%.zip
+@set ZIPDISTRNAME=%DISTR_NAME%_windows_%PLATFORM%_%LCCONFIGURATION%.zip
 @echo Zip: %ZIPDISTRNAME%
 
 @set ZIP_TARGET_FOLDER=%TARGET_ROOT%\..
@@ -95,7 +96,7 @@ rem set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
 @rem Be good zip %DISTR_ROOT%\%ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip %TARGET_ROOT%
 @rem zip %ZIP_ROOT%\%ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip %TARGET_ROOT%
 @cd %ZIP_TARGET_FOLDER%
-@zip %ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip umba-pretty-headers
+@zip %ZIPDISTRNAME% -r %ZIP_TARGET_FOLDER%.zip %DISTR_NAME%
 @move %ZIPDISTRNAME% ..\..
 @cd ..\..\..
 @rem echo RD_ROOT = %RD_ROOT%
