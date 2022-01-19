@@ -52,6 +52,7 @@ StringType expandSimpleMaskToEcmaRegex( StringType s, bool useAnchoring = false,
 
     // https://docs.microsoft.com/en-us/previous-versions/windows/desktop/indexsrv/ms-dos-and-windows-wildcard-characters
     // https://en.cppreference.com/w/cpp/regex/ecmascript
+    // https://developer.mozilla.org/ru/docs/Web/JavaScript/Guide/Regular_Expressions
 
     // The assertion ^ (beginning of line) matches
     //  
@@ -155,12 +156,29 @@ bool regexMatch(const StringType &text, const std::basic_regex<typename StringTy
 }
 #endif
 
-template< typename StringType > inline
-bool regexMatch(const StringType &text, const std::basic_regex<typename StringType::value_type> &r)
+template< typename CharType > inline
+bool regexMatch(const std::basic_string<CharType> &text, const std::basic_regex<typename CharType> &r
+               , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
+               )
 {
     try
     {
-        return std::regex_match( text, r );
+        return std::regex_match( text, r, flags );
+    }
+    catch(...)
+    {}
+
+    return false;
+}
+
+template< typename CharType > inline
+bool regexMatch(const std::vector<CharType> &text, const std::basic_regex<typename CharType> &r
+               , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
+               )
+{
+    try
+    {
+        return std::regex_match( text.begin(), text.end(), r, flags );
     }
     catch(...)
     {}
@@ -170,10 +188,21 @@ bool regexMatch(const StringType &text, const std::basic_regex<typename StringTy
 
 
 //----------------------------------------------------------------------------
-template< typename StringType > inline
-bool regexMatch(const StringType &text, const StringType &r)
+template< typename CharType > inline
+bool regexMatch(const std::basic_string<CharType> &text, const std::basic_string<CharType> &r
+               , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
+               )
 {
-    return regexMatch(text, std::basic_regex<typename StringType::value_type>(r));
+    return regexMatch(text, std::basic_regex<typename CharType>(r));
+}
+
+//----------------------------------------------------------------------------
+template< typename CharType > inline
+bool regexMatch(const std::vector<CharType> &text, const std::basic_string<CharType> &r
+               , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
+               )
+{
+    return regexMatch(text, std::basic_regex<CharType>(r));
 }
 
 //----------------------------------------------------------------------------

@@ -149,49 +149,6 @@ size_t formatIntImpl(IntType val, BaseType base, bool uppercase, char *pBuf, int
     return formatIntImpl(val, base, uppercase ? upperDigits : lowerDigits, pBuf, width, fillCh, groupSize, groupSep, grpSepCounter, digitsCounter, std::is_signed<IntType>());
 }
 
-/*
-template<typename IntType, typename BaseType>
-std::string formatInt( IntType val, BaseType base, int width = 0, char fillCh = ' ')
-{
-    char buf[130];
-    size_t len = formatIntImpl(val, base, false, buf, width, fillCh);
-    return std::string(buf, len);
-}
-
-template<typename IntType, typename BaseType>
-void testFormatInt( IntType val, BaseType base, int width = 0, char fillCh = ' ' )
-{
-    using std::cout;
-    switch(base)
-    {
-        case  8: cout<<std::oct; break;
-        case 10: cout<<std::dec; break;
-        case 16: cout<<std::hex; break;
-        //default:
-    };
-
-    cout<<val<<" = "<<formatInt( val, base, width, fillCh )<<"\n";
-}
-
-int main(int argc, char* argv[])
-   {
-    using std::cout;
-
-    testFormatInt( -25 ,  8 );
-    testFormatInt( -25 , 10 );
-    testFormatInt( -25 , 16 );
-    testFormatInt(  25u,  8 );
-    testFormatInt(  25u, 10 );
-    testFormatInt(  25u, 16 );
-    testFormatInt(  INT_MIN, 10 );
-
-    unsigned u25 = 25;
-    testFormatInt(  u25, 16, sizeof(u25)*2, '0' );
-
-    return 0;
-   }
-*/
-
 
 }; // namespace format_utils
 
