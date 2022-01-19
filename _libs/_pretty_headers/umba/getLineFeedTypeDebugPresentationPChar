@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::getLineFeedTypeDebugPresentationPChar
+
+#include <umba/linefeedtype.h>
+

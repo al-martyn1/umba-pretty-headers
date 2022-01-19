@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_COUNT_OF
+
+#include <umba/preprocessor.h>
+

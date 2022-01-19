@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::NumericVersionEx
+
+#include <umba/numeric_version.h>
+

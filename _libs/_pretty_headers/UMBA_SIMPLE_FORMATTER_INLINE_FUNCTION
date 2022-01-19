@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_SIMPLE_FORMATTER_INLINE_FUNCTION
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

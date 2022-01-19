@@ -1,0 +1,7 @@
+#pragma once
+
+// enum
+// umba::qtui::MessageType
+
+#include <umba/qtui-show-simple-message.h>
+

@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_PROGRAM_LOCATION_INIT_IMPL
+
+#include <umba/program_location.h>
+

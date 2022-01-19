@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::bits::itegralTypeFastSwap
+
+#include <umba/bits.h>
+

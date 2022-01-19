@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::omanip::SimpleManip
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

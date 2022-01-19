@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::qtui::showSimpleError
+
+#include <umba/qtui-show-simple-message.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::buildSomeTypeArrayImpl
+
+#include <umba/variadic_helpers.h>
+

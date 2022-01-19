@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::cpp::array_back_insert_iterator
+
+#include <umba/umba_cpp.h>
+

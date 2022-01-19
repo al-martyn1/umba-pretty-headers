@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::hasFirstPathSep
+
+#include <umba/filename.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::string_plus::split_by_class
+
+#include <umba/string_plus.h>
+

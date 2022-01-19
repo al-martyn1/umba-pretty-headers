@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::string_plus::linefeed_pred
+
+#include <umba/string_plus.h>
+

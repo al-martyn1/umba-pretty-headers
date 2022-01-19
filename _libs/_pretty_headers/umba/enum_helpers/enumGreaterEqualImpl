@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::enum_helpers::enumGreaterEqualImpl
+
+#include <umba/enum_helpers.h>
+

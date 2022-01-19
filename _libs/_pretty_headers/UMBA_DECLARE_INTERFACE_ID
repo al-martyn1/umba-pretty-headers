@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DECLARE_INTERFACE_ID
+
+#include <umba/interface.h>
+

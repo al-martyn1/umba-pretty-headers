@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::SimpleTimerHandler
+
+#include <umba/basic_interfaces_impl.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::makeLineViewSymbolIteratorLineEnd
+
+#include <umba/lineview.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::string_plus::lambda_return_arg
+
+#include <umba/string_plus.h>
+

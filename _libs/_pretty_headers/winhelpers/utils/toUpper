@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// winhelpers::utils::toUpper
+
+#include <umba/winconhelpers.h>
+

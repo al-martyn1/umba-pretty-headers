@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_CONSTEXPR
+
+#include <umba/preprocessor.h>
+

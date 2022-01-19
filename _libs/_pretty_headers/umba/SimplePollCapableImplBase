@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::SimplePollCapableImplBase
+
+#include <umba/basic_interfaces_impl.h>
+

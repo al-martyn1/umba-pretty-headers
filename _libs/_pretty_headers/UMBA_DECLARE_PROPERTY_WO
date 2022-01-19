@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DECLARE_PROPERTY_WO
+
+#include <umba/properties.h>
+

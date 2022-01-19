@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DECLARE_DEPRECATED_FN
+
+#include <umba/preprocessor.h>
+

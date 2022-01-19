@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DECLARE_WEAK_IRQ_HANDLER
+
+#include <umba/preprocessor.h>
+

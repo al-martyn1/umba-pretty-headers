@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::appendPathSepCopy
+
+#include <umba/filename.h>
+

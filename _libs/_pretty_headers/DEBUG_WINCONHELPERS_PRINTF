@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// DEBUG_WINCONHELPERS_PRINTF
+
+#include <umba/winconhelpers.h>
+

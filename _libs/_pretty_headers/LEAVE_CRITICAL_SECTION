@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// LEAVE_CRITICAL_SECTION
+
+#include <umba/critical_section.h>
+

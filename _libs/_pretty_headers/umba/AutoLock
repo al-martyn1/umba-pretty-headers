@@ -1,0 +1,12 @@
+#pragma once
+
+// class
+// umba::AutoLock
+
+#include <umba/autolock.h>
+
+// class
+// umba::AutoLock
+
+#include <umba/critical_section.h>
+

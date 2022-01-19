@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::macros::MacroTextFromEnv
+
+#include <umba/macro_helpers.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::dumpSolid
+
+#include <umba/dump.h>
+

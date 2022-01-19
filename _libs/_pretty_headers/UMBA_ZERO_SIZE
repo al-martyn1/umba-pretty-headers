@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_ZERO_SIZE
+
+#include <umba/preprocessor.h>
+

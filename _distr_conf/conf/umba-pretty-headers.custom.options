@@ -1,0 +1,18 @@
+## Custom global rules 
+
+
+# My prefix for non-standalone headers
+-X=*/zz_*
+
+# Ignore Keil C++11 support
+-X=*umba/stl_*
+
+# Что-то пролезло по ошибке в глобальное пространство имён - это локальные typedef'ы внутри функций
+-N=^CharType^
+-N=^StringType^
+-N=^TrimPred^
+-N=^ConditionalsCompareResult^
+-N=^NtQueryInformationProcessFnPtrT^
+#-N=^^
+
+

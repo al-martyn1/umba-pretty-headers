@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::cpp::is_space
+
+#include <umba/lineview.h>
+

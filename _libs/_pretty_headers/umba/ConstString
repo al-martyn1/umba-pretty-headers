@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::ConstString
+
+#include <umba/const_string.h>
+

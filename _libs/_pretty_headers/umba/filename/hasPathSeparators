@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::hasPathSeparators
+
+#include <umba/filename.h>
+

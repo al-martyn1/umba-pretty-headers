@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::hr_counter::isCounterAvailable
+
+#include <umba/hr_counter.h>
+

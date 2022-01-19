@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DEFINE_USER_LITERAL_TYPE
+
+#include <umba/user_literals.h>
+

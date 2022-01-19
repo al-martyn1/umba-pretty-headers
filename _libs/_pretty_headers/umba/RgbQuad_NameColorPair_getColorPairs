@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::RgbQuad_NameColorPair_getColorPairs
+
+#include <umba/rgbquad.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::time_service::HiresTimeTick
+
+#include <umba/time_service.h>
+

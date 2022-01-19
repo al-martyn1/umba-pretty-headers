@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::getNativePathListSep
+
+#include <umba/filename.h>
+

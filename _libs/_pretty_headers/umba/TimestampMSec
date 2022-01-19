@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::TimestampMSec
+
+#include <umba/timestamp.h>
+

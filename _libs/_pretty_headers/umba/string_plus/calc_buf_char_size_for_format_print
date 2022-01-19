@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::string_plus::calc_buf_char_size_for_format_print
+
+#include <umba/string_plus.h>
+

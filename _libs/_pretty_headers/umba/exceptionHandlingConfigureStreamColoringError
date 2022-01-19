@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::exceptionHandlingConfigureStreamColoringError
+
+#include <umba/exception.h>
+

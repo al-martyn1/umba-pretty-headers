@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::macros::getMacroTextFromMap
+
+#include <umba/macro_helpers.h>
+

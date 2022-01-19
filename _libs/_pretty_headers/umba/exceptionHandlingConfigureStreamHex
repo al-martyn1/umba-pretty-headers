@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::exceptionHandlingConfigureStreamHex
+
+#include <umba/exception.h>
+

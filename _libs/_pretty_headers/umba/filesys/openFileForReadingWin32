@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filesys::openFileForReadingWin32
+
+#include <umba/filesys.h>
+

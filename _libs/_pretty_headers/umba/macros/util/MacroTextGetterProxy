@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::macros::util::MacroTextGetterProxy
+
+#include <umba/macros.h>
+

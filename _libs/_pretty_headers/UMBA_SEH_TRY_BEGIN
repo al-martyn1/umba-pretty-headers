@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_SEH_TRY_BEGIN
+
+#include <umba/exception.h>
+

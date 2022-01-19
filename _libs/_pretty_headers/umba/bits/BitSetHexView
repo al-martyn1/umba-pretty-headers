@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::bits::BitSetHexView
+
+#include <umba/bits.h>
+

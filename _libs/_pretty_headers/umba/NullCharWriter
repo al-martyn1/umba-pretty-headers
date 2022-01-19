@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::NullCharWriter
+
+#include <umba/char_writers.h>
+

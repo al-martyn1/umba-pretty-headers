@@ -1,0 +1,7 @@
+#pragma once
+
+// enum
+// winhelpers::ConsoleType
+
+#include <umba/winconhelpers.h>
+

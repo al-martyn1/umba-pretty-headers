@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::SimpleIdleCapableImplBase
+
+#include <umba/basic_interfaces_impl.h>
+

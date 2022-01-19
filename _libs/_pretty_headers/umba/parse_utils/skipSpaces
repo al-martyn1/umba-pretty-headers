@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::parse_utils::skipSpaces
+
+#include <umba/parse_utils.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::isIniCommentLine
+
+#include <umba/ini.h>
+

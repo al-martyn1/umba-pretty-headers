@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::makeLeaveScopeExec
+
+#include <umba/scope_exec.h>
+

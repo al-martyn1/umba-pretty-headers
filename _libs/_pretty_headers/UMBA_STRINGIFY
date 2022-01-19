@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_STRINGIFY
+
+#include <umba/preprocessor.h>
+

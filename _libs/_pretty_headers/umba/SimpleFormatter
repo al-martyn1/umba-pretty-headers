@@ -1,0 +1,12 @@
+#pragma once
+
+// class
+// umba::SimpleFormatter
+
+#include <sfmt/inc/umba/simple_formatter.h>
+
+// class
+// umba::SimpleFormatter
+
+#include <umba/bits.h>
+

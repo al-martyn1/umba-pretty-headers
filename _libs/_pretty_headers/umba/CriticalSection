@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::CriticalSection
+
+#include <umba/critical_section.h>
+

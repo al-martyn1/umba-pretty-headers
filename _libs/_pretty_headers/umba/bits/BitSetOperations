@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::bits::BitSetOperations
+
+#include <umba/bits.h>
+

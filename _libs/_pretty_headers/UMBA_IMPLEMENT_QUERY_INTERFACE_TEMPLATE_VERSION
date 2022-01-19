@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_IMPLEMENT_QUERY_INTERFACE_TEMPLATE_VERSION
+
+#include <umba/interface.h>
+

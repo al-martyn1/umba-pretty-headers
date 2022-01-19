@@ -34,8 +34,6 @@
 /vcxproj_msvc2019/*.user
 /tests/*.txt
 /tests/test.bat
-/_libs/pretty_headers
-/_libs/_pretty_headers
 /_prj_msvc2019/*.user
 /.distr
 /*.log

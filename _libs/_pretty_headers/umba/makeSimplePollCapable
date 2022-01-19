@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::makeSimplePollCapable
+
+#include <umba/basic_interfaces_impl.h>
+

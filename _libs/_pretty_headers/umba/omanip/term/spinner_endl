@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::omanip::term::spinner_endl
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

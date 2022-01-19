@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::time_service::getCurTimeHires
+
+#include <umba/time_service.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::liv::LineViewDataInfo
+
+#include <umba/lineview.h>
+

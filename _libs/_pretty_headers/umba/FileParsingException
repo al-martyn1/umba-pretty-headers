@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::FileParsingException
+
+#include <umba/exception.h>
+

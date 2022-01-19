@@ -16,3 +16,7 @@ My First Language Frontend with LLVM Tutorial
 
 Clang Tutorial: Finding Declarations
   https://xinhuang.github.io/posts/2014-10-19-clang-tutorial-finding-declarations.html
+
+Makeheaders from Fossil
+https://habr.com/ru/company/ruvds/blog/599431/
+https://www.fossil-scm.org/home/doc/trunk/www/index.wiki

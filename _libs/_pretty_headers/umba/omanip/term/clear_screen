@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::omanip::term::clear_screen
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

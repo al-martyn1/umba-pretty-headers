@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::string_plus::not_pred
+
+#include <umba/string_plus.h>
+

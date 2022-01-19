@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::command_line::CommandLineOptionEnumInfo
+
+#include <umba/cmd_line.h>
+

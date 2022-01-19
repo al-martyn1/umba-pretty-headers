@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::macros::IMacroTextGetter
+
+#include <umba/macros.h>
+

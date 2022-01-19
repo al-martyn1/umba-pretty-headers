@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::getNativeNetworkPathPrefix
+
+#include <umba/filename.h>
+

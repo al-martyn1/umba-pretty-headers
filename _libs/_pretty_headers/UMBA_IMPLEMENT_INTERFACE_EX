@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_IMPLEMENT_INTERFACE_EX
+
+#include <umba/interface.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::macros::util::prepareMacroName
+
+#include <umba/macros.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::splitToLineInfos
+
+#include <umba/lineinfo.h>
+

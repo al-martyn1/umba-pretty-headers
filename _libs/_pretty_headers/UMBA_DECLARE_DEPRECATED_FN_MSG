@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DECLARE_DEPRECATED_FN_MSG
+
+#include <umba/preprocessor.h>
+

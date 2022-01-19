@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::utility::optional_shrink_to_fit
+
+#include <umba/utility.h>
+

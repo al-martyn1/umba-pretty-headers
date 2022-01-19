@@ -1,0 +1,7 @@
+#pragma once
+
+// enum
+// umba::filesys::FileType
+
+#include <umba/filesys.h>
+

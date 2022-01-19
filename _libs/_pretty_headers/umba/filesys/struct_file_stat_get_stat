@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filesys::struct_file_stat_get_stat
+
+#include <umba/filesys.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::ConstStringCaseSensitive
+
+#include <umba/const_string.h>
+

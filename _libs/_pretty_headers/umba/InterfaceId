@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::InterfaceId
+
+#include <umba/interface.h>
+

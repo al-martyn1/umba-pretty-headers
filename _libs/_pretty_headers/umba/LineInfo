@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::LineInfo
+
+#include <umba/lineinfo.h>
+

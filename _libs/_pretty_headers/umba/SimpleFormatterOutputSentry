@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::SimpleFormatterOutputSentry
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

@@ -1,21 +1,3 @@
-## Custom ignored files
-
-# My prefix for non-standalone headers
--X=*/zz_*
-
-# Keil C++11 support
--X=*umba/stl_*
-
-# Что-то пролезло по ошибке в глобальное пространство имён - это локальные typedef'ы внутри функций
--N=^CharType^
--N=^StringType^
--N=^TrimPred^
--N=^ConditionalsCompareResult^
--N=^NtQueryInformationProcessFnPtrT^
-#-N=^^
-
-
-
 
 # Лишнее отбрасываем, чтобы долго не тупило, для тестов достаточно нескольких файлов
 #-X=*_libs\umba\a*

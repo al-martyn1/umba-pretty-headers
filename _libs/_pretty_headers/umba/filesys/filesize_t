@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::filesys::filesize_t
+
+#include <umba/filesys.h>
+

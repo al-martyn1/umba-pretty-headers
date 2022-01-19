@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::flag_helpers::util::getAllFlags
+
+#include <umba/flag_helpers.h>
+

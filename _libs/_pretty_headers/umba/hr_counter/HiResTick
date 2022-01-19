@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::hr_counter::HiResTick
+
+#include <umba/hr_counter.h>
+

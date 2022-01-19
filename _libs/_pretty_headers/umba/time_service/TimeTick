@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::time_service::TimeTick
+
+#include <umba/time_service.h>
+

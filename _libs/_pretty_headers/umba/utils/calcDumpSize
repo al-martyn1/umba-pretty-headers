@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::utils::calcDumpSize
+
+#include <umba/dump.h>
+

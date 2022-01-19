@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_LEGACY_UART_CHAR_WRITTER_LOCK
+
+#include <umba/char_writers.h>
+

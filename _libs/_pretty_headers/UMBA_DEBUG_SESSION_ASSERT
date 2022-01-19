@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DEBUG_SESSION_ASSERT
+
+#include <umba/debug_helpers.h>
+

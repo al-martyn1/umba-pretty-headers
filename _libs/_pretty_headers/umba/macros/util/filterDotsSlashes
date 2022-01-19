@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::macros::util::filterDotsSlashes
+
+#include <umba/macros.h>
+

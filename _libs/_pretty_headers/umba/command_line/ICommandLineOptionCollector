@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::command_line::ICommandLineOptionCollector
+
+#include <umba/cmd_line.h>
+

@@ -1,0 +1,115 @@
+File: F:/_github/umba-pretty-headers/_libs/sfmt/inc/umba/simple_formatter.h
+    UMBA_SIMPLE_FORMATTER_H - skipped due '*_H^' (.*_H$)
+    UMBA_SIMPLE_FORMATTER_INLINE_FUNCTION
+File: F:/_github/umba-pretty-headers/_libs/umba/alloca.h
+    _alloca - skipped due '^_alloca^' (^_alloca$)
+    alloca - skipped due '^alloca^' (^alloca$)
+File: F:/_github/umba-pretty-headers/_libs/umba/assert.h
+    UMBA_ASSERT
+    UMBA_ASSERT_FAIL
+    UMBA_STATIC_ASSERT
+    UMBA_STATIC_ASSERT2
+    UMBA_STATIC_ASSERT3
+    UMBA_STATIC_ASSERT_MSG
+File: F:/_github/umba-pretty-headers/_libs/umba/char_writers.h
+    UMBA_LEGACY_UART_CHAR_WRITTER_LOCK
+File: F:/_github/umba-pretty-headers/_libs/umba/critical_section.h
+    ENTER_CRITICAL_SECTION
+    EXIT_CRITICAL_SECTION
+    LEAVE_CRITICAL_SECTION
+    UMBA_CRITICAL_SECTION
+    UMBA_CRITICAL_SECTION_EX
+    UMBA_CRITICAL_SECTION_EX2
+    UMBA_CRITICAL_SECTION_EX_IMPL2
+    UMBA_FORCE_USE_INTERRUPT_CS
+    UMBA_NO_GLOBAL_CS
+File: F:/_github/umba-pretty-headers/_libs/umba/debug_helpers.h
+    UMBA_DEBUG_SESSION_ASSERT
+    UMBA_DEBUG_SESSION_ASSERT_FAIL
+File: F:/_github/umba-pretty-headers/_libs/umba/errors.h
+    UMBA_DECLARE_ERROR_CODE_ALIAS
+File: F:/_github/umba-pretty-headers/_libs/umba/exception.h
+    UMBA_EXCEPTION_TO_STREAM_PRINT
+    UMBA_EXCEPTION_TO_STREAM_PRINTLN
+    UMBA_SEH_CATCH_BEGIN
+    UMBA_SEH_CATCH_CONTINUE_SEARCH_BEGIN
+    UMBA_SEH_CATCH_CONTINUE_SEARCH_END
+    UMBA_SEH_CATCH_END
+    UMBA_SEH_TRY_BEGIN
+    UMBA_SEH_TRY_END
+    UMBA_UNKNOWN_EXCEPTION_TO_STREAM_PRINT
+    UMBA_UNKNOWN_EXCEPTION_TO_STREAM_PRINTLN
+File: F:/_github/umba-pretty-headers/_libs/umba/filesys.h
+    struct_file_stat - skipped due '^struct_file_stat^' (^struct_file_stat$)
+File: F:/_github/umba-pretty-headers/_libs/umba/i_char_writer.h
+    UMBA_I_CHAR_WRITER_H - skipped due '*_H^' (.*_H$)
+File: F:/_github/umba-pretty-headers/_libs/umba/interface.h
+    UMBA_DECLARE_INTERFACE_ID
+    UMBA_IMPLEMENTS
+    UMBA_IMPLEMENT_INTERFACE
+    UMBA_IMPLEMENT_INTERFACE_EX
+    UMBA_IMPLEMENT_QUERY_INTERFACE_TEMPLATE_VERSION
+    UMBA_INHERITS
+    UMBA_INTERFACE
+File: F:/_github/umba-pretty-headers/_libs/umba/preprocessor.h
+    NUM_ELEM
+    UMBA_ALIGNED
+    UMBA_CONSTEXPR
+    UMBA_COUNT_OF
+    UMBA_DECLARE_DEPRECATED_FN
+    UMBA_DECLARE_DEPRECATED_FN_MSG
+    UMBA_DECLARE_WEAK_FUNCTION
+    UMBA_DECLARE_WEAK_IRQ_HANDLER
+    UMBA_DEPRECATED
+    UMBA_DEPRECATED_MSG
+    UMBA_EXPLICIT
+    UMBA_FORCE_INLINE
+    UMBA_FORCE_INLINE_DECLARATION
+    UMBA_FORCE_INLINE_MEMBER
+    UMBA_NON_COPYABLE_CLASS_STRICT
+    UMBA_NON_COPYABLE_STRUCT_STRICT
+    UMBA_SIZE_T
+    UMBA_STD_SIZE_T
+    UMBA_STRINGIFY
+    UMBA_STRINGIFY_HELPER
+    UMBA_USED
+    UMBA_WEAK_IRQ_HANDLER
+    UMBA_ZERO_SIZE
+File: F:/_github/umba-pretty-headers/_libs/umba/program_location.h
+    UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME
+    UMBA_PROGRAM_LOCATION_INIT
+    UMBA_PROGRAM_LOCATION_INIT_IMPL
+File: F:/_github/umba-pretty-headers/_libs/umba/properties.h
+    UMBA_DECLARE_PROPERTY_WO
+File: F:/_github/umba-pretty-headers/_libs/umba/stl.h
+    INT16_MAX - skipped due '^INT*_MAX^' (^INT.*_MAX$)
+    INT16_MIN - skipped due '^INT*_MIN^' (^INT.*_MIN$)
+    INT32_MAX - skipped due '^INT*_MAX^' (^INT.*_MAX$)
+    INT32_MIN - skipped due '^INT*_MIN^' (^INT.*_MIN$)
+    INT64_MAX - skipped due '^INT*_MAX^' (^INT.*_MAX$)
+    INT64_MIN - skipped due '^INT*_MIN^' (^INT.*_MIN$)
+    INT8_MAX - skipped due '^INT*_MAX^' (^INT.*_MAX$)
+    INT8_MIN - skipped due '^INT*_MIN^' (^INT.*_MIN$)
+    UINT16_MAX - skipped due '^UINT*_MAX^' (^UINT.*_MAX$)
+    UINT16_MIN - skipped due '^UINT*_MIN^' (^UINT.*_MIN$)
+    UINT32_MAX - skipped due '^UINT*_MAX^' (^UINT.*_MAX$)
+    UINT32_MIN - skipped due '^UINT*_MIN^' (^UINT.*_MIN$)
+    UINT64_MAX - skipped due '^UINT*_MAX^' (^UINT.*_MAX$)
+    UINT64_MIN - skipped due '^UINT*_MIN^' (^UINT.*_MIN$)
+    UINT8_MAX - skipped due '^UINT*_MAX^' (^UINT.*_MAX$)
+    UINT8_MIN - skipped due '^UINT*_MIN^' (^UINT.*_MIN$)
+File: F:/_github/umba-pretty-headers/_libs/umba/user_literals.h
+    UMBA_DEFINE_USER_LITERAL_TYPE
+File: F:/_github/umba-pretty-headers/_libs/umba/winconhelpers.h
+    DEBUG_WINCONHELPERS_PRINTF
+    DEBUG_WINCONHELPERS_WRITE_STR
+    S_IFCHR - skipped due '^S_IFCHR^' (^S_IFCHR$)
+    S_ISCHR - skipped due '^S_ISCHR^' (^S_ISCHR$)
+    UMBA_WCH_CONSOLETYPE_ANSI_TERMINAL
+    UMBA_WCH_CONSOLETYPE_FILE
+    UMBA_WCH_CONSOLETYPE_WINDOWS_CONSOLE
+    UNICODE - skipped due '^UNICODE^' (^UNICODE$)
+    _fileno - skipped due '^_fileno^' (^_fileno$)
+    _isatty - skipped due '^_isatty^' (^_isatty$)
+    _tell - skipped due '^_tell^' (^_tell$)
+    _write - skipped due '^_write^' (^_write$)

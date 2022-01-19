@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::LinePosInfo
+
+#include <umba/lineposinfo.h>
+

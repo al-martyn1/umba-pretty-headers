@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::readLines
+
+#include <umba/lineinfo.h>
+

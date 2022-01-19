@@ -1,0 +1,7 @@
+#pragma once
+
+// typedef
+// umba::hr_counter::HiResTickLong
+
+#include <umba/hr_counter.h>
+

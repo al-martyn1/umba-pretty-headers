@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_ALIGNED
+
+#include <umba/preprocessor.h>
+

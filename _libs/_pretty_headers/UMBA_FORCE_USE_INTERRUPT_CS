@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_FORCE_USE_INTERRUPT_CS
+
+#include <umba/critical_section.h>
+

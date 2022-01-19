@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::RgbQuad
+
+#include <umba/rgbquad.h>
+

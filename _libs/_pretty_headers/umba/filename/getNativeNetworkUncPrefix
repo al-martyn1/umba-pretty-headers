@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::getNativeNetworkUncPrefix
+
+#include <umba/filename.h>
+

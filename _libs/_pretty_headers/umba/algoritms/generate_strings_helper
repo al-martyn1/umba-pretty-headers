@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::algoritms::generate_strings_helper
+
+#include <umba/algoritms.h>
+

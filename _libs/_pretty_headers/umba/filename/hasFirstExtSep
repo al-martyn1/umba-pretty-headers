@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::hasFirstExtSep
+
+#include <umba/filename.h>
+

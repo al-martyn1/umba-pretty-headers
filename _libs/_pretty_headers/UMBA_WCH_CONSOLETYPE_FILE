@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_WCH_CONSOLETYPE_FILE
+
+#include <umba/winconhelpers.h>
+

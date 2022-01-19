@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::FileCache
+
+#include <umba/filecache.h>
+

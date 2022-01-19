@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::regex_helpers::expandSimpleMaskToEcmaRegex
+
+#include <umba/regex_helpers.h>
+

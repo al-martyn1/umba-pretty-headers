@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::utility::has_reserve
+
+#include <umba/utility.h>
+

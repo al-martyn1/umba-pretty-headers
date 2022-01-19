@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::Result
+
+#include <umba/errors.h>
+

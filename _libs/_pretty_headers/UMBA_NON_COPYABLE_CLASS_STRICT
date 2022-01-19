@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_NON_COPYABLE_CLASS_STRICT
+
+#include <umba/preprocessor.h>
+

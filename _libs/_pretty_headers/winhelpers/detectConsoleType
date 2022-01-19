@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// winhelpers::detectConsoleType
+
+#include <umba/winconhelpers.h>
+

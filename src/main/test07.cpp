@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 
 
 
-    if (!appConfig.getOptQuet())
+    if (!appConfig.testVerbosity(VerbosityLevel::detailed))
     {
         if (!foundFiles.empty())
             printInfoLogSectionHeader(logMsg, "Files for Processing");
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
 
     // Phases: Init, Scaning, Processing, Generating
 
-    if (!appConfig.getOptQuet())
+    if (!appConfig.testVerbosity(VerbosityLevel::normal))
     {
         if (!foundFiles.empty())
         {

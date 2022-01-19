@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::omanip::defaultfloat
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::makeStringDebugPresentationStr
+
+#include <umba/linefeedtype.h>
+

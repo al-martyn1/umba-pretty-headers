@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::cpp::array_back_inserter
+
+#include <umba/umba_cpp.h>
+

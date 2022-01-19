@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::filename::stripFirstPathSepCopy
+
+#include <umba/filename.h>
+

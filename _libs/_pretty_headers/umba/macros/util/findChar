@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::macros::util::findChar
+
+#include <umba/macros.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::program_location::getArgv0_nc
+
+#include <umba/program_location.h>
+

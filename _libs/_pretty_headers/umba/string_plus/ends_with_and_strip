@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::string_plus::ends_with_and_strip
+
+#include <umba/string_plus.h>
+

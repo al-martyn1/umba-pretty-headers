@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::utils::dumpSingleByte
+
+#include <umba/dump.h>
+

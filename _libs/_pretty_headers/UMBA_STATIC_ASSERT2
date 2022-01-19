@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_STATIC_ASSERT2
+
+#include <umba/assert.h>
+

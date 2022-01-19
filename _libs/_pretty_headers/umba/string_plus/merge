@@ -1,0 +1,7 @@
+#pragma once
+
+// function
+// umba::string_plus::merge
+
+#include <umba/string_plus.h>
+

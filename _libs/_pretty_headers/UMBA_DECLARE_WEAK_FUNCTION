@@ -1,0 +1,8 @@
+#pragma once
+
+// pp-macro
+
+// UMBA_DECLARE_WEAK_FUNCTION
+
+#include <umba/preprocessor.h>
+

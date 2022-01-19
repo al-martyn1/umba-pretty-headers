@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::SimpleStdIfstreamIniFileReader
+
+#include <umba/ini.h>
+

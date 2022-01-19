@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::omanip::IntManipHelper
+
+#include <sfmt/inc/umba/simple_formatter.h>
+

@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::NameVersionEx
+
+#include <umba/name_version.h>
+

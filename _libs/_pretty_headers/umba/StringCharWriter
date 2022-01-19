@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::StringCharWriter
+
+#include <umba/char_writers.h>
+
