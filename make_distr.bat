@@ -6,6 +6,10 @@
 @rem echo %VS150COMNTOOLS%
 @rem C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\
 
+@rem https://devblogs.microsoft.com/setup/vswhere-available/
+@rem https://devblogs.microsoft.com/setup/fast-acquisition-of-vswhere/
+@rem https://github.com/Microsoft/vswhere
+
 @set MSVC2017_COMNTOOLS=%VS150COMNTOOLS%\
 @set MSVC2019_COMNTOOLS=%VS160COMNTOOLS%\
 
