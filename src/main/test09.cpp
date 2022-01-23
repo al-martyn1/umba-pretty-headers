@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
     pAppConfig = &appConfig;
 
-    if (appConfig.getOptShowConfig())
+    if (appConfig.testVerbosity(VerbosityLevel::config))
     {
         printInfoLogSectionHeader(logMsg, "Actual Config");
         // logMsg << appConfig;

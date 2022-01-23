@@ -65,6 +65,8 @@ struct AppConfig
     std::vector<std::string>                 excludeFilesMaskList;
     std::vector<std::string>                 excludeNamesMaskList;
 
+    std::vector<std::string>                 clangExtraArgs;
+
     std::vector<std::string>                 scanPaths;
     std::string                              outputPath;
 
@@ -150,7 +152,7 @@ struct AppConfig
     void setOptQuet( bool q ) { setVerbosityLevel(VerbosityLevel::quet);  }
     //bool getOptQuet( )  const { return testVerbosity(VerbosityLevel::quet); }
 
-    bool getOptShowConfig( )  const { return testVerbosity(VerbosityLevel::config); }
+    // bool getOptShowConfig( )  const { return testVerbosity(VerbosityLevel::config); }
 
     //------------------------------
 
@@ -285,6 +287,17 @@ struct AppConfig
 
         //------------------------------
 
+        s << "\n";
+        s << "Clang Extra Args:\n";
+        for(auto extraArg : clangExtraArgs)
+        {
+            s << "    " << extraArg << "\n";
+        }
+
+        s << "\n";
+
+        //------------------------------
+
         if (macros.empty())
             s << "Macros : <EMPTY>";
         else
@@ -366,6 +379,7 @@ struct AppConfig
         appConfig.verbosityLevel     = verbosityLevel;
 
         appConfig.excludeNamesMaskList = excludeNamesMaskList;
+        appConfig.clangExtraArgs     = clangExtraArgs;
 
 
         appConfig.allowedKinds       = allowedKinds;

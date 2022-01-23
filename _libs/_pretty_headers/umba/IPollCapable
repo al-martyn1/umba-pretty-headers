@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::IPollCapable
+
+#include <umba/basic_interfaces.h>
+

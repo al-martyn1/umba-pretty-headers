@@ -42,7 +42,8 @@
 #ifndef UMBA_INTERFACE
     #if (_MSC_VER >= 1100) && defined(__cplusplus)
         //#define UMBA_INTERFACE struct 
-        #define UMBA_INTERFACE struct __declspec(novtable)
+        #define UMBA_INTERFACE struct 
+        //__declspec(novtable)
     #else
         #define UMBA_INTERFACE struct
     #endif
@@ -219,7 +220,8 @@ InterfaceId interfaceIdOf(InterfaceType **ppInterface)
     устройства, и при повторных инициализациях предыдущая версия удаляется тупо через delete.
 
  */
-UMBA_INTERFACE IUnknown
+// UMBA_INTERFACE 
+struct IUnknown
 {
     UMBA_DECLARE_INTERFACE_ID(0x00000000);
 

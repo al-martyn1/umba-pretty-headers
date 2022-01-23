@@ -28,9 +28,9 @@
 #--no-output
 
 #--verbose=extra
-#--verbose=detailed
+--verbose=detailed
 #--verbose=config
---verbose=normal
+#--verbose=normal
 
 #--type
 #--function
@@ -44,4 +44,4 @@ compile_flags_09.txt
 
 --output-root=..\..\_libs\_pretty_headers
 
-
+#--clang-extra-arg=-v

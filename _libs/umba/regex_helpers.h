@@ -157,7 +157,7 @@ bool regexMatch(const StringType &text, const std::basic_regex<typename StringTy
 #endif
 
 template< typename CharType > inline
-bool regexMatch(const std::basic_string<CharType> &text, const std::basic_regex<typename CharType> &r
+bool regexMatch(const std::basic_string<CharType> &text, const std::basic_regex<CharType> &r
                , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
                )
 {
@@ -172,7 +172,7 @@ bool regexMatch(const std::basic_string<CharType> &text, const std::basic_regex<
 }
 
 template< typename CharType > inline
-bool regexMatch(const std::vector<CharType> &text, const std::basic_regex<typename CharType> &r
+bool regexMatch(const std::vector<CharType> &text, const std::basic_regex<CharType> &r
                , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
                )
 {
@@ -193,7 +193,7 @@ bool regexMatch(const std::basic_string<CharType> &text, const std::basic_string
                , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
                )
 {
-    return regexMatch(text, std::basic_regex<typename CharType>(r));
+    return regexMatch(text, std::basic_regex<CharType>(r));
 }
 
 //----------------------------------------------------------------------------

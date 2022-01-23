@@ -285,6 +285,8 @@ public:
           // clang::Decl::Kind::;
           // clang::Decl::Kind::;
 
+          //------------------------------
+
           #define HANDLE_DECL_IMPL(k) \
                       case k : declUsageMapHandled[k]++; processDeclaration(NamedDecl, marty::clang::helpers::getClangDeclKindName(k) /* #k */  ); break
 
@@ -295,6 +297,20 @@ public:
                       HANDLE_DECL_IMPL(clang::Decl::Kind::k)
 
 
+          //------------------------------
+
+          #define HANDLE_DECL_IMPL_NO_RECURSION(k) \
+                      case k : declUsageMapHandled[k]++; processDeclaration(NamedDecl, marty::clang::helpers::getClangDeclKindName(k) /* #k */  ); return false
+
+          #define HANDLE_DECL_EX_NO_RECURSION(k) \
+                      HANDLE_DECL_IMPL_NO_RECURSION(k)
+
+          #define HANDLE_DECL_NO_RECURSION(k) \
+                      HANDLE_DECL_IMPL_NO_RECURSION(clang::Decl::Kind::k)
+
+
+          //------------------------------
+
           #define UNHANDLED_DECL_IMPL(k) \
                       case k : declUsageMapUnhandled[k]++; unhadledDeclaration(NamedDecl, marty::clang::helpers::getClangDeclKindName(k) /* #k */  ); break
 
@@ -304,6 +320,8 @@ public:
           #define UNHANDLED_DECL(k) \
                       UNHANDLED_DECL_IMPL(clang::Decl::Kind::k)
 
+
+          //------------------------------
 
           #define SKIP_DECL_IMPL(k) \
                       case k : declUsageMapSkipped[k]++; skipDeclaration(NamedDecl, marty::clang::helpers::getClangDeclKindName(k) /* #k */  ); break
@@ -324,6 +342,7 @@ public:
               HANDLE_DECL    (TypeAliasTemplate);
               HANDLE_DECL    (VarTemplate);
               HANDLE_DECL    (CXXRecord);
+              //HANDLE_DECL_NO_RECURSION(CXXRecord);
               HANDLE_DECL    (Enum);
               HANDLE_DECL    (FunctionTemplate);
               HANDLE_DECL    (ClassTemplate);
@@ -406,6 +425,7 @@ public:
               //UNHANDLED_DECL();
 
               default:
+                   stream << "???UNKNOWN\n";
                    stream << "UnsignedKind: " << (unsigned)kind << "\n";
                    declUsageMapUnknowns[kind]++;
                    printDeclarationInfo(stream, NamedDecl);

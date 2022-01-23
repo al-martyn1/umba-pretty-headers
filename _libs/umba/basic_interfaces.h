@@ -27,7 +27,8 @@ namespace umba
 
 //-----------------------------------------------------------------------------
 //! Интерфейс полируемого
-UMBA_INTERFACE IPollCapable : UMBA_INHERITS umba::IUnknown
+// UMBA_INTERFACE 
+struct IPollCapable : UMBA_INHERITS umba::IUnknown
 {
 
     UMBA_DECLARE_INTERFACE_ID(0xB54FCCA9);
@@ -49,7 +50,8 @@ UMBA_INTERFACE IPollCapable : UMBA_INHERITS umba::IUnknown
 
 //-----------------------------------------------------------------------------
 //! Интерфейс ждуна
-UMBA_INTERFACE IIdleCapable : UMBA_INHERITS umba::IUnknown
+//UMBA_INTERFACE 
+struct IIdleCapable : UMBA_INHERITS umba::IUnknown
 {
 
     UMBA_DECLARE_INTERFACE_ID(0xD001476E);
@@ -67,7 +69,8 @@ UMBA_INTERFACE IIdleCapable : UMBA_INHERITS umba::IUnknown
 
 //-----------------------------------------------------------------------------
 //! "Something is complete" event handler UMBA_INTERFACE
-UMBA_INTERFACE ICompletionHandler : UMBA_INHERITS umba::IUnknown
+//UMBA_INTERFACE 
+struct ICompletionHandler : UMBA_INHERITS umba::IUnknown
 {
 
     UMBA_DECLARE_INTERFACE_ID(0xA1A1E85B);
@@ -90,7 +93,8 @@ UMBA_INTERFACE ICompletionHandler : UMBA_INHERITS umba::IUnknown
    различними ID.
    ID задается при создании таймера.
  */
-UMBA_INTERFACE ITimerHandler : UMBA_INHERITS umba::IUnknown
+//UMBA_INTERFACE 
+struct ITimerHandler : UMBA_INHERITS umba::IUnknown
 {
 
     UMBA_DECLARE_INTERFACE_ID(0xF10B5BD3);
@@ -110,7 +114,8 @@ UMBA_INTERFACE ITimerHandler : UMBA_INHERITS umba::IUnknown
 
 //-----------------------------------------------------------------------------
 //! Обработчик запросов пинга
-UMBA_INTERFACE IPingRequestHandler : UMBA_INHERITS umba::IUnknown
+//UMBA_INTERFACE 
+struct IPingRequestHandler : UMBA_INHERITS umba::IUnknown
 {
 
     UMBA_DECLARE_INTERFACE_ID(0x800459C3);
@@ -138,7 +143,8 @@ UMBA_INTERFACE IPingRequestHandler : UMBA_INHERITS umba::IUnknown
     Также этот интерфейс ничего не говорит о том, кто и как обрабатывает
     запросы пингов
  */
-UMBA_INTERFACE IPingRequestGenerator : UMBA_INHERITS umba::IUnknown
+//UMBA_INTERFACE 
+struct IPingRequestGenerator : UMBA_INHERITS umba::IUnknown
 {
 
     UMBA_DECLARE_INTERFACE_ID(0x6A8CA481);

@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 
     programLocationInfo = argsParser.programLocationInfo;
 
-    // Job completed - may be, --where option found
+    // Job completed - may be, --where option found, or something else
     if (argsParser.mustExit)
         return 0;
 
@@ -125,10 +125,11 @@ int main(int argc, char* argv[])
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
     pAppConfig = &appConfig;
 
-    if (appConfig.getOptShowConfig())
+
+    if (appConfig.testVerbosity(VerbosityLevel::config))
     {
         printInfoLogSectionHeader(logMsg, "Actual Config");
-        // logMsg << appConfig;
+        argsParser.printBuiltinFileNames( logMsg );
         appConfig.print(logMsg) << "\n";
     }
 
@@ -769,7 +770,8 @@ int main(int argc, char* argv[])
     {
         #if defined(WIN32) || defined(_WIN32)
 
-            clearScriptStream << "@del " << fileName << "\n";
+            std::string name = std::string("%~dp0\\") + umba::filename::makeCanonical(fileName);
+            clearScriptStream << "@if exist " << name << " del " << name << "\n";
 
         #else
             
@@ -780,7 +782,8 @@ int main(int argc, char* argv[])
     {
         #if defined(WIN32) || defined(_WIN32)
 
-            clearScriptStream << "@rd /Q /S " << folderName << "\n";
+            std::string name = std::string("%~dp0\\") + umba::filename::makeCanonical(folderName);
+            clearScriptStream << "@if exist " << name << " rd /Q /S %~dp0\\" << umba::filename::makeCanonical(folderName) << "\n";
 
         #else
             
