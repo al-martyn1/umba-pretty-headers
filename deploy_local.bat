@@ -3,8 +3,10 @@
 @if not exist %UMBA_TOOLS%\bin    mkdir %UMBA_TOOLS%\bin
 @if not exist %UMBA_TOOLS%\conf   mkdir %UMBA_TOOLS%\conf
 
-@copy /Y .out\msvc2019\x64\Release\umba-make-headers.exe     %UMBA_TOOLS%\bin\
-@copy /Y .out\msvc2019\x64\Release\umba-pretty-headers.exe   %UMBA_TOOLS%\bin\
+@set OUT_ROOT=.out\msvc2019\x64\Release
+
+@if exist %OUT_ROOT%\umba-make-headers.exe    copy /Y %OUT_ROOT%\umba-make-headers.exe     %UMBA_TOOLS%\bin\
+@if exist %OUT_ROOT%\umba-pretty-headers.exe  copy /Y %OUT_ROOT%\umba-pretty-headers.exe   %UMBA_TOOLS%\bin\
 
 @xcopy /Y /S /E /I /F /R _distr_conf\conf\*                  %UMBA_TOOLS%\conf
 

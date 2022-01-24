@@ -114,6 +114,10 @@
 -N=^UINT*_MIN^
 
 
+# Делаем вид, что WinSock.h уже подключен, иначе, если потом подключается 
+# WinSock2.h, то будет конфликт
+
+--clang-extra-arg=-D_WINSOCKAPI_
 
 
 
