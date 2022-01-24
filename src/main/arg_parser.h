@@ -310,6 +310,13 @@ int operator()( const std::string                               &a           //!
                 return 0;
             }
 
+        else if (opt.isOption("generate-git-add") || opt.setDescription("Generate git add script - .bat/.sh."))
+            {
+                if (argsParser.hasHelpOption) return 0;
+                appConfig.setOptGenerateGitAdd(true);
+                return 0;
+            }
+
         else if (opt.isOption("used-macros")    || opt.setDescription("Write all found (in PP conditions) macros to file '$(OutputRoot)/__used_macros.txt'."))
             {
                 if (argsParser.hasHelpOption) return 0;
@@ -359,7 +366,7 @@ int operator()( const std::string                               &a           //!
             
             if (!opt.hasArg())
             {
-                LOG_ERR_OPT<<"Add path to scan path list requires argument (--path)\n";
+                LOG_ERR_OPT<<"Adding path to scan path list requires argument (--path)\n";
                 return -1;
             }
 
@@ -369,6 +376,21 @@ int operator()( const std::string                               &a           //!
             return 0;
         }
 
+        else if ( opt.isOption("clang-extra-arg") || opt.isOption('G') || opt.setParam("CLANG-ARG")
+               || opt.setDescription("Pass extra arg to clang (after other explicitly taken args)"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"Adding extra args for passing to clang requires argument (--clang-extra-arg)\n";
+                return -1;
+            }
+
+            appConfig.clangExtraArgs.push_back(opt.optArg);
+
+            return 0;
+        }
 
         //------------
 

@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 
     programLocationInfo = argsParser.programLocationInfo;
 
-    // Job completed - may be, --where option found
+    // Job completed - may be, --where option found, or something else
     if (argsParser.mustExit)
         return 0;
 
@@ -125,10 +125,11 @@ int main(int argc, char* argv[])
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
     pAppConfig = &appConfig;
 
-    if (appConfig.getOptShowConfig())
+
+    if (appConfig.testVerbosity(VerbosityLevel::config))
     {
         printInfoLogSectionHeader(logMsg, "Actual Config");
-        // logMsg << appConfig;
+        argsParser.printBuiltinFileNames( logMsg );
         appConfig.print(logMsg) << "\n";
     }
 
@@ -738,6 +739,24 @@ int main(int argc, char* argv[])
     }
 
 
+    #if defined(WIN32) || defined(_WIN32)
+        std::string gitaddScriptSimpleName = "git-add.bat";
+    #else
+        std::string gitaddScriptSimpleName = "git-add.sh";
+    #endif
+
+    auto gitaddScriptFileName = appConfig.getOutputPath(gitaddScriptSimpleName);
+
+    std::ofstream gitaddScriptStream;
+    if (!appConfig.getOptNoOutput() && appConfig.getOptGenerateGitAdd())
+    {
+        gitaddScriptStream.open( gitaddScriptFileName, std::ios_base::out | std::ios_base::trunc );
+        if (!gitaddScriptStream)
+            LOG_WARN_OPT("create-file-failed") << "failed to create '" << gitaddScriptSimpleName << "' file: " << gitaddScriptFileName << endl;
+    }
+
+
+
     std::set<std::string> createdSubFoldersSet;
     for( auto path : createdFolders )
     {
@@ -765,11 +784,27 @@ int main(int argc, char* argv[])
             createdFilesSet.insert(name);
     }
 
+
+    for( auto fileName : createdFilesSet )
+    {
+        std::string name = umba::filename::makeCanonical(fileName);
+
+        #if defined(WIN32) || defined(_WIN32)
+
+            gitaddScriptStream << "@";
+
+        #endif
+
+        gitaddScriptStream << "git add " << name << "\n";
+    }
+
+
     for( auto fileName : createdFilesSet )
     {
         #if defined(WIN32) || defined(_WIN32)
 
-            clearScriptStream << "@del " << fileName << "\n";
+            std::string name = std::string("%~dp0\\") + umba::filename::makeCanonical(fileName);
+            clearScriptStream << "@if exist " << name << " del " << name << "\n";
 
         #else
             
@@ -780,7 +815,8 @@ int main(int argc, char* argv[])
     {
         #if defined(WIN32) || defined(_WIN32)
 
-            clearScriptStream << "@rd /Q /S " << folderName << "\n";
+            std::string name = std::string("%~dp0\\") + umba::filename::makeCanonical(folderName);
+            clearScriptStream << "@if exist " << name << " rd /Q /S %~dp0\\" << umba::filename::makeCanonical(folderName) << "\n";
 
         #else
             

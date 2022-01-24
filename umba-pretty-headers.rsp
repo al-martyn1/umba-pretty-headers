@@ -1,0 +1,17 @@
+--keep-generated-files
+--generate-clear-script
+--generate-git-add
+
+--used-macros
+--defined-macros
+
+--all
+--define
+
+-P=_libs
+--output-root=_libs\_pretty_headers
+
+--verbose=detailed
+#--verbose=normal
+
+compile_flags.txt

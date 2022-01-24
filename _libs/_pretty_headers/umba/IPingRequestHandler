@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::IPingRequestHandler
+
+#include <umba/basic_interfaces.h>
+

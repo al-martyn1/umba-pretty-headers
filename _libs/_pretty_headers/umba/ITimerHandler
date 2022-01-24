@@ -1,0 +1,7 @@
+#pragma once
+
+// class
+// umba::ITimerHandler
+
+#include <umba/basic_interfaces.h>
+

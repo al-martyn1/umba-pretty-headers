@@ -48,7 +48,8 @@ namespace umba
 
 //-----------------------------------------------------------------------------
 //! Интерфейс "писателя символов" в куда-то
-UMBA_INTERFACE ICharWriter
+//UMBA_INTERFACE 
+struct ICharWriter
 {
 
     //! Запись символа

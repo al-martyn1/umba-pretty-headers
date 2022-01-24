@@ -33,7 +33,7 @@
 
 :TRY_X64_DEBUG
 @if not exist %BUILD_OUTPUT_ROOT%\x64\Debug\%MAIN_EXE_NAME%.exe goto TRY_X64_RELEASE
-@call :MK_DISTR x64 Debug msvc2019_64
+@rem call :MK_DISTR x64 Debug msvc2019_64
 
 
 :TRY_X64_RELEASE
@@ -43,7 +43,7 @@
 
 :TRY_X86_DEBUG
 @if not exist %BUILD_OUTPUT_ROOT%\x86\Debug\%MAIN_EXE_NAME%.exe goto TRY_X86_RELEASE
-@call :MK_DISTR x86 Debug msvc2019
+@rem call :MK_DISTR x86 Debug msvc2019
 
 :TRY_X86_RELEASE
 @if not exist %BUILD_OUTPUT_ROOT%\x86\Release\%MAIN_EXE_NAME%.exe goto END
@@ -87,6 +87,12 @@ set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
 
 rem set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
 @%WINDEPLOYQT% --%WINDEPLOYQTRELOPT% --compiler-runtime %TARGET_ROOT%\bin\  > windeployqt-%PLATFORM%-%CONFIGURATION%.log 2>&1
+
+set CLANG_INCLUDE=G:\llvm-built\msvc2019\x64\Release\lib\clang\13.0.1\include
+@if not exist %CLANG_INCLUDE% goto NO_CLANG_ICLUDES
+@xcopy /Y /S /E /I /F /R %CLANG_INCLUDE%\* %TARGET_ROOT%\lib\clang\13.0.1\include
+
+:NO_CLANG_ICLUDES
 
 @del %TARGET_ROOT%\bin\qt_stub.exe
 @rd /S /Q   %TARGET_ROOT%\bin\translations

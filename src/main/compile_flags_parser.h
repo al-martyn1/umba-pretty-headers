@@ -162,11 +162,11 @@ std::string filterFilenameForbiddenChars( std::string s )
 //----------------------------------------------------------------------------
 inline
 void extractIncludePathsFromCompileFlagsTxtLines( const std::string              basePath
-                                                , const std::vector<std::string> &lines
+                                                , std::vector<std::string>       &lines
                                                 , std::vector<std::string>       &incPaths
                                                 )
 {
-    for(auto line: lines)
+    for(auto &line: lines)
     {
         umba::string_plus::trim(line);
         if (umba::string_plus::starts_with_and_strip( line, "-I=" ) || umba::string_plus::starts_with_and_strip( line, "-I" ))
@@ -174,6 +174,7 @@ void extractIncludePathsFromCompileFlagsTxtLines( const std::string             
             umba::string_plus::trim(line);
             auto incPath = umba::filename::makeAbsPath( line, basePath );
             incPaths.push_back(incPath);
+            line = "-I" + umba::filename::makeCanonical(line, '/');
         }
     }
 }
@@ -217,10 +218,16 @@ bool generateCompileFlags( const AppConfig &appConfig
             // Нужно добавить отсканированные пути в инклуды
             for( const auto &path : appConfig.scanPaths)
             {
-                lines.push_back(std::string("-I") + path);
+                lines.push_back(std::string("-I") + umba::filename::makeCanonical(path, '/') );
             }
 
             lines.push_back(std::string("-xc++")); // force C++
+
+            for( auto extraPath: appConfig.clangExtraArgs )
+            {
+                extraPath = umba::macros::substMacros(extraPath,umba::macros::MacroTextFromMapOrEnv<std::string>(appConfig.macros),umba::macros::keepUnknownVars);
+                lines.push_back(extraPath);
+            }
             
 
             // Извлекаем все инклуды - нужно, чтобы потом сгенерить сорц с корректно проинклуженными входными файлами

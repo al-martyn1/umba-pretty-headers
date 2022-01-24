@@ -4,8 +4,19 @@
 #include "umba/preprocessor.h"
 #include "stl.h"
 #include "umba/string_plus.h"
+#include "umba/enum_helpers.h"
 
 #include <vector>
+
+
+
+
+//----------------------------------------------------------------------------
+//! Реализует битовые операции для флагового enum-типа
+#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_OPERATORS(FlagType)                             \
+             UMBA_ENUM_CLASS_IMPLEMENT_BIT_OPERATORS( FlagType )                       \
+             UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_BIT_OPERATORS( FlagType )       \
+             UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_EQUAL_OPERATORS( FlagType )
 
 
 

@@ -43,10 +43,10 @@ namespace enum_helpers {
 
 //----------------------------------------------------------------------------
 //! Конвертирует enum в подлежащий тип. Версия для 'честных' enum'ов.
-template< typename FlagType, typename std::enable_if<std::is_enum<FlagType>{}, bool>::type = true > inline
-typename std::underlying_type< FlagType >::type toUnderlyingType( FlagType flagsVal )
+template< typename EnumType, typename std::enable_if<std::is_enum<EnumType>{}, bool>::type = true > inline
+typename std::underlying_type< EnumType >::type toUnderlyingType( EnumType flagsVal )
 {
-    typedef typename std::underlying_type< FlagType >::type    EnumUnderlyingType;
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
     return (EnumUnderlyingType)flagsVal;
 }
 
@@ -55,18 +55,18 @@ typename std::underlying_type< FlagType >::type toUnderlyingType( FlagType flags
 /*! Часто неохота разбираться, является ли значение int'ом, unsigned'ом, или другим интегральным типом,
     или же является enum'ом.
  */ 
-template< typename FlagType, typename std::enable_if<!std::is_enum<FlagType>{} && std::is_integral< FlagType >{} /* ::value */ , bool>::type = true > inline
-FlagType toUnderlyingType( FlagType flagsVal )
+template< typename EnumType, typename std::enable_if<!std::is_enum<EnumType>{} && std::is_integral< EnumType >{} /* ::value */ , bool>::type = true > inline
+EnumType toUnderlyingType( EnumType flagsVal )
 {
     return flagsVal;
 }
 
 //----------------------------------------------------------------------------
 //! Конвертирует в enum из подлежащего типа. Версия для 'честных' enum'ов.
-template< typename FlagType, typename std::enable_if<std::is_enum<FlagType>{}, bool>::type = true > inline
-FlagType fromUnderlyingType( typename std::underlying_type< FlagType >::type flagsVal )
+template< typename EnumType, typename std::enable_if<std::is_enum<EnumType>{}, bool>::type = true > inline
+EnumType fromUnderlyingType( typename std::underlying_type< EnumType >::type flagsVal )
 {
-    return (FlagType)flagsVal;
+    return (EnumType)flagsVal;
 }
 
 //----------------------------------------------------------------------------
@@ -74,13 +74,43 @@ FlagType fromUnderlyingType( typename std::underlying_type< FlagType >::type fla
 /*! Часто неохота разбираться, является ли значение int'ом, unsigned'ом, или другим интегральным типом,
     или же является enum'ом.
  */ 
-template< typename FlagType, typename std::enable_if<!std::is_enum<FlagType>{} && std::is_integral< FlagType >{} /* ::value */ , bool>::type = true > inline
-FlagType fromUnderlyingType( FlagType flagsVal )
+template< typename EnumType, typename std::enable_if<!std::is_enum<EnumType>{} && std::is_integral< EnumType >{} /* ::value */ , bool>::type = true > inline
+EnumType fromUnderlyingType( EnumType flagsVal )
 {
     return flagsVal;
 }
 
 //----------------------------------------------------------------------------
+template< typename EnumType > inline
+bool enumLessImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 < (EnumUnderlyingType)e2;
+}
+
+//----------------------------------------------------------------------------
+template< typename EnumType > inline
+bool enumLessEqualImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 <= (EnumUnderlyingType)e2;
+}
+
+//----------------------------------------------------------------------------
+template< typename EnumType > inline
+bool enumGreaterImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 > (EnumUnderlyingType)e2;
+}
+
+//----------------------------------------------------------------------------
+template< typename EnumType > inline
+bool enumGreaterEqualImpl(EnumType e1, EnumType e2)
+{
+    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
+    return (EnumUnderlyingType)e1 >= (EnumUnderlyingType)e2;
+}
 
 
 } // namespace enum_helpers
@@ -94,9 +124,9 @@ FlagType fromUnderlyingType( FlagType flagsVal )
 
 
 //----------------------------------------------------------------------------
-#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_UNARY_OPERATOR_IMPL(EnumType, operatorSign)                              \
+#define UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNARY_OPERATOR_IMPL(EnumType, operatorSign)                              \
             inline                                                                                              \
-            EnumType operator##operatorSign( EnumType e )                                                        \
+            EnumType operator##operatorSign( EnumType e )                                                       \
             {                                                                                                   \
                 return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
                                            operatorSign                                                         \
@@ -105,9 +135,9 @@ FlagType fromUnderlyingType( FlagType flagsVal )
             }
 
 //------------------------------
-#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType, operatorSign)                             \
+#define UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType, operatorSign)                             \
             inline                                                                                              \
-            EnumType operator##operatorSign( EnumType e1, EnumType e2)                                           \
+            EnumType operator##operatorSign( EnumType e1, EnumType e2)                                          \
             {                                                                                                   \
                 return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
                                            umba::enum_helpers::toUnderlyingType<EnumType>(e1)                   \
@@ -116,16 +146,43 @@ FlagType fromUnderlyingType( FlagType flagsVal )
                 );                                                                                              \
             }                                                                                                   \
             inline                                                                                              \
-            EnumType& operator##operatorSign##=( EnumType &e1, EnumType e2)                                      \
+            EnumType& operator##operatorSign##=( EnumType &e1, EnumType e2)                                     \
             {                                                                                                   \
                 e1 = e1 operatorSign e2;                                                                        \
                 return e1;                                                                                      \
             }
 
 //------------------------------
-#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_SHIFT_OPERATOR_IMPL(EnumType, operatorSign)                              \
+#define UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType, operatorSign)             \
             inline                                                                                              \
-            EnumType operator##operatorSign( EnumType e, unsigned sh )                                           \
+            EnumType operator##operatorSign( EnumType e1, typename std::underlying_type< EnumType >::type e2)   \
+            {                                                                                                   \
+                return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
+                                           umba::enum_helpers::toUnderlyingType<EnumType>(e1)                   \
+                                           operatorSign                                                         \
+                                           e2                                                                   \
+                );                                                                                              \
+            }                                                                                                   \
+            inline                                                                                              \
+            EnumType operator##operatorSign( typename std::underlying_type< EnumType >::type e1, EnumType e2)   \
+            {                                                                                                   \
+                return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
+                                           e1                                                                   \
+                                           operatorSign                                                         \
+                                           umba::enum_helpers::toUnderlyingType<EnumType>(e2)                   \
+                );                                                                                              \
+            }                                                                                                   \
+            inline                                                                                              \
+            EnumType& operator##operatorSign##=( EnumType &e1, typename std::underlying_type< EnumType >::type e2) \
+            {                                                                                                   \
+                e1 = e1 operatorSign e2;                                                                        \
+                return e1;                                                                                      \
+            }
+
+//------------------------------
+#define UMBA_ENUM_CLASS_IMPLEMENT_ENUM_SHIFT_OPERATOR_IMPL(EnumType, operatorSign)                              \
+            inline                                                                                              \
+            EnumType operator##operatorSign( EnumType e, unsigned sh )                                          \
             {                                                                                                   \
                 return umba::enum_helpers::fromUnderlyingType<EnumType>(                                        \
                                            umba::enum_helpers::toUnderlyingType<EnumType>(e)                    \
@@ -147,36 +204,83 @@ FlagType fromUnderlyingType( FlagType flagsVal )
 
 //----------------------------------------------------------------------------
 //! Реализует битовые операции для enum-типа
-#define UMBA_ENUM_CLASS_IMPLEMENT_FLAG_OPERATORS( EnumType )                                                    \
-             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_UNARY_OPERATOR_IMPL (EnumType,~)                                    \
-             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType,|)                                    \
-             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType,&)                                    \
-             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_BINARY_OPERATOR_IMPL(EnumType,^)                                    \
-             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_SHIFT_OPERATOR_IMPL (EnumType,<<)                                   \
-             UMBA_ENUM_CLASS_IMPLEMENT_FLAG_SHIFT_OPERATOR_IMPL (EnumType,>>)                                   \
+#define UMBA_ENUM_CLASS_IMPLEMENT_BIT_OPERATORS( EnumType )                                                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNARY_OPERATOR_IMPL (EnumType,~)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,|)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,&)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,^)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_SHIFT_OPERATOR_IMPL (EnumType,<<)                                   \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_SHIFT_OPERATOR_IMPL (EnumType,>>)
+
+
+//----------------------------------------------------------------------------
+//! Реализует битовые операции для enum-типа и подлежащего типа
+#define UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_BIT_OPERATORS( EnumType )                                      \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,|)                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,&)                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,^)
+
+
+//----------------------------------------------------------------------------
+//! Реализует арифметические операции для enum-типа
+#define UMBA_ENUM_CLASS_IMPLEMENT_ARITHMETIC_OPERATORS( EnumType )                                              \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNARY_OPERATOR_IMPL (EnumType,+)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNARY_OPERATOR_IMPL (EnumType,-)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,+)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,-)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,*)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,/)
+
+
+//----------------------------------------------------------------------------
+//! Реализует арифметические операции для enum-типа и подлежащего типа
+#define UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_ARITHMETIC_OPERATORS( EnumType )                               \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_UNARY_OPERATOR_IMPL (EnumType,+)                          \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_UNARY_OPERATOR_IMPL (EnumType,-)                          \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,+)                          \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,-)                          \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,*)                          \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,/)
+
+
+//----------------------------------------------------------------------------
+//! Реализует операции сравнения больше/меньше для enum-типа
+#define UMBA_ENUM_CLASS_IMPLEMENT_RELATION_OPERATORS( EnumType )                                                            \
+                                                                                                                            \
+             inline bool operator< (EnumType e1, EnumType e2) { return umba::enum_helpers::enumLessImpl        (e1, e2); }  \
+             inline bool operator<=(EnumType e1, EnumType e2) { return umba::enum_helpers::enumLessEqualImpl   (e1, e2); }  \
+             inline bool operator> (EnumType e1, EnumType e2) { return umba::enum_helpers::enumGreaterImpl     (e1, e2); }  \
+             inline bool operator>=(EnumType e1, EnumType e2) { return umba::enum_helpers::enumGreaterEqualImpl(e1, e2); }
+
+                                                                                                                
+//----------------------------------------------------------------------------
+//! Реализует операции сравнения больше/меньше для enum-типа и подлежащего типа
+#define UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_RELATION_OPERATORS( EnumType )                                             \
+                                                                                                                            \
+             inline bool operator< (EnumType e1, typename std::underlying_type< EnumType >::type e2) { return umba::enum_helpers::enumLessImpl        (e1, (EnumType)e2); } \
+             inline bool operator<=(EnumType e1, typename std::underlying_type< EnumType >::type e2) { return umba::enum_helpers::enumLessEqualImpl   (e1, (EnumType)e2); } \
+             inline bool operator> (EnumType e1, typename std::underlying_type< EnumType >::type e2) { return umba::enum_helpers::enumGreaterImpl     (e1, (EnumType)e2); } \
+             inline bool operator>=(EnumType e1, typename std::underlying_type< EnumType >::type e2) { return umba::enum_helpers::enumGreaterEqualImpl(e1, (EnumType)e2); } \
+                                                                                                                            \
+             inline bool operator< (typename std::underlying_type< EnumType >::type e1, EnumType e2) { return umba::enum_helpers::enumLessImpl        ((EnumType)e1, e2); } \
+             inline bool operator<=(typename std::underlying_type< EnumType >::type e1, EnumType e2) { return umba::enum_helpers::enumLessEqualImpl   ((EnumType)e1, e2); } \
+             inline bool operator> (typename std::underlying_type< EnumType >::type e1, EnumType e2) { return umba::enum_helpers::enumGreaterImpl     ((EnumType)e1, e2); } \
+             inline bool operator>=(typename std::underlying_type< EnumType >::type e1, EnumType e2) { return umba::enum_helpers::enumGreaterEqualImpl((EnumType)e1, e2); }
+
+                                                                                                                
+//----------------------------------------------------------------------------
+#define UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_EQUAL_OPERATORS( EnumType )                                   \
                                                                                                                 \
-             template<typename IntType> inline                                                                  \
+             template<typename EnumType, typename IntType> inline                                               \
              bool operator==(EnumType e, IntType i)                                                             \
              {                                                                                                  \
-                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)==i;                                   \
+                 return umba::enum_helpers::toUnderlyingType(e)==umba::enum_helpers::toUnderlyingType(i);       \
              }                                                                                                  \
                                                                                                                 \
-             template<typename IntType> inline                                                                  \
+             template<typename EnumType, typename IntType> inline                                               \
              bool operator!=(EnumType e, IntType i)                                                             \
              {                                                                                                  \
-                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)!=i;                                   \
-             }                                                                                                  \
-                                                                                                                \
-             template<typename IntType> inline                                                                  \
-             bool operator==(IntType i, EnumType e)                                                             \
-             {                                                                                                  \
-                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)==i;                                   \
-             }                                                                                                  \
-                                                                                                                \
-             template<typename IntType> inline                                                                  \
-             bool operator!=(IntType i, EnumType e)                                                             \
-             {                                                                                                  \
-                 return umba::enum_helpers::toUnderlyingType<EnumType>(e)!=i;                                   \
+                 return umba::enum_helpers::toUnderlyingType(e)!=umba::enum_helpers::toUnderlyingType(i);       \
              }                                                                                                  \
                                                                                                                 \
              inline                                                                                             \
@@ -185,40 +289,22 @@ FlagType fromUnderlyingType( FlagType flagsVal )
                  return e==0;                                                                                   \
              }
 
-
-
-//----------------------------------------------------------------------------
-
-
-
-
-
-//----------------------------------------------------------------------------
-#define UMBA_ENUM_CLASS_IMPLEMENT_RELATION_OPERATORS( EnumType )                                                \
+/*
+             template<typename EnumType, typename IntType> inline                                               \
+             bool operator==(IntType i, EnumType e)                                                             \
+             {                                                                                                  \
+                 return umba::enum_helpers::toUnderlyingType(e)==umba::enum_helpers::toUnderlyingType(i);       \
+             }                                                                                                  \
                                                                                                                 \
-    inline                                                                                                      \
-    bool operator<(EnumType e1, EnumType e2)                                                                    \
-    {                                                                                                           \
-        return umba::enum_helpers::enumLessImpl(e1, e2);                                                        \
-    }                                                                                                           \
-                                                                                                                \
-    inline                                                                                                      \
-    bool operator<=(EnumType e1, EnumType e2)                                                                   \
-    {                                                                                                           \
-        return umba::enum_helpers::enumLessEqualImpl(e1, e2);                                                   \
-    }                                                                                                           \
-                                                                                                                \
-    inline                                                                                                      \
-    bool operator>(EnumType e1, EnumType e2)                                                                    \
-    {                                                                                                           \
-        return umba::enum_helpers::enumGreaterImpl(e1, e2);                                                     \
-    }                                                                                                           \
-                                                                                                                \
-    inline                                                                                                      \
-    bool operator>=(EnumType e1, EnumType e2)                                                                   \
-    {                                                                                                           \
-        return umba::enum_helpers::enumGreaterEqualImpl(e1, e2);                                                \
-    }
+             template<typename EnumType, typename IntType> inline                                               \
+             bool operator!=(IntType i, EnumType e)                                                             \
+             {                                                                                                  \
+                 return umba::enum_helpers::toUnderlyingType(e)!=umba::enum_helpers::toUnderlyingType(i);       \
+             }                                                                                                  \
+
+*/
+
+
 
 //----------------------------------------------------------------------------
 
@@ -323,34 +409,6 @@ std::vector<EnumType> enumValuesToVector( EnumType eb, EnumType ee, bool inclusi
 namespace umba {
 namespace enum_helpers {
 
-
-template< typename EnumType > inline
-bool enumLessImpl(EnumType e1, EnumType e2)
-{
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
-    return (EnumUnderlyingType)e1 < (EnumUnderlyingType)e2;
-}
-
-template< typename EnumType > inline
-bool enumLessEqualImpl(EnumType e1, EnumType e2)
-{
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
-    return (EnumUnderlyingType)e1 <= (EnumUnderlyingType)e2;
-}
-
-template< typename EnumType > inline
-bool enumGreaterImpl(EnumType e1, EnumType e2)
-{
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
-    return (EnumUnderlyingType)e1 > (EnumUnderlyingType)e2;
-}
-
-template< typename EnumType > inline
-bool enumGreaterEqualImpl(EnumType e1, EnumType e2)
-{
-    typedef typename std::underlying_type< EnumType >::type    EnumUnderlyingType;
-    return (EnumUnderlyingType)e1 >= (EnumUnderlyingType)e2;
-}
 
 
 

@@ -52,6 +52,7 @@ struct AppConfig
     static const unsigned                    ofDefinedMacros         = 0x0008; // Write found defined macros list to $(OutputRoot)\__defined_macros.txt
     static const unsigned                    ofNoOutput              = 0x0010; // Do not actually write output files
     static const unsigned                    ofGenerateClearScript   = 0x0020; // Generate clear script
+    static const unsigned                    ofGenerateGitAdd        = 0x0040; // 
 
     //------------------------------
 
@@ -64,6 +65,8 @@ struct AppConfig
 
     std::vector<std::string>                 excludeFilesMaskList;
     std::vector<std::string>                 excludeNamesMaskList;
+
+    std::vector<std::string>                 clangExtraArgs;
 
     std::vector<std::string>                 scanPaths;
     std::string                              outputPath;
@@ -128,6 +131,7 @@ struct AppConfig
             case ofDefinedMacros         : return "Write '__defined_macros.txt'";
             case ofNoOutput              : return "Disable writting outputs";
             case ofGenerateClearScript   : return "Generate clear script";
+            case ofGenerateGitAdd        : return "Generate git-add script";
 
             default                      : return "Multiple flags taken!!!";
         }
@@ -143,6 +147,8 @@ struct AppConfig
     UMBA_PRETTY_HEADERS_APPC_CONFIG_DECLARE_SET_GET_OPT(DefinedMacros)
     UMBA_PRETTY_HEADERS_APPC_CONFIG_DECLARE_SET_GET_OPT(NoOutput)
     UMBA_PRETTY_HEADERS_APPC_CONFIG_DECLARE_SET_GET_OPT(GenerateClearScript)
+    UMBA_PRETTY_HEADERS_APPC_CONFIG_DECLARE_SET_GET_OPT(GenerateGitAdd)
+    
     
     //UMBA_PRETTY_HEADERS_APPC_CONFIG_DECLARE_SET_GET_OPT()
 
@@ -150,7 +156,7 @@ struct AppConfig
     void setOptQuet( bool q ) { setVerbosityLevel(VerbosityLevel::quet);  }
     //bool getOptQuet( )  const { return testVerbosity(VerbosityLevel::quet); }
 
-    bool getOptShowConfig( )  const { return testVerbosity(VerbosityLevel::config); }
+    // bool getOptShowConfig( )  const { return testVerbosity(VerbosityLevel::config); }
 
     //------------------------------
 
@@ -261,6 +267,7 @@ struct AppConfig
         s << "    " << getOptNameString(ofDefinedMacros)       << ": " << getOptValAsString(optionFlags&ofDefinedMacros) << "\n";
         s << "    " << getOptNameString(ofNoOutput)            << ": " << getOptValAsString(optionFlags&ofNoOutput) << "\n";
         s << "    " << getOptNameString(ofGenerateClearScript) << ": " << getOptValAsString(optionFlags&ofGenerateClearScript) << "\n";
+        s << "    " << getOptNameString(ofGenerateGitAdd)      << ": " << getOptValAsString(optionFlags&ofGenerateGitAdd) << "\n";
 
         s << "\n";
 
@@ -279,6 +286,17 @@ struct AppConfig
         for(auto scanPath : scanPaths)
         {
             s << "    " << scanPath << " (" << umba::filename::makeCanonical(scanPath) << ")\n";
+        }
+
+        s << "\n";
+
+        //------------------------------
+
+        s << "\n";
+        s << "Clang Extra Args:\n";
+        for(auto extraArg : clangExtraArgs)
+        {
+            s << "    " << extraArg << "\n";
         }
 
         s << "\n";
@@ -366,6 +384,7 @@ struct AppConfig
         appConfig.verbosityLevel     = verbosityLevel;
 
         appConfig.excludeNamesMaskList = excludeNamesMaskList;
+        appConfig.clangExtraArgs     = clangExtraArgs;
 
 
         appConfig.allowedKinds       = allowedKinds;

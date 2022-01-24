@@ -1,0 +1,1 @@
+@call test_release_umba-pretty-headers.bat >test_release_umba-pretty-headers.txt 2>&1

@@ -1,0 +1,1 @@
+make-pretty-headers.bat >make-pretty-headers.log  2>&1

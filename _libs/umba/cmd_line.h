@@ -2571,6 +2571,30 @@ struct ArgsParser
 
     std::string getBuiltinsOptFileName(unsigned flag) const { return programLocationInfo.getBuiltinOptionsFilename(flag); }
 
+    template< typename StreamType >
+    StreamType& printBuiltinFileNames( StreamType &s ) const
+    {
+        if (builtinsOptions)
+            s << "\nBuiltin option files:\n";
+
+        using namespace umba::program_location;
+        
+        if (builtinsOptions&BuiltinOptionsLocationFlag::appGlobal   )
+            s << "    AppGlobal : " << programLocationInfo.getBuiltinOptionsFilename( BuiltinOptionsLocationFlag::appGlobal ) << "\n";
+
+        if (builtinsOptions&BuiltinOptionsLocationFlag::customGlobal)
+            s << "    UserGlobal: " << programLocationInfo.getBuiltinOptionsFilename( BuiltinOptionsLocationFlag::customGlobal ) << "\n";
+
+        if (builtinsOptions&BuiltinOptionsLocationFlag::userLocal   )
+            s << "    UserLocal : " << programLocationInfo.getBuiltinOptionsFilename( BuiltinOptionsLocationFlag::userLocal ) << "\n";
+
+        // if (builtinsOptions)
+        //     s << "\n";
+
+        return s;
+    }
+
+
     int callArgParser( std::string a, bool fBuiltin, bool ignoreInfos )
     {
         umba::string_plus::trim(a);
