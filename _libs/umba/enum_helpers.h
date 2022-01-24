@@ -19,6 +19,7 @@
 
 #if !defined(UMBA_MCU_USED)
     #include <string>
+    #include <vector>
     #include <map>
 #endif
 
@@ -191,7 +192,7 @@ bool enumGreaterEqualImpl(EnumType e1, EnumType e2)
                 );                                                                                              \
             }                                                                                                   \
             inline                                                                                              \
-            EnumType& operator##operatorSign##=( EnumType &e, unsigned sh )                                      \
+            EnumType& operator##operatorSign##=( EnumType &e, unsigned sh )                                     \
             {                                                                                                   \
                 e = e operatorSign sh;                                                                          \
                 return e;                                                                                       \
@@ -229,18 +230,18 @@ bool enumGreaterEqualImpl(EnumType e1, EnumType e2)
              UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,+)                                    \
              UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,-)                                    \
              UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,*)                                    \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,%)                                    \
              UMBA_ENUM_CLASS_IMPLEMENT_ENUM_BINARY_OPERATOR_IMPL(EnumType,/)
 
 
 //----------------------------------------------------------------------------
 //! Реализует арифметические операции для enum-типа и подлежащего типа
 #define UMBA_ENUM_CLASS_IMPLEMENT_UNDERLYING_TYPE_ARITHMETIC_OPERATORS( EnumType )                               \
-             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_UNARY_OPERATOR_IMPL (EnumType,+)                          \
-             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_UNARY_OPERATOR_IMPL (EnumType,-)                          \
-             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,+)                          \
-             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,-)                          \
-             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,*)                          \
-             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_BINARY_OPERATOR_IMPL(EnumType,/)
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,+)                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,-)                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,*)                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,/)                     \
+             UMBA_ENUM_CLASS_IMPLEMENT_ENUM_UNDERLYING_TYPE_BINARY_OPERATOR_IMPL(EnumType,%)
 
 
 //----------------------------------------------------------------------------
