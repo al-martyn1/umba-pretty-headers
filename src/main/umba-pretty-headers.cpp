@@ -739,6 +739,24 @@ int main(int argc, char* argv[])
     }
 
 
+    #if defined(WIN32) || defined(_WIN32)
+        std::string gitaddScriptSimpleName = "git-add.bat";
+    #else
+        std::string gitaddScriptSimpleName = "git-add.sh";
+    #endif
+
+    auto gitaddScriptFileName = appConfig.getOutputPath(gitaddScriptSimpleName);
+
+    std::ofstream gitaddScriptStream;
+    if (!appConfig.getOptNoOutput() && appConfig.getOptGenerateGitAdd())
+    {
+        gitaddScriptStream.open( gitaddScriptFileName, std::ios_base::out | std::ios_base::trunc );
+        if (!gitaddScriptStream)
+            LOG_WARN_OPT("create-file-failed") << "failed to create '" << gitaddScriptSimpleName << "' file: " << gitaddScriptFileName << endl;
+    }
+
+
+
     std::set<std::string> createdSubFoldersSet;
     for( auto path : createdFolders )
     {
@@ -765,6 +783,21 @@ int main(int argc, char* argv[])
         if (umba::filename::getPath(name).empty())
             createdFilesSet.insert(name);
     }
+
+
+    for( auto fileName : createdFilesSet )
+    {
+        std::string name = umba::filename::makeCanonical(fileName);
+
+        #if defined(WIN32) || defined(_WIN32)
+
+            gitaddScriptStream << "@";
+
+        #endif
+
+        gitaddScriptStream << "git add " << name << "\n";
+    }
+
 
     for( auto fileName : createdFilesSet )
     {

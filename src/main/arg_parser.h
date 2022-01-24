@@ -310,6 +310,13 @@ int operator()( const std::string                               &a           //!
                 return 0;
             }
 
+        else if (opt.isOption("generate-git-add") || opt.setDescription("Generate git add script - .bat/.sh."))
+            {
+                if (argsParser.hasHelpOption) return 0;
+                appConfig.setOptGenerateGitAdd(true);
+                return 0;
+            }
+
         else if (opt.isOption("used-macros")    || opt.setDescription("Write all found (in PP conditions) macros to file '$(OutputRoot)/__used_macros.txt'."))
             {
                 if (argsParser.hasHelpOption) return 0;

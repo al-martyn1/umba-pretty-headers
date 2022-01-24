@@ -1,5 +1,7 @@
 --keep-generated-files
 --generate-clear-script
+--generate-git-add
+
 --used-macros
 --defined-macros
 
