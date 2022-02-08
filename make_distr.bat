@@ -73,7 +73,13 @@ goto END
 @set ZIP_ROOT=%DISTR_ROOT%\%PLATFORM%\%CONFIGURATION%
 
 @mkdir %TARGET_ROOT%\bin
-@xcopy /Y /S /E /I /F /R _distr_conf\conf\* %TARGET_ROOT%\conf
+
+@rem xcopy /Y /S /E /I /F /R _distr_conf\conf\*  %TARGET_ROOT%\conf
+@if not exist %TARGET_ROOT%\conf  mkdir %TARGET_ROOT%\conf
+@copy /Y  _distr_conf\conf\umba-pretty-headers.options          %TARGET_ROOT%\conf\umba-pretty-headers.options
+@copy /Y  _distr_conf\conf\umba-pretty-headers.custom.options   %TARGET_ROOT%\conf\umba-pretty-headers.custom.options.example
+
+
 @copy %BUILD_OUTPUT%\%MAIN_EXE_NAME%.exe     %TARGET_ROOT%\bin\%MAIN_EXE_NAME%.exe
 @copy %BUILD_OUTPUT%\umba-make-headers.exe   %TARGET_ROOT%\bin\umba-make-headers.exe
 @copy %BUILD_OUTPUT%\qt_stub.exe             %TARGET_ROOT%\bin\qt_stub.exe
