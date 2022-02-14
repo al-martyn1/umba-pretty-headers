@@ -7,6 +7,10 @@
 #include "filesys.h"
 
 
+#include <map>
+#include <filesystem>
+
+
 
 
 
@@ -155,44 +159,24 @@ void detectLocation( StringType &exeFullName, StringType &progBinPath, StringTyp
 
             if ( exeFolderNameOnly==cmpHelper("bin")
 
-              || exeFolderNameOnly==cmpHelper("Debug")
-              || exeFolderNameOnly==cmpHelper("Release")
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("Debug"))
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("Release"))
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("Unicode"))
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("Ansi"))
 
-              || exeFolderNameOnly==cmpHelper("Unicode_Debug")
-              || exeFolderNameOnly==cmpHelper("Unicode_Release")
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("Debug"))
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("Release"))
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("Unicode"))
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("Ansi"))
 
-              || exeFolderNameOnly==cmpHelper("Unicode Debug")
-              || exeFolderNameOnly==cmpHelper("Unicode Release")
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("RelWithDebInfo"))
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("RelWithDebInfo"))
 
-              || exeFolderNameOnly==cmpHelper("UnicodeDebug")
-              || exeFolderNameOnly==cmpHelper("UnicodeRelease")
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("RelWithDbgInfo"))
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("RelWithDbgInfo"))
 
-              || exeFolderNameOnly==cmpHelper("RelWithDebInfo")
-              || exeFolderNameOnly==cmpHelper("MinSizeRel")
-
-              || exeFolderNameOnly==cmpHelper("Unicode_RelWithDebInfo")
-              || exeFolderNameOnly==cmpHelper("Unicode_MinSizeRel")
-
-              || exeFolderNameOnly==cmpHelper("UnicodeRelWithDebInfo")
-              || exeFolderNameOnly==cmpHelper("UnicodeMinSizeRel")
-
-              || exeFolderNameOnly==cmpHelper("Ansi_Debug")
-              || exeFolderNameOnly==cmpHelper("Ansi_Release")
-
-              || exeFolderNameOnly==cmpHelper("Ansi Debug")
-              || exeFolderNameOnly==cmpHelper("Ansi Release")
-
-              || exeFolderNameOnly==cmpHelper("AnsiDebug")
-              || exeFolderNameOnly==cmpHelper("AnsiRelease")
-
-              || exeFolderNameOnly==cmpHelper("RelWithDebInfo")
-              || exeFolderNameOnly==cmpHelper("MinSizeRel")
-
-              || exeFolderNameOnly==cmpHelper("Ansi_RelWithDebInfo")
-              || exeFolderNameOnly==cmpHelper("Ansi_MinSizeRel")
-
-              || exeFolderNameOnly==cmpHelper("AnsiRelWithDebInfo")
-              || exeFolderNameOnly==cmpHelper("AnsiMinSizeRel")
+              || umba::string_plus::starts_with(exeFolderNameOnly, cmpHelper("MinSizeRel"))
+              || umba::string_plus::ends_with  (exeFolderNameOnly, cmpHelper("MinSizeRel"))
 
                )
             {
@@ -244,6 +228,112 @@ struct ProgramLocation
 
     bool        useUserFolder = false; //!< If false single file(s) used
 
+
+    std::map<StringType, StringType> getProgramLocationMacros() const
+    {
+        std::map<StringType, StringType> m;
+
+        m[umba::string_plus::make_string<StringType>("AppName")] = exeName;
+
+        
+        m[umba::string_plus::make_string<StringType>("AppPath")] = rootPath; // For compatibility
+
+        m[umba::string_plus::make_string<StringType>("AppBinPath"   )] = binPath ;
+        m[umba::string_plus::make_string<StringType>("AppRootPath"  )] = rootPath;
+        m[umba::string_plus::make_string<StringType>("AppConfPath"  )] = confPath;
+
+        m[umba::string_plus::make_string<StringType>("UserHomePath" )] = umba::filesys::getCurrentUserHomeDirectory<StringType>();
+
+        // stripLastPathSep
+        m[umba::string_plus::make_string<StringType>("AppBin"       )] = m[umba::string_plus::make_string<StringType>("AppBinPath"   )];
+        m[umba::string_plus::make_string<StringType>("AppRoot"      )] = m[umba::string_plus::make_string<StringType>("AppRootPath"  )];
+        m[umba::string_plus::make_string<StringType>("AppConf"      )] = m[umba::string_plus::make_string<StringType>("AppConfPath"  )];
+
+        m[umba::string_plus::make_string<StringType>("AppUserHome"     )] = m[umba::string_plus::make_string<StringType>("UserHomePath" )];
+
+
+        m[umba::string_plus::make_string<StringType>("AppTempPath"     )] = umba::filesys::getTempFolderPath<StringType>();
+        m[umba::string_plus::make_string<StringType>("AppTemp"         )] = m[umba::string_plus::make_string<StringType>("TempPath"     )];
+
+
+        StringType logPath;
+        
+        #if defined(WIN32) || defined(_WIN32)
+
+            StringType logRoot;
+
+            if (!umba::env::getVar(umba::string_plus::make_string<StringType>("LOCALAPPDATA"), logRoot))
+            {
+                //return res;
+                logRoot = umba::string_plus::make_string<StringType>("C:\\Log");
+            }
+
+            logPath = umba::filename::appendPath(umba::filename::appendPath(logRoot, exeName), umba::string_plus::make_string<StringType>("log") );
+
+        #else
+
+            logPath = umba::filename::appendPath(umba::filename::appendPath(umba::string_plus::make_string<StringType>("/var/log"), exeName) );
+
+        #endif
+
+        m[umba::string_plus::make_string<StringType>("AppLogPath"      )] = logPath;
+
+        // PersistLogPath
+        // LogPath
+
+        // UserTemp
+        
+        // Windows
+        //   System-wide persistent
+        //   System-wide
+        //   User 
+
+        // https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-gettemppatha
+
+        // Про логи - http://rsdn.org/forum/setup/8192177.1
+        // %LOCALAPPDATA%
+
+        // Temp
+        // https://superuser.com/questions/332610/where-is-the-temporary-directory-in-linux/332616
+
+        // Temp
+        // In Unix and Linux, the global temporary directories are /tmp and /var/tmp. 
+        // Web browsers periodically write data to the tmp directory during page views and downloads. 
+        // Typically, /var/tmp is for persistent files (as it may be preserved over reboots), and /tmp is for more temporary files.
+
+        // In addition, a user can set their TMPDIR environment variable to point to a preferred directory 
+        // (where the creation and modification of files is allowed).
+
+        // https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+
+        // /var/log - Log files. Various logs.
+
+        // TMP =C:\Users\martinov\AppData\Local\Temp
+        // TEMP=C:\Users\martinov\AppData\Local\Temp
+
+        // https://en.wikipedia.org/wiki/Temporary_folder
+
+        //umba::filesys::getCurrentUserHomeDirectory();
+
+        // StringType res;
+        // if (umba::env::getVar(make_string<StringType>("HOME"), res))
+        // {
+        //     return res;
+        // }
+
+
+        return m;
+    }
+
+    std::map<StringType, StringType> mergeProgramLocationMacros( std::map<StringType, StringType> mergeTo ) const
+    {
+         auto locationMacros = getProgramLocationMacros();
+
+         for( auto [name, val] : locationMacros)
+             mergeTo[name] = val;
+
+         return mergeTo;
+    }
 
     //! Creates full path under AppRoot folder
     StringType  getAppRootSubName(const StringType &subName) const
@@ -354,8 +444,73 @@ StreamType& operator<<(StreamType &os, const ProgramLocation<StringType> &pl)
 }
 
 
+//----------------------------------------------------------------------------
+template<typename StringType> inline
+const std::vector<StringType>& getConfFolderNames( const StringType &confFolderName )
+{
+    static std::vector<StringType> confNames;
+
+    if (!confNames.empty())
+        return confNames;
+
+    confNames.emplace_back(confFolderName);
+    confNames.emplace_back(umba::string_plus::make_string<StringType>("conf"));
+    confNames.emplace_back(umba::string_plus::make_string<StringType>("config"));
+    confNames.emplace_back(umba::string_plus::make_string<StringType>("cfg"));
+    confNames.emplace_back(umba::string_plus::make_string<StringType>("etc"));
+
+    return confNames;
+}
+
+//----------------------------------------------------------------------------
+template<typename StringType> inline
+StringType findAppConfPath( const StringType &appRoot, const StringType &confFolderName )
+{
+    std::vector<StringType> confCandisDatton;
+    std::vector<StringType> confRoots;
+    StringType              curConfRoot = appRoot;
+
+    confRoots.emplace_back(curConfRoot);
+
+    // $(ProjectRoot)\.out\msvc2019\x64
+    // $(ProjectRoot)\.out\msvc2019
+    // $(ProjectRoot)\.out
+    // $(ProjectRoot)
+
+    #if !defined(UMBA_PROGRAM_LOCATION_CONF_LOOKUP_LEVELS_MAX)
+
+        #define UMBA_PROGRAM_LOCATION_CONF_LOOKUP_LEVELS_MAX 4u
+
+    #endif
+
+    for( auto i=1u; i<=UMBA_PROGRAM_LOCATION_CONF_LOOKUP_LEVELS_MAX; ++i)
+    {
+        curConfRoot = umba::filename::appendPath( curConfRoot, umba::string_plus::make_string<StringType>("..") );
+        curConfRoot = umba::filename::makeCanonical(curConfRoot);
+        confRoots.emplace_back(curConfRoot);
+    }
+
+    //for( avito )
+
+    auto confNames = getConfFolderNames(confFolderName);
+
+    for( auto confRootCandy : confRoots )
+    {
+        for( auto confName : confNames )
+        {
+            auto candisDatton = umba::filename::appendPath( confRootCandy, confName );
+            candisDatton      = umba::filename::makeCanonical(candisDatton);
+            if (std::filesystem::exists(candisDatton))
+                return candisDatton;
+        }
+    }
+
+    return umba::filename::appendPath( appRoot, confFolderName );
+
+}
 
 
+//----------------------------------------------------------------------------
 //! Возвращает информацию по расположению исполняемого файла и основных файлов/каталогов программы
 template<typename StringType> inline
 ProgramLocation<StringType> getProgramLocationImpl( const StringType &argv0
@@ -373,7 +528,9 @@ ProgramLocation<StringType> getProgramLocationImpl( const StringType &argv0
 
     loc.exeFileName = umba::filename::getFileName(loc.exeFullName);
 
-    loc.confPath    = umba::filename::appendPath(loc.rootPath, confFolderName);
+
+    //StringType confRoot = findAppConfPath(loc.rootPath);
+    loc.confPath    = findAppConfPath(loc.rootPath, confFolderName); // umba::filename::appendPath(loc.rootPath, confFolderName);
 
     auto exeName    = umba::filename::getName(loc.exeFullName);
     if (!overrideExeName.empty())
