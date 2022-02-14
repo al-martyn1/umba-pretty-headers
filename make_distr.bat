@@ -85,6 +85,11 @@ goto END
 @copy %BUILD_OUTPUT%\qt_stub.exe             %TARGET_ROOT%\bin\qt_stub.exe
 
 
+@%BUILD_OUTPUT%\%MAIN_EXE_NAME%.exe -v >version.txt
+@set /P VERSION=<version.txt
+@del version.txt
+
+
 set "VCINSTALLDIR=%MSVC2019_VSINSTALLDIR%\VC"
 @rem set "VCIDEInstallDir=%MSVC2019_VSIDEInstallDir%\VC"
 
@@ -104,7 +109,7 @@ set CLANG_INCLUDE=G:\llvm-built\msvc2019\x64\Release\lib\clang\13.0.1\include
 @rd /S /Q   %TARGET_ROOT%\bin\translations
 @del /S /Q  %TARGET_ROOT%\bin\Qt5*.dll
 
-@set ZIPDISTRNAME=%DISTR_NAME%_windows_%PLATFORM%_%LCCONFIGURATION%.zip
+@set ZIPDISTRNAME=%DISTR_NAME%_windows_%PLATFORM%_%LCCONFIGURATION%_%VERSION%.zip
 @echo Zip: %ZIPDISTRNAME%
 
 @set ZIP_TARGET_FOLDER=%TARGET_ROOT%\..
