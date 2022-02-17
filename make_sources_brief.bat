@@ -1,2 +1,2 @@
-umba-brief-scanner --main --verbose=normal doc\sources_brief.txt
+umba-brief-scanner --main --verbose=normal doc\_sources_brief.txt
 @rem --scan=..\..
