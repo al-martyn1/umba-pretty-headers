@@ -26,7 +26,7 @@
   <Import Project="$(ProjectDir)\umba_msvcver.props" />
   <Import Project="$(ProjectDir)\umba_prjdirs.props" />
   <Import Project="$(ProjectDir)\umba_boost.props" />
-  <Import Project="$(ProjectDir)\umba_qt.props" />
+  <!--Import Project="$(ProjectDir)\umba_qt.props" /-->
   <Import Project="$(ProjectDir)\umba_llvm.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -196,7 +196,7 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\main\clang.cpp">
+    <ClCompile Include="..\src\common\clang.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -214,7 +214,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\src\main\umba-pretty-headers.cpp" />
+    <ClCompile Include="..\src\umba-pretty-headers\umba-pretty-headers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -42,16 +42,28 @@ void scanFolders( const AppConfig &appConfig
 
     std::list<std::string> scanPaths( appConfig.scanPaths.begin(), appConfig.scanPaths.end() );
 
-    std::map<std::string,std::regex>  regexes;
-    std::map<std::string,std::string> originalMasks;
+    std::map<std::string,std::regex>  excludeRegexes;
+    std::map<std::string,std::string> excludeOriginalMasks;
 
     for(auto excludeFileMask : appConfig.excludeFilesMaskList)
     {
         //auto normalizedName = StringType normalizePathSeparators( const StringType &fileName, typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>() )
         auto regexStr = expandSimpleMaskToEcmaRegex(excludeFileMask);
-        regexes      [regexStr] = std::regex(regexStr);
-        originalMasks[regexStr] = excludeFileMask;
+        excludeRegexes      [regexStr] = std::regex(regexStr);
+        excludeOriginalMasks[regexStr] = excludeFileMask;
     }
+
+    std::map<std::string,std::regex>  includeRegexes;
+    std::map<std::string,std::string> includeOriginalMasks;
+
+    for(auto includeFileMask : appConfig.includeFilesMaskList)
+    {
+        //auto normalizedName = StringType normalizePathSeparators( const StringType &fileName, typename StringType::value_type pathSep = getNativePathSep<typename StringType::value_type>() )
+        auto regexStr = expandSimpleMaskToEcmaRegex(includeFileMask);
+        includeRegexes      [regexStr] = std::regex(regexStr);
+        includeOriginalMasks[regexStr] = includeFileMask;
+    }
+
 
     bool bFound = false;
 
@@ -130,8 +142,83 @@ void scanFolders( const AppConfig &appConfig
 
             auto normalizedEntryName = umba::filename::normalizePathSeparators(entryName,'/');
 
+            //TODO: !!! Нужно что-то решать с отсутствующим расширением
+
+            //umba::filename::
+
+            bool addThisFile = false;
+            bool excludedByIncludeMask = false;
+
             std::string regexStr;
-            if (!umba::regex_helpers::regexMatch(normalizedEntryName,regexes,&regexStr))
+
+            bool matchInclude = true;
+            if (!includeRegexes.empty()) // матчим только если не пусто
+            {
+                matchInclude = umba::regex_helpers::regexMatch(normalizedEntryName,includeRegexes,&regexStr);
+            }
+
+            if (!matchInclude)
+            {
+                // Не подходит под инклюзивную маску
+                addThisFile = false;
+                excludedByIncludeMask = true;
+            }
+            else
+            {
+                addThisFile = true; // Вроде подошло, надо проверить исключения
+
+                if (umba::regex_helpers::regexMatch(normalizedEntryName,excludeRegexes,&regexStr))
+                {
+                    addThisFile = false;
+                    excludedByIncludeMask = false;
+                }
+            }
+
+            if (addThisFile)
+            {
+                foundFiles.push_back(entryName);
+
+                auto ext = umba::filename::getExt(entryName);
+
+                foundExtentions.insert(ext);
+
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                {
+                    if (ext.empty())
+                        ext = "<EMPTY>";
+                    else
+                        ext = std::string(".") + ext;
+
+                    logMsg << good << "Added" << normal;
+                    logMsg << " (" << notice << ext << normal << ")";
+                    logMsg << endl;
+
+                    if (ext.empty())
+                    {
+                        logMsg << "  " << notice << entryName << normal << "";
+                        logMsg << endl;
+                    }
+                }
+            }
+            else
+            {
+                excludedFiles.push_back(entryName);
+
+                if (appConfig.testVerbosity(VerbosityLevel::detailed))
+                {
+                    std::string orgMask  = excludedByIncludeMask ? includeOriginalMasks[regexStr] : excludeOriginalMasks[regexStr];
+                    std::string wichMask = excludedByIncludeMask ? "include" : "exclude";
+                    logMsg << notice << "skipped" <<  /* normal << */  " due " << wichMask << " mask '" << orgMask << "' (" << regexStr << ")" << normal << endl;
+                }
+            }
+
+
+    // std::map<std::string,std::regex>  includeRegexes;
+    // std::map<std::string,std::string> includeOriginalMasks;
+
+            #if 0
+            std::string regexStr;
+            if (!umba::regex_helpers::regexMatch(normalizedEntryName,excludeRegexes,&regexStr))
             {
                 foundFiles.push_back(entryName);
 
@@ -156,8 +243,9 @@ void scanFolders( const AppConfig &appConfig
                 excludedFiles.push_back(entryName);
 
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                    logMsg << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                    logMsg << notice << "skipped" <<  /* normal << */  " due '" << excludeOriginalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
             }
+            #endif
 
 // error
 // warning

@@ -2,7 +2,7 @@
     \brief Главный файл приложения umba-pretty-headers
 */
 
-#include "clang.h"
+#include "../common/clang.h"
 
 #if defined(_MSC_VER)
     #pragma hdrstop
@@ -30,9 +30,9 @@
 #include "umba/time_service.h"
 
 
-#include "utils.h"
-#include "clang.h"
-#include "marty_clang_helpers.h"
+#include "../common/utils.h"
+#include "../common/clang.h"
+#include "../common/marty_clang_helpers.h"
 
 
 umba::StdStreamCharWriter coutWriter(std::cout);
@@ -48,13 +48,13 @@ bool logGccFormat  = false;
 bool logSourceInfo = false;
 
 
-#include "log.h"
-#include "compile_flags_parser.h"
-#include "utils.h"
-#include "scan_folders.h"
+#include "../common/log.h"
+#include "../common/compile_flags_parser.h"
+#include "../common/utils.h"
+#include "../common/scan_folders.h"
 
-#include "scan_sources.h"
-#include "scan_for_pp.h"
+#include "../common/scan_sources.h"
+#include "../common/scan_for_pp.h"
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
@@ -63,7 +63,7 @@ umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
 
 #include "app_ver_config.h"
-#include "print_ver.h"
+#include "../common/print_ver.h"
 
 #include "arg_parser.h"
 

@@ -8,8 +8,8 @@
 #include "umba/enum_helpers.h"
 #include "umba/flag_helpers.h"
 
-#include "regex_helpers.h"
-#include "marty_clang_helpers.h"
+#include "../common/regex_helpers.h"
+#include "../common/marty_clang_helpers.h"
 
 //----------------------------------------------------------------------------
 
@@ -62,6 +62,8 @@ struct AppConfig
     std::map<std::string,std::string>        macros;
 
     std::vector<std::string>                 clangCompileFlagsTxtFilename; // compile_flags.txt
+
+    std::vector<std::string>                 includeFilesMaskList;
 
     std::vector<std::string>                 excludeFilesMaskList;
     std::vector<std::string>                 excludeNamesMaskList;

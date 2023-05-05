@@ -4,7 +4,7 @@
 
 #include "app_config.h"
 #include "umba/cmd_line.h"
-#include "marty_clang_helpers.h"
+#include "../common/marty_clang_helpers.h"
 
 
 #if defined(WIN32) || defined(_WIN32)
@@ -215,6 +215,27 @@ int operator()( const std::string                               &a           //!
 
             std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
             appConfig.excludeNamesMaskList.insert(appConfig.excludeNamesMaskList.end(), lst.begin(), lst.end());
+
+            return 0;
+        }
+
+        else if ( opt.isOption("include-files") || opt.isOption('I') || opt.setParam("MASK,...")
+               || opt.setDescription("Include C/C++ names for output. Only files which file name matched any of taken masks, will be added to output.\n"
+                                     "Note: exclude masks also performed on included names\n"
+                                     "For details about 'MASK' parameter see '--exclude-files' option description."
+                                    )
+                )
+        {
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"exclude names mask not taken (--exclude-names)\n";
+                return -1;
+            }
+
+            std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
+            appConfig.includeFilesMaskList.insert(appConfig.includeFilesMaskList.end(), lst.begin(), lst.end());
 
             return 0;
         }
