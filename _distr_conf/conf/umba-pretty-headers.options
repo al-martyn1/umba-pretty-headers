@@ -35,6 +35,7 @@
 -X={*?regex?*}.*\.c.*$
 #-X=*.c*^
 
+-X=.git/*,*/.git/*,.git*^,*/.git*^
 
 # Config files
 -X=*.cfg^
