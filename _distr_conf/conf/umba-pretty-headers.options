@@ -1,48 +1,38 @@
 # umba-pretty-headers default options
 
+# Sample of include rules (C++ headers only)
+# --include-files=*.h^,*.hpp^,*.hxx^,*.h++^
+
+
 ## Ignore generated pretty headers
--X=*\pretty_headers\*
--X=^pretty_headers\*
--X=*\_pretty_headers\*
--X=^_pretty_headers\*
+-X=*\pretty_headers\*,^pretty_headers\*,*\_pretty_headers\*,^_pretty_headers\*
+-X=*\pretty-headers\*,^pretty-headers\*,*\_pretty-headers\*,^_pretty-headers\*
 
 ## Ignore generated std/qt headers
 
--X=*\std_headers\*
--X=^std_headers\*
--X=*\_std_headers\*
--X=^_std_headers\*
+-X=*\std_headers\*,^std_headers\*,*\_std_headers\*,^_std_headers\*
+-X=*\std-headers\*,^std-headers\*,*\_std-headers\*,^_std-headers\*
 
--X=*\qt_headers\*
--X=^qt_headers\*
--X=*\_qt_headers\*
--X=^_qt_headers\*
+-X=*\qt_headers\*,^qt_headers\*,*\_qt_headers\*,^_qt_headers\*
+-X=*\qt-headers\*,^qt-headers\*,*\_qt-headers\*,^_qt-headers\*
 
--X=*\qt5_headers\*
--X=^qt5_headers\*
--X=*\_qt5_headers\*
--X=^_qt5_headers\*
+-X=*\qt5_headers\*,^qt5_headers\*,*\_qt5_headers\*,^_qt5_headers\*
+-X=*\qt5-headers\*,^qt5-headers\*,*\_qt5-headers\*,^_qt5-headers\*
 
--X=*\qt6_headers\*
--X=^qt6_headers\*
--X=*\_qt6_headers\*
--X=^_qt6_headers\*
+-X=*\qt6_headers\*,^qt6_headers\*,*\_qt6_headers\*,^_qt6_headers\*
+-X=*\qt6-headers\*,^qt6-headers\*,*\_qt6-headers\*,^_qt6-headers\*
 
 
 ## Standard ignored types
 
 # .c .cpp .cxx .c++ etc
--X={*?regex?*}.*\.c.*$
-#-X=*.c*^
+#-X={*?regex?*}.*\.c.*$
+-X=*.c^,*.cpp^,*.cxx^,*.c++^,*.cc^
 
 -X=.git/*,*/.git/*,.git*^,*/.git*^
 
 # Config files
--X=*.cfg^
--X=*.ini^
--X=*.yaml^
--X=*.toml^
--X=*.properties^
+-X=*.cfg^,*.ini^,*.yaml^,*.yml^,*.toml^,*.properties^
 
 # Misc script files
 -X=*.g^
@@ -54,37 +44,14 @@
 -X=*.*ml^
 
 # Shell scripts
--X=*.bat^
--X=*.cmd^
--X=*.sh^
+-X=*.bat^,*.cmd^,=*.sh^
 
 # Doc files
--X=*.md^
--X=*.txt^
--X=*.ht*^
--X=*.xht*^
--X=*.mht*^
--X=*.doc*^
--X=*.rtf*^
--X=*.xls*^
--X=*.xlt*^
--X=*.xla*^
--X=*.csv^
--X=*.xlw^
--X=*.wk*^
--X=*.wq*^
--X=*.dbf^
--X=*.prn^
--X=*.slk^
--X=*.dif*^
--X=*readme.*^
--X=*Readme.*^
--X=*ReadMe.*^
--X=*README.*^
+-X=*.md^,*.txt^,*.ht*^,*.xht*^,*.mht*^,*.doc*^,*.rtf*^,*.xls*^,*.xlt*^,*.xla*^,*.csv^,*.xlw^,*.wk*^,*.wq*^,*.dbf^,*.prn^,*.slk^,*.dif*^
+-X=*readme.*^,*Readme.*^,*ReadMe.*^,*README.*^
 
 # Qt private (or other private folders and files) and other stuff
--X=*\private\*
--X=*_p.h^
+-X=*\private\*,*_p.h^
 
 
 # Exclude macros
@@ -113,6 +80,9 @@
 -N=^INT*_MIN^
 -N=^UINT*_MAX^
 -N=^UINT*_MIN^
+
+-N=^size_type^,^value_type^,^char_type^,^iterator^,^const_iterator^,^reverse_iterator^,^const_reverse_iterator^
+-N=^CharType^,^StringType^
 
 
 # Делаем вид, что WinSock.h уже подключен, иначе, если потом подключается 

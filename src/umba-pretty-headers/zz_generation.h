@@ -53,7 +53,7 @@
             logMsg << endl;
             logMsg << name << endl;
 
-            logMsg << "Include paths: ";
+            logMsg << "Include paths found: ";
 
             std::map< std::string, std::vector<std::string> >::const_iterator pit = generatedCompileFlagsIncPaths.find(name);
 

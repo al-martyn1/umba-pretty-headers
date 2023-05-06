@@ -57,7 +57,8 @@ struct AppConfig
     //------------------------------
 
 
-
+    //------------------------------
+    // !!! Не забывать копировать и/или подготавливать поля класса в функции getAdjustedConfig
     //------------------------------
     std::map<std::string,std::string>        macros;
 
@@ -76,6 +77,9 @@ struct AppConfig
     unsigned                                 optionFlags = 0; // ofNormalizeFilenames; // ofEmptyOptionFlags;
 
     VerbosityLevel                           verbosityLevel = VerbosityLevel::normal;
+
+    bool                                     testConfig                 = false;
+    bool                                     ignoreSourceParsingErrors  = false;
 
     marty::clang::helpers::DeclKindOfKind    allowedKinds = marty::clang::helpers::DeclKindOfKind::none;
 
@@ -98,7 +102,7 @@ struct AppConfig
     {
         return (verbosityLevel==VerbosityLevel::invalid)
              ? false
-             : lvl<=verbosityLevel
+             : (int)lvl<=(int)verbosityLevel
              ;
     }
 
@@ -250,9 +254,15 @@ struct AppConfig
     StreamType& print( StreamType &s ) const
     {
         s << "\n";
-        printVerbosity(s) << "\n";
+        // printVerbosity(s) << "\n";
 
         //------------------------------
+
+        s << "Config Test         : " << testConfig << "\n"; // endl;
+        s << "Ignore Clang Errors : " << ignoreSourceParsingErrors << "\n"; // endl;
+        // printVerbosityTests(s);
+
+        s << "\n";
 
         s << "Output Path    : " << outputPath << "\n"; // endl;
 
@@ -306,13 +316,39 @@ struct AppConfig
         //------------------------------
 
         if (macros.empty())
-            s << "Macros : <EMPTY>";
+        {
+            s << "Macros : <EMPTY>\n";
+        }
         else
         {
             s << "Macros:\n";
             for(auto [key,val] : macros)
             {
                 s << "    '" << key << "' : '" << val << "'\n";
+            }
+        }
+
+        s << "\n";
+        
+        //------------------------------
+
+        s << "Include File Masks:\n";
+        for(auto includeFileMask : includeFilesMaskList)
+	    {
+            auto regexStr = expandSimpleMaskToEcmaRegex(includeFileMask);
+            s << "    '" << includeFileMask;
+
+            bool isRaw = false;
+            if (umba::string_plus::starts_with<std::string>(includeFileMask,umba::regex_helpers::getRawEcmaRegexPrefix<std::string>()))
+                isRaw = true;
+
+            if (regexStr==includeFileMask || isRaw)
+                s << "'\n";
+            else
+            {
+                s << "', corresponding mECMA regexp: '"
+                  << regexStr
+                  << "'\n";
             }
         }
 
@@ -378,6 +414,9 @@ struct AppConfig
     {
         AppConfig appConfig;
 
+        appConfig.testConfig                = testConfig               ;
+        appConfig.ignoreSourceParsingErrors = ignoreSourceParsingErrors;
+
         appConfig.macros             = macros;
         //appConfig.keepGeneratedFiles = keepGeneratedFiles;
         appConfig.scanPaths          = scanPaths;
@@ -398,6 +437,16 @@ struct AppConfig
         {
             appConfig.clangCompileFlagsTxtFilename.push_back( programLocation.makeAbsPath(inputFilename) );
         }
+
+
+        for(auto includeFileMask: includeFilesMaskList)
+        {
+            if (umba::string_plus::starts_with(includeFileMask,umba::regex_helpers::getRawEcmaRegexPrefix<std::string>()))
+                appConfig.includeFilesMaskList.push_back(includeFileMask); // keep regex as is
+            else
+                appConfig.includeFilesMaskList.push_back( umba::filename::normalizePathSeparators(includeFileMask,'/') );
+        }
+
 
         for(auto excludeFileMask: excludeFilesMaskList)
         {

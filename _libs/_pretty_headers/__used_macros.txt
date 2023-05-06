@@ -1,8 +1,20 @@
 F:/_github/umba-pretty-headers/_libs/sfmt/inc/umba/simple_formatter.h
-    UMBA_MCU_USED - [        #if defined(UMBA_MCU_USED) || defined(_WIN32)]
+    UMBA_COMPILE_VERBOSE - [#if defined(UMBA_COMPILE_VERBOSE)]
+    UMBA_LOUT_USED - [#if defined(USE_LOUT) && defined(UMBA_LOUT_USED)]
+    UMBA_MCU_USED - [#if defined(UMBA_MCU_USED)]
+    UMBA_NO_STD_IOMANIPS - [    #ifndef UMBA_NO_STD_IOMANIPS]
     UMBA_SIMPLE_FORMATTER_NO_HEADER_ONLY - [#if defined(UMBA_SIMPLE_FORMATTER_NO_HEADER_ONLY)]
-    USE_LOUT - [#ifdef USE_LOUT]
+    UMBA_WIN32_USED - [#if defined(UMBA_WIN32_USED)]
+    USE_LOUT - [#if defined(USE_LOUT) && defined(UMBA_LOUT_USED)]
+    USE_UMBA_LOUT - [    #ifndef USE_UMBA_LOUT]
+    USE_UMBA_LOUT_CERR - [#if defined(USE_UMBA_LOUT_UART) || defined(USE_UMBA_LOUT_SWV) || defined(USE_UMBA_LOUT_COUT) || defined(USE_UMBA_LOUT_CERR)]
+    USE_UMBA_LOUT_COUT - [#if defined(USE_UMBA_LOUT_UART) || defined(USE_UMBA_LOUT_SWV) || defined(USE_UMBA_LOUT_COUT) || defined(USE_UMBA_LOUT_CERR)]
+    USE_UMBA_LOUT_SWV - [#if defined(USE_UMBA_LOUT_UART) || defined(USE_UMBA_LOUT_SWV) || defined(USE_UMBA_LOUT_COUT) || defined(USE_UMBA_LOUT_CERR)]
+    USE_UMBA_LOUT_UART - [#if defined(USE_UMBA_LOUT_UART) || defined(USE_UMBA_LOUT_SWV) || defined(USE_UMBA_LOUT_COUT) || defined(USE_UMBA_LOUT_CERR)]
+    _MSC_VER - [    #if defined(_MSC_VER) || defined(__GNUC__) || defined(__clang__)]
     _WIN32 - [        #if defined(UMBA_MCU_USED) || defined(_WIN32)]
+    __GNUC__ - [    #if defined(_MSC_VER) || defined(__GNUC__) || defined(__clang__)]
+    __clang__ - [    #if defined(_MSC_VER) || defined(__GNUC__) || defined(__clang__)]
 F:/_github/umba-pretty-headers/_libs/umba/algoritms.h
     UMBA_CXX_HAS_STD11 - [    #ifdef UMBA_CXX_HAS_STD11]
     UMBA_CXX_HAS_STD17 - [          #ifdef UMBA_CXX_HAS_STD17]
@@ -27,6 +39,13 @@ F:/_github/umba-pretty-headers/_libs/umba/char_writers.h
     _WIN32 - [        #if defined(UMBA_MCU_USED) || defined(_WIN32)]
     __ARMCC_VERSION - [#if __CC_ARM || ( (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) )]
     __CC_ARM - [#if __CC_ARM || ( (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) )]
+F:/_github/umba-pretty-headers/_libs/umba/cli_tool_helpers.h
+    HAS_CLIPBOARD_SUPPORT - [#if defined(HAS_CLIPBOARD_SUPPORT)]
+    WIN32 - [        #if defined(WIN32) || defined(_WIN32)]
+    _WIN32 - [        #if defined(WIN32) || defined(_WIN32)]
+F:/_github/umba-pretty-headers/_libs/umba/clipboard_win32.h
+    WIN32 - [#if defined(WIN32) || defined(_WIN32)]
+    _WIN32 - [#if defined(WIN32) || defined(_WIN32)]
 F:/_github/umba-pretty-headers/_libs/umba/cmd_line.h
     RTC_PRIVATE_BUILD - [        #if defined(RTC_PRIVATE_BUILD)]
     WIN32 - [    #if defined(WIN32) || defined(_WIN32)]
@@ -80,9 +99,13 @@ F:/_github/umba-pretty-headers/_libs/umba/exception.h
 F:/_github/umba-pretty-headers/_libs/umba/file_helpers.h
     WIN32 - [#ifndef WIN32]
 F:/_github/umba-pretty-headers/_libs/umba/filename.h
+    UMBA_FILENAME_GET_NATIVE_PATH_SEP_DECLARED - [#if !defined(UMBA_FILENAME_GET_NATIVE_PATH_SEP_DECLARED)]
+    UMBA_FILENAME_MAKE_CANONICAL_DECLARED - [#if !defined(UMBA_FILENAME_MAKE_CANONICAL_DECLARED)]
     WIN32 - [    #if defined(WIN32) || defined(_WIN32)]
     _WIN32 - [    #if defined(WIN32) || defined(_WIN32)]
 F:/_github/umba-pretty-headers/_libs/umba/filesys.h
+    UMBA_FILENAME_GET_NATIVE_PATH_SEP_DECLARED - [#if !defined(UMBA_FILENAME_GET_NATIVE_PATH_SEP_DECLARED)]
+    UMBA_FILENAME_MAKE_CANONICAL_DECLARED - [#if !defined(UMBA_FILENAME_MAKE_CANONICAL_DECLARED)]
     WIN32 - [    #if defined(WIN32) || defined(_WIN32)]
     _WIN32 - [    #if defined(WIN32) || defined(_WIN32)]
 F:/_github/umba-pretty-headers/_libs/umba/hr_counter.h
@@ -114,6 +137,8 @@ F:/_github/umba-pretty-headers/_libs/umba/lineinfo.h
     UMBA_CXX_HAS_STD11 - [    #ifdef UMBA_CXX_HAS_STD11]
 F:/_github/umba-pretty-headers/_libs/umba/lineview.h
     UMBA_MCU_USED - [    #if !defined(UMBA_MCU_USED)]
+F:/_github/umba-pretty-headers/_libs/umba/log.h
+    UMBA_SIMPLE_FORMATTER_H - [#if !defined(UMBA_SIMPLE_FORMATTER_H)]
 F:/_github/umba-pretty-headers/_libs/umba/optimize_pop.h
     UMBA_KEIL_ARMCC_COMPILER_USED - [#ifdef UMBA_KEIL_ARMCC_COMPILER_USED]
 F:/_github/umba-pretty-headers/_libs/umba/optimize_speed.h
@@ -142,9 +167,10 @@ F:/_github/umba-pretty-headers/_libs/umba/preprocessor.h
     max - [    #ifdef max]
     min - [    #ifdef min]
 F:/_github/umba-pretty-headers/_libs/umba/program_location.h
+    UMBA_PROGRAM_LOCATION_CONF_LOOKUP_LEVELS_MAX - [    #if !defined(UMBA_PROGRAM_LOCATION_CONF_LOOKUP_LEVELS_MAX)]
     UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME_FORCE_CONF - [    #if defined(UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME_FORCE_CONF)]
-    WIN32 - [#if defined(WIN32) || defined(_WIN32)]
-    _WIN32 - [#if defined(WIN32) || defined(_WIN32)]
+    WIN32 - [        #if defined(WIN32) || defined(_WIN32)]
+    _WIN32 - [        #if defined(WIN32) || defined(_WIN32)]
 F:/_github/umba-pretty-headers/_libs/umba/pushpack1.h
     _WIN32 - [#if defined(_WIN32)]
 F:/_github/umba-pretty-headers/_libs/umba/pushpack2.h
@@ -163,7 +189,7 @@ F:/_github/umba-pretty-headers/_libs/umba/stl.h
     UMBA_CXX_HAS_STD14 - [#if !defined(UMBA_CXX_HAS_STD14)]
     UMBA_KEIL_ARMCC_COMPILER_USED - [#if defined(UMBA_KEIL_ARMCC_COMPILER_USED)]
 F:/_github/umba-pretty-headers/_libs/umba/string_plus.h
-    UMBA_CXX_HAS_STD11 - [                                    #ifdef UMBA_CXX_HAS_STD11]
+    UMBA_CXX_HAS_STD11 - [    #ifdef UMBA_CXX_HAS_STD11 ]
     UMBA_MSVC_COMPILER_USED - [#ifdef UMBA_MSVC_COMPILER_USED]
 F:/_github/umba-pretty-headers/_libs/umba/time_service.h
     DOXYGEN_ONLY - [    #ifdef DOXYGEN_ONLY]

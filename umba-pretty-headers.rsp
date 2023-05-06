@@ -11,7 +11,15 @@
 -P=_libs
 --output-root=_libs\_pretty_headers
 
---verbose=detailed
-#--verbose=normal
+#--include-files=*.cpx^,*.hcc^
+--include-files=*.h^,*.hpp^,*.hxx^,*.h++^
 
-compile_flags.txt
+
+#--verbose=quet
+#--verbose=normal
+#--verbose=config
+--verbose=detailed
+#--verbose=extra
+
+
+#compile_flags.txt

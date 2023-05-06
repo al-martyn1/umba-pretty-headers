@@ -149,12 +149,13 @@ void scanFolders( const AppConfig &appConfig
             bool addThisFile = false;
             bool excludedByIncludeMask = false;
 
-            std::string regexStr;
+            std::string includeRegexStr;
+            std::string excludeRegexStr;
 
             bool matchInclude = true;
             if (!includeRegexes.empty()) // матчим только если не пусто
             {
-                matchInclude = umba::regex_helpers::regexMatch(normalizedEntryName,includeRegexes,&regexStr);
+                matchInclude = umba::regex_helpers::regexMatch(normalizedEntryName,includeRegexes,&includeRegexStr);
             }
 
             if (!matchInclude)
@@ -167,7 +168,7 @@ void scanFolders( const AppConfig &appConfig
             {
                 addThisFile = true; // Вроде подошло, надо проверить исключения
 
-                if (umba::regex_helpers::regexMatch(normalizedEntryName,excludeRegexes,&regexStr))
+                if (umba::regex_helpers::regexMatch(normalizedEntryName,excludeRegexes,&excludeRegexStr))
                 {
                     addThisFile = false;
                     excludedByIncludeMask = false;
@@ -189,15 +190,22 @@ void scanFolders( const AppConfig &appConfig
                     else
                         ext = std::string(".") + ext;
 
-                    logMsg << good << "Added" << normal;
+                    logMsg << good << "added" << normal;
                     logMsg << " (" << notice << ext << normal << ")";
-                    logMsg << endl;
+                    if (!includeRegexStr.empty())
+                    {
+                        // orgMask = includeOriginalMasks[includeRegexStr]
+                        logMsg << " due include mask '" << includeOriginalMasks[includeRegexStr] << "' (" << includeRegexStr << ")" << normal;
+                    }
 
                     if (ext.empty())
                     {
-                        logMsg << "  " << notice << entryName << normal << "";
-                        logMsg << endl;
+                        logMsg << " - !note: empty extention: " << notice << entryName << normal << "";
+                        //logMsg << "\n";
                     }
+
+                    logMsg << "\n";
+
                 }
             }
             else
@@ -206,9 +214,18 @@ void scanFolders( const AppConfig &appConfig
 
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
                 {
-                    std::string orgMask  = excludedByIncludeMask ? includeOriginalMasks[regexStr] : excludeOriginalMasks[regexStr];
-                    std::string wichMask = excludedByIncludeMask ? "include" : "exclude";
-                    logMsg << notice << "skipped" <<  /* normal << */  " due " << wichMask << " mask '" << orgMask << "' (" << regexStr << ")" << normal << endl;
+                    if (excludedByIncludeMask)
+                    {
+                        logMsg << notice << "skipped" <<  /* normal << */  " due include masks" << normal << "\n";
+                    }
+                    else
+                    {
+                        logMsg << notice << "skipped" <<  /* normal << */  " due exclude mask '" << excludeOriginalMasks[excludeRegexStr] << "' (" << excludeRegexStr << ")" << normal << "\n";
+                    }
+                    // std::string regexStr = excludedByIncludeMask ? includeRegexStr : excludeRegexStr;
+                    // std::string orgMask  = excludedByIncludeMask ? includeOriginalMasks[includeRegexStr] : excludeOriginalMasks[excludeRegexStr];
+                    // std::string wichMask = excludedByIncludeMask ? "include" : "exclude";
+                    // logMsg << notice << "skipped" <<  /* normal << */  " due " << wichMask << " mask '" << orgMask << "' (" << regexStr << ")" << normal << endl;
                 }
             }
 

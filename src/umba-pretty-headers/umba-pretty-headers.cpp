@@ -26,6 +26,8 @@
 #include "umba/scope_exec.h"
 #include "umba/macro_helpers.h"
 #include "umba/macros.h"
+#include "umba/filesys.h"
+#include "umba/filename.h"
 
 #include "umba/time_service.h"
 
@@ -57,6 +59,11 @@ bool logSourceInfo = false;
 #include "../common/scan_for_pp.h"
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
+
+
+#include "app_config.h"
+
+AppConfig    appConfig;
 
 
 #include "umba/cmd_line.h"
@@ -94,7 +101,9 @@ int main(int argc, char* argv[])
     if (umba::isDebuggerPresent())
     {
         argsParser.args.clear();
-        argsParser.args.push_back("@..\\tests\\data\\umba-pretty-headers-09.rsp");
+        argsParser.args.push_back("@umba-pretty-headers.rsp");
+        argsParser.args.push_back("--test-config");
+
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
         // argsParser.args.push_back(umba::string_plus::make_string(""));
@@ -126,6 +135,54 @@ int main(int argc, char* argv[])
     pAppConfig = &appConfig;
 
 
+    // Looking for compile_flags.txt
+    if (appConfig.clangCompileFlagsTxtFilename.empty())
+    {
+        LOG_WARN_OPT("input-compile-flags") << "no input 'compile_flags.txt' taken, trying to find one of\n";
+    }
+
+    std::string clangCompileFlagsSearchDir = argsParser.argParser.getCurPath();
+    // argsParser.makeAbsPath(a)
+    // Ищем в текущем каталоге и всё // на уровень выше
+    for(unsigned lvlCount=0; appConfig.clangCompileFlagsTxtFilename.empty() && lvlCount!=1; ++lvlCount)
+    {
+        std::string
+        compileFlagsTxtFilename = umba::filename::appendPath( clangCompileFlagsSearchDir, std::string("compile_flags_x.txt") );
+        if (umba::filesys::isFileReadable(compileFlagsTxtFilename))
+        {
+            appConfig.clangCompileFlagsTxtFilename.emplace_back(compileFlagsTxtFilename);
+            break;
+        }
+
+        compileFlagsTxtFilename = umba::filename::appendPath( clangCompileFlagsSearchDir, std::string("compile_flags.txt") );
+        if (umba::filesys::isFileReadable(compileFlagsTxtFilename))
+        {
+            appConfig.clangCompileFlagsTxtFilename.emplace_back(compileFlagsTxtFilename);
+            break;
+        }
+
+        std::string upperDir = umba::filename::getPath(clangCompileFlagsSearchDir);
+
+        if (upperDir.empty())
+            break;
+
+        if (upperDir==clangCompileFlagsSearchDir)
+            break;
+
+    }
+
+
+    if (appConfig.verbosityLevel!=VerbosityLevel::quet)
+    {
+        printInfoLogSectionHeader(logMsg, "Verbosity");
+        logMsg << "Verbosity: " << appConfig.VerbosityLevelToStdString(appConfig.verbosityLevel) << "\n"; // endl;
+        logMsg << "  quet   : " << appConfig.testVerbosityStringRes(VerbosityLevel::quet    )    << "\n"; // endl;
+        logMsg << "  normal : " << appConfig.testVerbosityStringRes(VerbosityLevel::normal  )    << "\n"; // endl;
+        logMsg << "  config : " << appConfig.testVerbosityStringRes(VerbosityLevel::config  )    << "\n"; // endl;
+        logMsg << "  verbose: " << appConfig.testVerbosityStringRes(VerbosityLevel::detailed)    << "\n"; // endl;
+        logMsg << "  extra  : " << appConfig.testVerbosityStringRes(VerbosityLevel::extra   )    << "\n"; // endl;
+    }
+
     if (appConfig.testVerbosity(VerbosityLevel::config))
     {
         printInfoLogSectionHeader(logMsg, "Actual Config");
@@ -135,14 +192,13 @@ int main(int argc, char* argv[])
 
     if (appConfig.outputPath.empty())
     {
-        LOG_ERR_OPT << "output path not taken (--output-path)" << endl;
+        LOG_ERR_OPT << "output path not taken (--output-path)" << "\n"; // endl;
         return 1;
     }
 
 
 
     #include "zz_generation.h"
-
 
 
     //unsigned totalFiles = 0;
@@ -152,8 +208,6 @@ int main(int argc, char* argv[])
     std::set<std::string>    foundExtentions;
     scanFolders(appConfig, foundFiles, excludedFiles, foundExtentions);
 
-
-
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
         if (!foundFiles.empty())
@@ -161,7 +215,7 @@ int main(int argc, char* argv[])
 
         for(const auto & name : foundFiles)
         {
-            logMsg << name << endl;
+            logMsg << name << "\n"; // endl;
         }
 
 
@@ -170,7 +224,7 @@ int main(int argc, char* argv[])
 
         for(const auto & name : excludedFiles)
         {
-            logMsg << name << endl;
+            logMsg << name << "\n"; // endl;
         }
 
 
@@ -180,9 +234,9 @@ int main(int argc, char* argv[])
         for(const auto & ext : foundExtentions)
         {
             if (ext.empty())
-                logMsg << "<EMPTY>" << endl;
+                logMsg << "<EMPTY>" << "\n"; // endl;
             else
-                logMsg << "." << ext << endl;
+                logMsg << "." << ext << "\n"; // endl;
         }
     }
 
@@ -194,6 +248,11 @@ int main(int argc, char* argv[])
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
+    }
+
+    if (appConfig.testConfig)
+    {
+        return 0;
     }
 
     if (foundFiles.empty())
@@ -228,7 +287,7 @@ int main(int argc, char* argv[])
         std::ofstream cppStream(srcFullName);
         if (!cppStream)
         {
-            LOG_ERR_OPT << "failed to create C++ source file: " << srcFullName << endl;
+            LOG_ERR_OPT << "failed to create C++ source file: " << srcFullName << "\n"; // endl;
             continue;
         }
 
@@ -243,8 +302,8 @@ int main(int argc, char* argv[])
         {
             printInfoLogSectionHeader(logMsg, "Generating C++ source");
             // logMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
-            logMsg << "File: " << srcFullName << endl << endl;
-            logMsg << "Processing..." << endl << endl;
+            logMsg << "File: " << srcFullName << "\n\n"; // endl << endl;
+            logMsg << "Processing..." << "\n\n"; // endl << endl;
         }
         
 
@@ -311,10 +370,15 @@ int main(int argc, char* argv[])
 
         if (res)
         {
-            LOG_ERR_OPT << "Clang returns error: " << res << endl;
-            return res;
+            LOG_ERR_OPT << "Clang returns error: " << res << "\n"; // endl;
+            if (appConfig.ignoreSourceParsingErrors)
+            {
+            }
+            else
+            {
+                return res;
+            }
         }
-
     }
 
 
@@ -325,7 +389,6 @@ int main(int argc, char* argv[])
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
     }
-
 
 
     auto createDirectory = [&](std::string p) -> bool
@@ -378,7 +441,7 @@ int main(int argc, char* argv[])
 
         for( auto [key,val] : m )
         {
-            logMsg << width(36) << marty::clang::helpers::getClangDeclKindName(key) << ": " << val <<endl;
+            logMsg << width(36) << marty::clang::helpers::getClangDeclKindName(key) << ": " << val << "\n"; // endl;
         }
 
     };
@@ -429,12 +492,12 @@ int main(int argc, char* argv[])
             auto path = umba::filename::getPath(definedMacrosTxtFullName);
 
             if (!createDirectory(path))
-                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << "\n"; // endl;
             else
             {
                 definedMacrosTxtStream.open( definedMacrosTxtFullName, std::ios_base::out | std::ios_base::trunc );
                 if (!definedMacrosTxtStream)
-                    LOG_WARN_OPT("create-file-failed") << "failed to create '__defined_macros.txt' file: " << definedMacrosTxtFullName << endl;
+                    LOG_WARN_OPT("create-file-failed") << "failed to create '__defined_macros.txt' file: " << definedMacrosTxtFullName << "\n"; // endl;
                 else
                 {
                     createdFiles.push_back(definedMacrosTxtFullName);
@@ -468,10 +531,10 @@ int main(int argc, char* argv[])
                 if (umba::regex_helpers::regexMatch(d,regexes,&regexStr))
                 {
                     if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                        logMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
+                        logMsg << " - " << notice << "skipped due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
                                         << normal 
                                         //<< " - [" << l << "]"
-                                        << endl;
+                                        << "\n"; // endl;
 
                     definedMacrosTxtStream << " - skipped due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
                                         //<< " - [" << l << "]"
@@ -489,12 +552,12 @@ int main(int argc, char* argv[])
                     auto path = umba::filename::getPath(definedMacroFullFileName);
                
                     if (!createDirectory(path))
-                        LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+                        LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << "\n"; // endl;
                     else
                     {
                         definedMacroStream.open( definedMacroFullFileName, std::ios_base::out | std::ios_base::trunc );
                         if (!definedMacroStream)
-                            LOG_WARN_OPT("create-file-failed") << "failed to create file: " << definedMacroFullFileName << endl;
+                            LOG_WARN_OPT("create-file-failed") << "failed to create file: " << definedMacroFullFileName << "\n"; // endl;
                         else
                         {
                             createdFiles.push_back(definedMacroFullFileName);
@@ -510,7 +573,7 @@ int main(int argc, char* argv[])
 
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
                     logMsg // << " - [" << l << "]" 
-                           << endl;
+                           << "\n"; // endl;
 
                 definedMacrosTxtStream << "\n";
 
@@ -532,12 +595,12 @@ int main(int argc, char* argv[])
             auto path = umba::filename::getPath(usedMacrosTxtFullName);
 
             if (!createDirectory(path))
-                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << "\n"; // endl;
             else
             {
                 usedMacrosTxtStream.open( usedMacrosTxtFullName, std::ios_base::out | std::ios_base::trunc );
                 if (!usedMacrosTxtStream)
-                    LOG_WARN_OPT("create-file-failed") << "failed to create '__used_macros.txt' file: " << usedMacrosTxtFullName << endl;
+                    LOG_WARN_OPT("create-file-failed") << "failed to create '__used_macros.txt' file: " << usedMacrosTxtFullName << "\n"; // endl;
                 else
                 {
                     createdFiles.push_back(usedMacrosTxtFullName);
@@ -578,7 +641,7 @@ int main(int argc, char* argv[])
 
         for(const auto& [cppName, info] : foundDeclarations)
         {
-            logMsg << endl;
+            logMsg << "\n"; // endl;
 
             auto fileNameForCppName = cppNameToFileName(cppName);
             logMsg << cppName <<  " - (" << fileNameForCppName << ")"; // << endl;
@@ -589,28 +652,32 @@ int main(int argc, char* argv[])
             if (umba::regex_helpers::regexMatch(cppName,regexes,&regexStr))
             {
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                    logMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                {
+                    logMsg << " - " << notice << "skipped due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal 
+                           //<< endl
+                           << "\n"; // endl;
+                }
                 continue;
             }
 
 
-            logMsg << endl;
+            logMsg << "\n"; // endl;
 
-            logMsg << "Kinds:" << endl;
+            logMsg << "Kinds:" << "\n"; // endl;
             for( auto kind : info.nameKinds )
             {
                 logMsg << "    " << marty::clang::helpers::getClangDeclKindName(kind) 
                        << " - "  << marty::clang::helpers::DeclKindOfKind_toStdString(marty::clang::helpers::declKind_toKindOfKind(kind))
-                       << endl;
+                       << "\n"; // endl;
             }
 
-            logMsg << "Files:" << endl;
+            logMsg << "Files:" << "\n"; // endl;
             for( const auto & [filenameKey, locFileInfo]: info.locationFiles )
             {
                 logMsg << "    " << marty::clang::helpers::getClangDeclKindName(locFileInfo.kind)
                        <<   ": " << locFileInfo.locationFilename
                        <<  " - " << locFileInfo.fullFilename
-                       << endl;
+                       << "\n"; // endl;
             }
 
         }
@@ -619,8 +686,15 @@ int main(int argc, char* argv[])
 
 
 
+    logMsg << "\n";
+    logMsg << "\n";
 
-
+    //printDeclStat( declUsageMapHandled  , "Handled Declaration Types"   );
+    //if (!foundDeclarations.empty() && appConfig.testVerbosity(VerbosityLevel::detailed))
+    if (appConfig.testVerbosity(VerbosityLevel::detailed))
+    {
+        printInfoLogSectionHeader(logMsg, "Output generation");
+    }
 
     for(const auto& [cxxName, info] : foundDeclarations)
     {
@@ -652,7 +726,7 @@ int main(int argc, char* argv[])
         if (!validKindFound)
         {
             if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                logMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due kind of name - " << marty::clang::helpers::DeclKindOfKind_toStdString(allNameKinds) << normal << endl;
+                logMsg << cxxName << " - " << notice << "skipped due kind of name - " << marty::clang::helpers::DeclKindOfKind_toStdString(allNameKinds) << normal << "\n"; // endl;
             continue;
         }
 
@@ -660,7 +734,7 @@ int main(int argc, char* argv[])
         if (umba::regex_helpers::regexMatch(cxxName,regexes,&regexStr))
         {
             if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                logMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                logMsg << cxxName << " - " << notice << "skipped due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << "\n"; // endl;
             continue;
         }
 
@@ -679,14 +753,14 @@ int main(int argc, char* argv[])
 
             if (!createDirectory(path))
             {
-                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << endl;
+                LOG_WARN_OPT("create-dir-failed") << "failed to create directory: " << path << "\n"; // endl;
                 continue;
             }
 
             hdrStream.open( canonicalFullName, std::ios_base::out | std::ios_base::trunc );
             if (!hdrStream)
             {
-                LOG_WARN_OPT("create-file-failed") << "failed to create C++ header file: " << canonicalFullName << endl;
+                LOG_WARN_OPT("create-file-failed") << "failed to create C++ header file: " << canonicalFullName << "\n"; // endl;
                 continue;
             }
             else
@@ -712,7 +786,7 @@ int main(int argc, char* argv[])
         }
 
         if (appConfig.testVerbosity(VerbosityLevel::detailed))
-            logMsg << cxxName << " - " << canonicalFullName /* fullName */  << " - generated" << endl;
+            logMsg << cxxName << " - " << canonicalFullName /* fullName */  << " - generated" << "\n"; // endl;
 
     }
 
@@ -721,6 +795,10 @@ int main(int argc, char* argv[])
         // std::vector<std::string>  createdFiles;
         // std::vector<std::string>  createdFolders;
 
+    if (appConfig.testVerbosity(VerbosityLevel::detailed))
+    {
+        printInfoLogSectionHeader(logMsg, "Scripts generation");
+    }
     
     #if defined(WIN32) || defined(_WIN32)
         std::string clearScriptSimpleName = "clear.bat";
@@ -735,7 +813,7 @@ int main(int argc, char* argv[])
     {
         clearScriptStream.open( clearScriptFileName, std::ios_base::out | std::ios_base::trunc );
         if (!clearScriptStream)
-            LOG_WARN_OPT("create-file-failed") << "failed to create '" << clearScriptSimpleName << "' file: " << clearScriptFileName << endl;
+            LOG_WARN_OPT("create-file-failed") << "failed to create '" << clearScriptSimpleName << "' file: " << clearScriptFileName << "\n"; // endl;
     }
 
 
@@ -752,7 +830,7 @@ int main(int argc, char* argv[])
     {
         gitaddScriptStream.open( gitaddScriptFileName, std::ios_base::out | std::ios_base::trunc );
         if (!gitaddScriptStream)
-            LOG_WARN_OPT("create-file-failed") << "failed to create '" << gitaddScriptSimpleName << "' file: " << gitaddScriptFileName << endl;
+            LOG_WARN_OPT("create-file-failed") << "failed to create '" << gitaddScriptSimpleName << "' file: " << gitaddScriptFileName << "\n"; // endl;
     }
 
 
@@ -828,9 +906,10 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
+        logMsg << "\n";
         printInfoLogSectionHeader(logMsg, "Job done");
 
-        logMsg << "Total files created: " << totalFilesCreated << endl;
+        logMsg << "Total files created: " << totalFilesCreated << "\n"; // endl;
 
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";

@@ -6,7 +6,7 @@
 -Wno-switch
 -Wno-pragma-pack
 -Wno-microsoft-template-shadow
--std=c++14
+-std=c++17
 -I_libs\mem_pools\inc
 -I_libs\sfmt\inc
 -I_libs

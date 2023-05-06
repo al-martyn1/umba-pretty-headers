@@ -2,7 +2,6 @@
 
 #include <stack>
 
-#include "app_config.h"
 #include "umba/cmd_line.h"
 #include "../common/marty_clang_helpers.h"
 
@@ -11,7 +10,6 @@
     #include <shellapi.h>
 #endif
 
-AppConfig    appConfig;
 
 
 struct ArgParser
@@ -20,18 +18,18 @@ struct ArgParser
 std::stack<std::string> optFiles;
 
 
+std::string getCurPath()
+{
+    if (optFiles.empty())
+        return umba::filesys::getCurrentDirectory<std::string>();
+    else
+        return umba::filename::getPath(optFiles.top());
+}
+
 std::string makeAbsPath( std::string p )
 {
-    std::string basePath;
-
-    if (optFiles.empty())
-        basePath = umba::filesys::getCurrentDirectory<std::string>();
-    else
-        basePath = umba::filename::getPath(optFiles.top());
-
-
+    std::string basePath = getCurPath();
     return umba::filename::makeAbsPath( p, basePath );
-
 }
 
 
@@ -61,7 +59,7 @@ int operator()( const std::string                               &a           //!
             return -1;
         }
 
-       if (opt.isOption("quet") || opt.isOption('q') || opt.setDescription("Operate quetly. Short alias for '--verbose=quet'"))
+        if (opt.isOption("quet") || opt.isOption('q') || opt.setDescription("Operate quetly. Short alias for '--verbose=quet'"))
         {
             argsParser.quet = true;
             appConfig.setOptQuet(true);
@@ -179,9 +177,24 @@ int operator()( const std::string                               &a           //!
 
             coutWriter.forceSetConsoleType(res);
             cerrWriter.forceSetConsoleType(res);
+            return 0;
         }
 
         //------------
+
+        else if (opt.isOption("test-config") || opt.setDescription("Test config on source tree only, do not parse sources and generate output"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            appConfig.testConfig = true;
+            return 0;
+        }
+
+        else if (opt.isOption("ignore-parsing-errors") || opt.setDescription("Ignore parsing errors and generate output if it possible"))
+        {
+            if (argsParser.hasHelpOption) return 0;
+            appConfig.ignoreSourceParsingErrors = true;
+            return 0;
+        }
 
         else if ( opt.isOption("keep-generated-files") || opt.isOption('K') 
                // || opt.setParam("VAL",true)
@@ -215,27 +228,6 @@ int operator()( const std::string                               &a           //!
 
             std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
             appConfig.excludeNamesMaskList.insert(appConfig.excludeNamesMaskList.end(), lst.begin(), lst.end());
-
-            return 0;
-        }
-
-        else if ( opt.isOption("include-files") || opt.isOption('I') || opt.setParam("MASK,...")
-               || opt.setDescription("Include C/C++ names for output. Only files which file name matched any of taken masks, will be added to output.\n"
-                                     "Note: exclude masks also performed on included names\n"
-                                     "For details about 'MASK' parameter see '--exclude-files' option description."
-                                    )
-                )
-        {
-            if (argsParser.hasHelpOption) return 0;
-            
-            if (!opt.hasArg())
-            {
-                LOG_ERR_OPT<<"exclude names mask not taken (--exclude-names)\n";
-                return -1;
-            }
-
-            std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
-            appConfig.includeFilesMaskList.insert(appConfig.includeFilesMaskList.end(), lst.begin(), lst.end());
 
             return 0;
         }
@@ -278,6 +270,27 @@ int operator()( const std::string                               &a           //!
 
             std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
             appConfig.excludeFilesMaskList.insert(appConfig.excludeFilesMaskList.end(), lst.begin(), lst.end());
+
+            return 0;
+        }
+
+        else if ( opt.isOption("include-files") || opt.isOption('I') || opt.setParam("MASK,...")
+               || opt.setDescription("Include C/C++ names for output. Only files which file name matched any of taken masks, will be added to output.\n"
+                                     "Note: exclude masks also performed on included names\n"
+                                     "For details about 'MASK' parameter see '--exclude-files' option description."
+                                    )
+                )
+        {
+            if (argsParser.hasHelpOption) return 0;
+            
+            if (!opt.hasArg())
+            {
+                LOG_ERR_OPT<<"exclude names mask not taken (--exclude-names)\n";
+                return -1;
+            }
+
+            std::vector< std::string > lst = umba::string_plus::split(opt.optArg, ',');
+            appConfig.includeFilesMaskList.insert(appConfig.includeFilesMaskList.end(), lst.begin(), lst.end());
 
             return 0;
         }

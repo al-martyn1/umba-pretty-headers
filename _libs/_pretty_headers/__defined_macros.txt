@@ -1,6 +1,9 @@
 File: F:/_github/umba-pretty-headers/_libs/sfmt/inc/umba/simple_formatter.h
+    UMBA_LOUT_USED
     UMBA_SIMPLE_FORMATTER_H - skipped due '*_H^' (.*_H$)
     UMBA_SIMPLE_FORMATTER_INLINE_FUNCTION
+    USE_LOUT
+    USE_UMBA_LOUT
 File: F:/_github/umba-pretty-headers/_libs/umba/alloca.h
     _alloca - skipped due '^_alloca^' (^_alloca$)
     alloca - skipped due '^alloca^' (^alloca$)
@@ -13,6 +16,8 @@ File: F:/_github/umba-pretty-headers/_libs/umba/assert.h
     UMBA_STATIC_ASSERT_MSG
 File: F:/_github/umba-pretty-headers/_libs/umba/char_writers.h
     UMBA_LEGACY_UART_CHAR_WRITTER_LOCK
+File: F:/_github/umba-pretty-headers/_libs/umba/cli_tool_helpers.h
+    HAS_CLIPBOARD_SUPPORT
 File: F:/_github/umba-pretty-headers/_libs/umba/critical_section.h
     ENTER_CRITICAL_SECTION
     EXIT_CRITICAL_SECTION
@@ -39,7 +44,12 @@ File: F:/_github/umba-pretty-headers/_libs/umba/exception.h
     UMBA_SEH_TRY_END
     UMBA_UNKNOWN_EXCEPTION_TO_STREAM_PRINT
     UMBA_UNKNOWN_EXCEPTION_TO_STREAM_PRINTLN
+File: F:/_github/umba-pretty-headers/_libs/umba/filename.h
+    UMBA_FILENAME_GET_NATIVE_PATH_SEP_DECLARED
+    UMBA_FILENAME_MAKE_CANONICAL_DECLARED
 File: F:/_github/umba-pretty-headers/_libs/umba/filesys.h
+    UMBA_FILENAME_GET_NATIVE_PATH_SEP_DECLARED
+    UMBA_FILENAME_MAKE_CANONICAL_DECLARED
     struct_file_stat - skipped due '^struct_file_stat^' (^struct_file_stat$)
 File: F:/_github/umba-pretty-headers/_libs/umba/i_char_writer.h
     UMBA_I_CHAR_WRITER_H - skipped due '*_H^' (.*_H$)
@@ -51,6 +61,12 @@ File: F:/_github/umba-pretty-headers/_libs/umba/interface.h
     UMBA_IMPLEMENT_QUERY_INTERFACE_TEMPLATE_VERSION
     UMBA_INHERITS
     UMBA_INTERFACE
+File: F:/_github/umba-pretty-headers/_libs/umba/log.h
+    UMBA_LOG_ERR
+    UMBA_LOG_ERR_INPUT
+    UMBA_LOG_MSG
+    UMBA_LOG_WARN
+    UMBA_LOG_WARN_INPUT
 File: F:/_github/umba-pretty-headers/_libs/umba/preprocessor.h
     NUM_ELEM
     UMBA_ALIGNED
@@ -76,6 +92,7 @@ File: F:/_github/umba-pretty-headers/_libs/umba/preprocessor.h
     UMBA_WEAK_IRQ_HANDLER
     UMBA_ZERO_SIZE
 File: F:/_github/umba-pretty-headers/_libs/umba/program_location.h
+    UMBA_PROGRAM_LOCATION_CONF_LOOKUP_LEVELS_MAX
     UMBA_PROGRAM_LOCATION_DEF_CONF_FOLDER_NAME
     UMBA_PROGRAM_LOCATION_INIT
     UMBA_PROGRAM_LOCATION_INIT_IMPL
