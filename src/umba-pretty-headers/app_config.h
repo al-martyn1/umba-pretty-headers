@@ -8,7 +8,7 @@
 #include "umba/enum_helpers.h"
 #include "umba/flag_helpers.h"
 
-#include "../common/regex_helpers.h"
+#include "umba/regex_helpers.h"
 #include "../common/marty_clang_helpers.h"
 
 //----------------------------------------------------------------------------
@@ -335,7 +335,8 @@ struct AppConfig
         s << "Include File Masks:\n";
         for(auto includeFileMask : includeFilesMaskList)
 	    {
-            auto regexStr = expandSimpleMaskToEcmaRegex(includeFileMask);
+            // auto regexStr = expandSimpleMaskToEcmaRegex(includeFileMask);
+            auto regexStr = umba::regex_helpers::expandSimpleMaskToEcmaRegex(includeFileMask, true /* useAnchoring */, true /* allowRawRegexes */);
             s << "    '" << includeFileMask;
 
             bool isRaw = false;
@@ -359,7 +360,9 @@ struct AppConfig
         s << "Exclude File Masks:\n";
         for(auto excludeFileMask : excludeFilesMaskList)
 	    {
-            auto regexStr = expandSimpleMaskToEcmaRegex(excludeFileMask);
+            //auto regexStr = expandSimpleMaskToEcmaRegex(excludeFileMask);
+            auto regexStr = umba::regex_helpers::expandSimpleMaskToEcmaRegex(excludeFileMask, true /* useAnchoring */, true /* allowRawRegexes */);
+
             s << "    '" << excludeFileMask;
 
             bool isRaw = false;
@@ -383,7 +386,8 @@ struct AppConfig
         s << "Exclude Name Masks:\n";
         for(auto excludeNameMask : excludeNamesMaskList)
 	    {
-            auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+            // auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+            auto regexStr = umba::regex_helpers::expandSimpleMaskToEcmaRegex(excludeNameMask, true /* useAnchoring */, true /* allowRawRegexes */);
             s << "    '" << excludeNameMask;
 
             bool isRaw = false;

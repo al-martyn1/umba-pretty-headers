@@ -465,7 +465,8 @@ int main(int argc, char* argv[])
 
     for(auto excludeNameMask : appConfig.excludeNamesMaskList)
     {
-        auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+        // auto regexStr = expandSimpleMaskToEcmaRegex(excludeNameMask);
+        auto regexStr = umba::regex_helpers::expandSimpleMaskToEcmaRegex(excludeNameMask, true /* useAnchoring */, true /* allowRawRegexes */);
         regexes      [regexStr] = std::regex(regexStr);
         originalMasks[regexStr] = excludeNameMask;
     }
