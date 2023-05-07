@@ -182,7 +182,7 @@
   <ItemGroup>
     <ClCompile Include="..\_libs\umba\critical_section.cpp" />
     <ClCompile Include="..\_libs\umba\time_service.cpp" />
-    <ClCompile Include="..\src\main\test08.cpp" />
+    <ClCompile Include="..\src\umba-pretty-headers\test08.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

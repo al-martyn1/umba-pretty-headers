@@ -17,8 +17,7 @@ do { \
 // marty::clang::helpers::
 namespace marty{
 namespace clang{
-namespace helpers
-{
+namespace helpers{
 
 
 

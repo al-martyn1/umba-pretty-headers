@@ -22,9 +22,13 @@ umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
 umba::NulCharWriter       nulWriter;
 
-umba::SimpleFormatter logMsg(&coutWriter);
-umba::SimpleFormatter logErr(&cerrWriter);
-umba::SimpleFormatter logNul(&nulWriter);
+umba::SimpleFormatter umbaLogStreamMsg(&coutWriter);
+umba::SimpleFormatter umbaLogStreamErr(&cerrWriter);
+umba::SimpleFormatter umbaLogStreamNul(&nulWriter);
+
+bool logWarnType   = true;
+bool umbaLogGccFormat  = false;
+bool umbaLogSourceInfo = false;
 
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;

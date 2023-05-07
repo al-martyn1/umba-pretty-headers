@@ -37,3 +37,7 @@
 /_prj_msvc2019/*.user
 /.distr
 /*.log
+/umba-pretty-headers.txt
+/windeployqt.txt
+/compile_flags_0.cpp
+/compile_flags_0.txt

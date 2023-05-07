@@ -1,11 +1,11 @@
 #pragma once
 
+#include "clang.h"
 
 // marty::clang::helpers
 namespace marty{
 namespace clang{
-namespace helpers
-{
+namespace helpers{
 
 
 // marty::clang::helpers::DeclFindingActionTemplate

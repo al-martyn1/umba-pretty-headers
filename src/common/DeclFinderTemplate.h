@@ -1,12 +1,12 @@
 #pragma once
 
+#include "clang.h"
 
 //----------------------------------------------------------------------------
 // marty::clang::helpers
 namespace marty{
 namespace clang{
-namespace helpers
-{
+namespace helpers{
 //----------------------------------------------------------------------------
 
 
@@ -108,7 +108,7 @@ public:
                 llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
                 std::string strFileName = fileName.str();
 
-                //logMsg << strFileName << endl;
+                //umbaLogStreamMsg << strFileName << endl;
                 std::cout << strFileName << std::endl;
             }
 
@@ -130,7 +130,7 @@ public:
                 llvm::StringRef fileName = (loc.isValid() && loc.getFileEntry() ? loc.getFileEntry()->getName() : "<INVALID_LOCATION>");
                 std::string strFileName = fileName.str();
 
-                //logMsg << strFileName << endl;
+                //umbaLogStreamMsg << strFileName << endl;
                 std::cout << strFileName << std::endl;
 
                 // auto declSrcLocInfo = pd->getLocation();

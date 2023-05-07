@@ -44,39 +44,39 @@
     {
         if (!generatedCompileFlagsTxtFiles.empty())
         {
-            //printInfoLogSectionHeader(logMsg, "Generated 'CompileFlags' Files");
-            printInfoLogSectionHeader(logMsg, "Generated 'compile_flags.txt' Files");
+            //printInfoLogSectionHeader(umbaLogStreamMsg, "Generated 'CompileFlags' Files");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Generated 'compile_flags.txt' Files");
         }
 
         for(auto & name : generatedCompileFlagsTxtFiles)
         {
-            logMsg << endl;
-            logMsg << name << endl;
+            umbaLogStreamMsg << endl;
+            umbaLogStreamMsg << name << endl;
 
-            logMsg << "Include paths found: ";
+            umbaLogStreamMsg << "Include paths found: ";
 
             std::map< std::string, std::vector<std::string> >::const_iterator pit = generatedCompileFlagsIncPaths.find(name);
 
             if (pit==generatedCompileFlagsIncPaths.end())
             {
-                logMsg << warning << "Not found" << normal << endl;
+                umbaLogStreamMsg << warning << "Not found" << normal << endl;
             }
             else
             {
-                logMsg << endl;
+                umbaLogStreamMsg << endl;
                 const auto &paths = pit->second;
                 for( const auto &p : paths)
                 {
-                    logMsg << "  " << p; // << endl;
+                    umbaLogStreamMsg << "  " << p; // << endl;
                     auto cp = umba::filename::makeCanonical(p,'/');
-                    logMsg << " - " << cp << endl;
+                    umbaLogStreamMsg << " - " << cp << endl;
                 }
             }
         }
 
-        printInfoLogSectionHeader(logMsg, "Initialization completed");
+        printInfoLogSectionHeader(umbaLogStreamMsg, "Initialization completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         startTick = umba::time_service::getCurTimeMs();
     }
 

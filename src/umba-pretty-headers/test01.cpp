@@ -9,10 +9,10 @@
 #include <iomanip>
 #include <string>
 
-#include "clang.h"
+#include "../common/clang.h"
 
-#include "marty_clang_helpers.h"
-#include "utils.h"
+#include "../common/marty_clang_helpers.h"
+#include "../common/utils.h"
 
 
 

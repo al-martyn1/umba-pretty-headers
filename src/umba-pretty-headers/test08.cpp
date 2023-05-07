@@ -20,18 +20,18 @@ umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
 umba::NulCharWriter       nulWriter;
 
-umba::SimpleFormatter logMsg(&coutWriter);
-umba::SimpleFormatter logErr(&cerrWriter);
-umba::SimpleFormatter logNul(&nulWriter);
+umba::SimpleFormatter umbaLogStreamMsg(&coutWriter);
+umba::SimpleFormatter umbaLogStreamErr(&cerrWriter);
+umba::SimpleFormatter umbaLogStreamNul(&nulWriter);
 
 bool logWarnType   = true;
-bool logGccFormat  = false;
-bool logSourceInfo = false;
+bool umbaLogGccFormat  = false;
+bool umbaLogSourceInfo = false;
 
 
-#include "log.h"
-#include "utils.h"
-#include "scan_folders.h"
+#include "../common/log.h"
+#include "../common/utils.h"
+#include "umba/scanners.h"
 
 
 // template<typename GetterType>
@@ -79,7 +79,8 @@ void testMacro( const std::string &text, const MacroGetter &getter, int flags )
 
 void testMask(const std::string &testRegexText, const std::string &testMaskStr, bool useAnchors)
 {
-    std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr /* , useAnchors */  );
+    // std::string testRegexStr      = expandSimpleMaskToEcmaRegex( testMaskStr /* , useAnchors */  );
+    std::string testRegexStr      = umba::regex_helpers::expandSimpleMaskToEcmaRegex(testMaskStr, true /* useAnchoring */, true /* allowRawRegexes */);
     std::string testRegexTextNorm = umba::filename::normalizePathSeparators(testRegexText,'/');
 
     std::cout << "Regex test\n";
@@ -197,19 +198,19 @@ int main(int argc, char* argv[])
 
     using namespace umba::omanip;
 
-    printInfoLogSectionHeader(logMsg, "Log Colors");
+    printInfoLogSectionHeader(umbaLogStreamMsg, "Log Colors");
 
-    logMsg << emergency << "emergency " << normal << endl;
-    logMsg << alert     << "alert     " << normal << endl;
-    logMsg << critical  << "critical  " << normal << endl;
-    logMsg << error     << "error     " << normal << endl;
-    logMsg << warning   << "warning   " << normal << endl;
-    logMsg << notice    << "notice    " << normal << endl;
-    logMsg << info      << "info      " << normal << endl;
-    logMsg << debug     << "debug     " << normal << endl;
-    logMsg << good      << "good      " << normal << endl;
-    logMsg << caption   << "caption   " << normal << endl;
-    logMsg << normal    << "normal    " << normal << endl;
+    umbaLogStreamMsg << emergency << "emergency " << normal << endl;
+    umbaLogStreamMsg << alert     << "alert     " << normal << endl;
+    umbaLogStreamMsg << critical  << "critical  " << normal << endl;
+    umbaLogStreamMsg << error     << "error     " << normal << endl;
+    umbaLogStreamMsg << warning   << "warning   " << normal << endl;
+    umbaLogStreamMsg << notice    << "notice    " << normal << endl;
+    umbaLogStreamMsg << info      << "info      " << normal << endl;
+    umbaLogStreamMsg << debug     << "debug     " << normal << endl;
+    umbaLogStreamMsg << good      << "good      " << normal << endl;
+    umbaLogStreamMsg << caption   << "caption   " << normal << endl;
+    umbaLogStreamMsg << normal    << "normal    " << normal << endl;
 
 
 

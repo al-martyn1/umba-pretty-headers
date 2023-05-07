@@ -32,15 +32,6 @@ struct DeclarationLocationFileInfo
 };
 
 
-
-
-
-const AppConfig           *pAppConfig = 0;
-std::set<std::string>      curProcessedFiles;
-std::string                currentSourceFullName;
-std::string                currentSourcePath;
-
-
 //std::map< clang::Decl::Kind, unsigned > declUsageMap        ; // = marty::clang::helpers::makeClangDeclKindUsageMap();
 std::map< clang::Decl::Kind, unsigned > declUsageMapHandled;
 std::map< clang::Decl::Kind, unsigned > declUsageMapUnhandled;
@@ -138,16 +129,16 @@ protected:
           
           if (!pAppConfig)
           {
-              //logMsg << "CP1: return NotAllowed" << endl;
+              //umbaLogStreamMsg << "CP1: return NotAllowed" << endl;
               return false; // If pAppConfig not set no other checks allowed. Helps to simplify next conditions
           }
 
-          //pAppConfig->printVerbosity(logMsg);
-          //pAppConfig->printVerbosityTests(logMsg);
+          //pAppConfig->printVerbosity(umbaLogStreamMsg);
+          //pAppConfig->printVerbosityTests(umbaLogStreamMsg);
 
           if (!pAppConfig->testVerbosity(VerbosityLevel::detailed)) 
           {
-              //logMsg << "CP2: return NotAllowed" << endl;
+              //umbaLogStreamMsg << "CP2: return NotAllowed" << endl;
               return false; // No any details allowed at all - no user, no system
           }
           // Detailed verbosity, user files decls allowed
@@ -155,27 +146,27 @@ protected:
 
           // if (strFullNameCmp=="D:/TC/Include/stddef.h")
           // {
-          //     logMsg << "Found '" << "D:/TC/Include/stddef.h" << "' (for break only)" << endl;
+          //     umbaLogStreamMsg << "Found '" << "D:/TC/Include/stddef.h" << "' (for break only)" << endl;
           // }
           // if (strFullNameCmp=="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include/vadefs.h")
           // {
-          //     logMsg << "Found '" << "D:/TC/Include/stddef.h" << "' (for break only)" << endl;
+          //     umbaLogStreamMsg << "Found '" << "D:/TC/Include/stddef.h" << "' (for break only)" << endl;
           // }
 
           // Here allowed user and system files - --verbosity=detaled
           if (isUserFile(strFullNameCmp))
           {
-              //logMsg << "CP3: return Allowed" << endl;
+              //umbaLogStreamMsg << "CP3: return Allowed" << endl;
               return true;
           }
 
           if (!pAppConfig->testVerbosity(VerbosityLevel::extra))
           {
-              //logMsg << "CP4: return NotAllowed" << endl;
+              //umbaLogStreamMsg << "CP4: return NotAllowed" << endl;
               return false;
           }
 
-          //logMsg << "CP5: return Allowed" << endl;
+          //umbaLogStreamMsg << "CP5: return Allowed" << endl;
           return true;
       }
 
@@ -189,7 +180,7 @@ protected:
       void skipDeclaration(clang::NamedDecl *NamedDecl, std::string kindStr = "") const
       {
           //auto &stream = llvm::outs();
-          auto &stream = logMsg;
+          auto &stream = umbaLogStreamMsg;
 
           // if (!pAppConfig || !pAppConfig->getOptSuperVerbose()) 
           //     return;
@@ -206,7 +197,7 @@ protected:
       void unhadledDeclaration(clang::NamedDecl *NamedDecl, std::string kindStr = "") const
       {
           //auto &stream = llvm::outs();
-          auto &stream = logMsg;
+          auto &stream = umbaLogStreamMsg;
 
           // if (!pAppConfig || !pAppConfig->getOptSuperVerbose()) 
           //     return;
@@ -223,7 +214,7 @@ protected:
       void processDeclaration(clang::NamedDecl *NamedDecl, std::string kindStr = "") const
       {
           //auto &stream = llvm::outs();
-          auto &stream = logMsg;
+          auto &stream = umbaLogStreamMsg;
 
           UMBA_PRETTY_HEADERS_DECL_VISITOR_DECLARE_AND_GET_LOCATION(NamedDecl); // makes strLocFileName and strFullName
 
@@ -272,7 +263,7 @@ public:
           // bool isInStdNamespace() const
 
           //auto &stream = llvm::outs();
-          auto &stream = logMsg;
+          auto &stream = umbaLogStreamMsg;
 
           auto kind        = NamedDecl->getKind();
           auto idns        = NamedDecl->getIdentifierNamespace();

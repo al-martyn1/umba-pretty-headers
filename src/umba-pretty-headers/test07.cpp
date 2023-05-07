@@ -20,6 +20,8 @@
 #include "umba/scope_exec.h"
 #include "umba/macro_helpers.h"
 #include "umba/macros.h"
+#include "umba/info_log.h"
+#include "umba/scanners.h"
 
 #include "umba/time_service.h"
 
@@ -29,22 +31,24 @@ umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
 umba::NulCharWriter       nulWriter;
 
-umba::SimpleFormatter logMsg(&coutWriter);
-umba::SimpleFormatter logErr(&cerrWriter);
-umba::SimpleFormatter logNul(&nulWriter);
+umba::SimpleFormatter umbaLogStreamMsg(&coutWriter);
+umba::SimpleFormatter umbaLogStreamErr(&cerrWriter);
+umba::SimpleFormatter umbaLogStreamNul(&nulWriter);
 
 bool logWarnType   = true;
-bool logGccFormat  = false;
-bool logSourceInfo = false;
+bool umbaLogGccFormat  = false;
+bool umbaLogSourceInfo = false;
 
 
-#include "log.h"
-#include "compile_flags_parser.h"
-#include "utils.h"
-#include "scan_folders.h"
-
+#include "../common/log.h"
+#include "../common/compile_flags_parser.h"
+#include "../common/utils.h"
+#include "umba/scanners.h"
+#include "app_config.h"
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
+AppConfig    appConfig;
+
 
 
 // bool                    quet = false;
@@ -66,7 +70,7 @@ umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 
 
 #include "app_ver_config.h"
-#include "print_ver.h"
+#include "umba/cli_tool_helpers.h"
 
 #include "arg_parser.h"
 
@@ -114,7 +118,7 @@ int main(int argc, char* argv[])
 
     if (!argsParser.quet)
     {
-        printNameVersion();
+        umba::cli_tool_helpers::printNameVersion(umbaLogStreamMsg);
     }
 
     if (!argsParser.parseStdBuiltins())
@@ -130,16 +134,16 @@ int main(int argc, char* argv[])
 
 
 
-    printInfoLogSectionHeader(logMsg, "App Config");
-    appConfig.print(logMsg) << "\n";
+    umba::info_log::printSectionHeader(umbaLogStreamMsg, "App Config");
+    appConfig.print(umbaLogStreamMsg) << "\n";
 
     appConfig = appConfig.getAdjustedConfig(programLocationInfo);
 
-    // printInfoLogSectionHeader(logMsg, "Adjusted App Config") << appConfig << "\n";
-    printInfoLogSectionHeader(logMsg, "Adjusted App Config");
-    appConfig.print(logMsg) << "\n";
+    // printInfoLogSectionHeader(umbaLogStreamMsg, "Adjusted App Config") << appConfig << "\n";
+    umba::info_log::printSectionHeader(umbaLogStreamMsg, "Adjusted App Config");
+    appConfig.print(umbaLogStreamMsg) << "\n";
 
-    printInfoLogSectionHeader(logMsg, "### Normal Output") << "\n";
+    umba::info_log::printSectionHeader(umbaLogStreamMsg, "### Normal Output") << "\n";
 
 
     #include "zz_generation.h"
@@ -147,39 +151,39 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> foundFiles, excludedFiles;
     std::set<std::string>    foundExtentions;
-    scanFolders(appConfig, foundFiles, excludedFiles, foundExtentions);
+    umba::scanners::scanFolders(appConfig, umbaLogStreamMsg, foundFiles, excludedFiles, foundExtentions);
 
 
 
     if (!appConfig.testVerbosity(VerbosityLevel::detailed))
     {
         if (!foundFiles.empty())
-            printInfoLogSectionHeader(logMsg, "Files for Processing");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Files for Processing");
 
         for(const auto & name : foundFiles)
         {
-            logMsg << name << endl;
+            umbaLogStreamMsg << name << endl;
         }
 
 
         if (!excludedFiles.empty())
-            printInfoLogSectionHeader(logMsg, "Files Excluded from Processing");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Files Excluded from Processing");
 
         for(const auto & name : excludedFiles)
         {
-            logMsg << name << endl;
+            umbaLogStreamMsg << name << endl;
         }
 
 
         if (!foundExtentions.empty())
-            printInfoLogSectionHeader(logMsg, "Found File Extentions");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Found File Extentions");
 
         for(const auto & ext : foundExtentions)
         {
             if (ext.empty())
-                logMsg << "<EMPTY>" << endl;
+                umbaLogStreamMsg << "<EMPTY>" << endl;
             else
-                logMsg << "." << ext << endl;
+                umbaLogStreamMsg << "." << ext << endl;
         }
     }
 
@@ -189,9 +193,9 @@ int main(int argc, char* argv[])
     {
         if (!foundFiles.empty())
         {
-            printInfoLogSectionHeader(logMsg, "Scaning completed");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Scaning completed");
             auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-            logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+            umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
             startTick = umba::time_service::getCurTimeMs();
         }
     }

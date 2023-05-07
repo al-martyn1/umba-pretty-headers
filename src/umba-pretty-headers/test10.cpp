@@ -14,24 +14,24 @@
 #include "umba/macro_helpers.h"
 #include "umba/enum_helpers.h"
 #include "umba/flag_helpers.h"
-#include "scan_for_pp.h"
-#include "utils.h"
+#include "../common/scan_for_pp.h"
+#include "../common/utils.h"
 
 umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
 umba::NulCharWriter       nulWriter;
 
-umba::SimpleFormatter logMsg(&coutWriter);
-umba::SimpleFormatter logErr(&cerrWriter);
-umba::SimpleFormatter logNul(&nulWriter);
+umba::SimpleFormatter umbaLogStreamMsg(&coutWriter);
+umba::SimpleFormatter umbaLogStreamErr(&cerrWriter);
+umba::SimpleFormatter umbaLogStreamNul(&nulWriter);
 
 bool logWarnType   = true;
-bool logGccFormat  = false;
-bool logSourceInfo = false;
+bool umbaLogGccFormat  = false;
+bool umbaLogSourceInfo = false;
 
 
-#include "log.h"
-#include "utils.h"
+#include "../common/log.h"
+#include "../common/utils.h"
 
 
 
@@ -47,37 +47,37 @@ int main(int argc, char* argv[])
     scanForPp( scanFilename, foundDefinitions, foundUsages );
 
     //------------------------------
-    printInfoLogSectionHeader( logMsg, "Found Defined Macros" );
+    printInfoLogSectionHeader( umbaLogStreamMsg, "Found Defined Macros" );
 
     std::map<std::string, std::map<std::string,std::string> >::const_iterator 
     it = foundDefinitions.begin();
     
     for(; it!=foundDefinitions.end(); ++it)
     {
-        logMsg << it->first << "\n";
+        umbaLogStreamMsg << it->first << "\n";
 
         const std::map<std::string,std::string> &defs = it->second;
 
         for( const auto &[d,l] : defs )
         {
-            logMsg << "    " << d << " - [" << l << "]\n";
+            umbaLogStreamMsg << "    " << d << " - [" << l << "]\n";
         }
     }
 
     //------------------------------
-    printInfoLogSectionHeader( logMsg, "Found Macro Usage" );
+    printInfoLogSectionHeader( umbaLogStreamMsg, "Found Macro Usage" );
 
     it = foundUsages.begin();
     
     for(; it!=foundUsages.end(); ++it)
     {
-        logMsg << it->first << "\n";
+        umbaLogStreamMsg << it->first << "\n";
 
         const std::map<std::string,std::string> &defs = it->second;
 
         for( const auto &[d,l] : defs )
         {
-            logMsg << "    " << d << " - [" << l << "]\n";
+            umbaLogStreamMsg << "    " << d << " - [" << l << "]\n";
         }
     }
 

@@ -132,7 +132,7 @@ int operator()( const std::string                               &a           //!
 
             if (!ignoreInfos)
             {
-                printOnlyVersion();
+                umba::cli_tool_helpers::printOnlyVersion(umbaLogStreamMsg);
                 return 1;
             }
         }
@@ -468,16 +468,16 @@ int operator()( const std::string                               &a           //!
                 //printNameVersion();
                 if (!argsParser.quet)
                 {
-                    printBuildDateTime();
-                    printCommitHash();
-                    std::cout<<"\n";
+                    umba::cli_tool_helpers::printBuildDateTime(umbaLogStreamMsg);
+                    umba::cli_tool_helpers::printCommitHash(umbaLogStreamMsg);
+                    umbaLogStreamMsg <<"\n";
                 //printHelp();
                 }
 
                 if (pCol && pCol->isNormalPrintHelpStyle() && argsParser.argsNeedHelp.empty())
                 {
                     auto helpText = opt.getHelpOptionsString();
-                    std::cout << "Usage: " << programLocationInfo.exeName
+                    umbaLogStreamMsg << "Usage: " << programLocationInfo.exeName
                     //std::cout<<"Usage: " << programLocationInfo.exeFullName 
                               << " [OPTIONS] input_file [output_file]\n\nOptions:\n\n"<<helpText;
                 }

@@ -26,46 +26,55 @@
 #include "umba/scope_exec.h"
 #include "umba/macro_helpers.h"
 #include "umba/macros.h"
+#include "umba/cli_tool_helpers.h"
+
 
 #include "umba/time_service.h"
 
 
-#include "utils.h"
-#include "clang.h"
-#include "marty_clang_helpers.h"
+#include "../common/utils.h"
+#include "../common/clang.h"
+#include "../common/marty_clang_helpers.h"
+#include "../common/DeclFindingActionTemplate.h"
+#include "../common/DeclFinderTemplate.h"
 
 
 umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
 umba::NulCharWriter       nulWriter;
 
-umba::SimpleFormatter logMsg(&coutWriter);
-umba::SimpleFormatter logErr(&cerrWriter);
-umba::SimpleFormatter logNul(&nulWriter);
+umba::SimpleFormatter umbaLogStreamMsg(&coutWriter);
+umba::SimpleFormatter umbaLogStreamErr(&cerrWriter);
+umba::SimpleFormatter umbaLogStreamNul(&nulWriter);
 
 bool logWarnType   = true;
-bool logGccFormat  = false;
-bool logSourceInfo = false;
+bool umbaLogGccFormat  = false;
+bool umbaLogSourceInfo = false;
 
 
-#include "log.h"
-#include "compile_flags_parser.h"
-#include "utils.h"
-#include "scan_folders.h"
+#include "../common/log.h"
+#include "../common/compile_flags_parser.h"
+#include "../common/utils.h"
+#include "umba/scanners.h"
 
-#include "scan_sources.h"
-#include "scan_for_pp.h"
-
-umba::program_location::ProgramLocation<std::string>   programLocationInfo;
-
+#include "app_config.h"
 
 #include "umba/cmd_line.h"
-
-
 #include "app_ver_config.h"
-#include "print_ver.h"
-
 #include "arg_parser.h"
+
+
+AppConfig    appConfig;
+umba::program_location::ProgramLocation<std::string>   programLocationInfo;
+
+const AppConfig           *pAppConfig = 0;
+std::set<std::string>      curProcessedFiles;
+std::string                currentSourceFullName;
+std::string                currentSourcePath;
+
+
+#include "../common/scan_sources.h"
+#include "../common/scan_for_pp.h"
 
 
 
@@ -108,7 +117,7 @@ int main(int argc, char* argv[])
 
     if (!argsParser.quet)
     {
-        printNameVersion();
+        umba::cli_tool_helpers::printNameVersion(umbaLogStreamMsg);
     }
 
     if (!argsParser.parseStdBuiltins())
@@ -127,9 +136,9 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::config))
     {
-        printInfoLogSectionHeader(logMsg, "Actual Config");
-        // logMsg << appConfig;
-        appConfig.print(logMsg) << "\n";
+        printInfoLogSectionHeader(umbaLogStreamMsg, "Actual Config");
+        // umbaLogStreamMsg << appConfig;
+        appConfig.print(umbaLogStreamMsg) << "\n";
     }
 
     if (appConfig.outputPath.empty())
@@ -149,39 +158,39 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> foundFiles, excludedFiles;
     std::set<std::string>    foundExtentions;
-    scanFolders(appConfig, foundFiles, excludedFiles, foundExtentions);
+    umba::scanners::scanFolders(appConfig, umbaLogStreamMsg, foundFiles, excludedFiles, foundExtentions);
 
 
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
         if (!foundFiles.empty())
-            printInfoLogSectionHeader(logMsg, "Files for Processing");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Files for Processing");
 
         for(const auto & name : foundFiles)
         {
-            logMsg << name << endl;
+            umbaLogStreamMsg << name << endl;
         }
 
 
         if (!excludedFiles.empty())
-            printInfoLogSectionHeader(logMsg, "Files Excluded from Processing");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Files Excluded from Processing");
 
         for(const auto & name : excludedFiles)
         {
-            logMsg << name << endl;
+            umbaLogStreamMsg << name << endl;
         }
 
 
         if (!foundExtentions.empty())
-            printInfoLogSectionHeader(logMsg, "Found File Extentions");
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Found File Extentions");
 
         for(const auto & ext : foundExtentions)
         {
             if (ext.empty())
-                logMsg << "<EMPTY>" << endl;
+                umbaLogStreamMsg << "<EMPTY>" << endl;
             else
-                logMsg << "." << ext << endl;
+                umbaLogStreamMsg << "." << ext << endl;
         }
     }
 
@@ -189,9 +198,9 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
-        printInfoLogSectionHeader(logMsg, "Scaning for input files completed");
+        printInfoLogSectionHeader(umbaLogStreamMsg, "Scaning for input files completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
     }
 
@@ -240,17 +249,17 @@ int main(int argc, char* argv[])
 
         if (appConfig.testVerbosity(VerbosityLevel::normal))
         {
-            printInfoLogSectionHeader(logMsg, "Generating C++ source");
-            // logMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
-            logMsg << "File: " << srcFullName << endl << endl;
-            logMsg << "Processing..." << endl << endl;
+            printInfoLogSectionHeader(umbaLogStreamMsg, "Generating C++ source");
+            // umbaLogStreamMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
+            umbaLogStreamMsg << "File: " << srcFullName << endl << endl;
+            umbaLogStreamMsg << "Processing..." << endl << endl;
         }
         
 
         // if (!appConfig.getOptQuet())
         // {
-        //     logMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
-        //     //printInfoLogSectionHeader(logMsg, "Generating C++ source");
+        //     umbaLogStreamMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
+        //     //printInfoLogSectionHeader(umbaLogStreamMsg, "Generating C++ source");
         // }
 
 
@@ -319,9 +328,9 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
-        printInfoLogSectionHeader(logMsg, "Scaning C++ headers completed");
+        printInfoLogSectionHeader(umbaLogStreamMsg, "Scaning C++ headers completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
     }
 
@@ -373,11 +382,11 @@ int main(int argc, char* argv[])
 
         using namespace umba::omanip;
 
-        printInfoLogSectionHeader(logMsg, title);
+        printInfoLogSectionHeader(umbaLogStreamMsg, title);
 
         for( auto [key,val] : m )
         {
-            logMsg << width(36) << marty::clang::helpers::getClangDeclKindName(key) << ": " << val <<endl;
+            umbaLogStreamMsg << width(36) << marty::clang::helpers::getClangDeclKindName(key) << ": " << val <<endl;
         }
 
     };
@@ -415,7 +424,7 @@ int main(int argc, char* argv[])
     if (!foundDefinitions.empty())
     {
         if (appConfig.testVerbosity(VerbosityLevel::detailed))
-            printInfoLogSectionHeader( logMsg, "Found Defined Macros" );
+            printInfoLogSectionHeader( umbaLogStreamMsg, "Found Defined Macros" );
        
         std::map<std::string, std::map<std::string,std::string> >::const_iterator 
         it = foundDefinitions.begin();
@@ -448,7 +457,7 @@ int main(int argc, char* argv[])
         for(; it!=foundDefinitions.end(); ++it)
         {
             if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                logMsg << "File: " << it->first << "\n";
+                umbaLogStreamMsg << "File: " << it->first << "\n";
 
             auto incName = appConfig.getIncludeName(it->first);
 
@@ -459,7 +468,7 @@ int main(int argc, char* argv[])
             for( const auto &[d,l] : defs )
             {
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                    logMsg << "    " << d ;
+                    umbaLogStreamMsg << "    " << d ;
 
                 definedMacrosTxtStream << "    " << d ;
 
@@ -467,7 +476,7 @@ int main(int argc, char* argv[])
                 if (umba::regex_helpers::regexMatch(d,regexes,&regexStr))
                 {
                     if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                        logMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
+                        umbaLogStreamMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" 
                                         << normal 
                                         //<< " - [" << l << "]"
                                         << endl;
@@ -508,7 +517,7 @@ int main(int argc, char* argv[])
                 definedMacroStream << "#include " << appConfig.getQuotedName(incName) << "\n\n";
 
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                    logMsg // << " - [" << l << "]" 
+                    umbaLogStreamMsg // << " - [" << l << "]" 
                            << endl;
 
                 definedMacrosTxtStream << "\n";
@@ -522,7 +531,7 @@ int main(int argc, char* argv[])
     if (!foundUsages.empty())
     {
         if (appConfig.testVerbosity(VerbosityLevel::detailed))
-            printInfoLogSectionHeader( logMsg, "Found Macro Usage" );
+            printInfoLogSectionHeader( umbaLogStreamMsg, "Found Macro Usage" );
 
         auto usedMacrosTxtFullName = umba::filename::makeCanonical(umba::filename::appendPath(appConfig.outputPath, std::string("__used_macros.txt")));
         std::ofstream usedMacrosTxtStream;
@@ -551,7 +560,7 @@ int main(int argc, char* argv[])
         for(; it!=foundUsages.end(); ++it)
         {
             if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                logMsg << it->first << "\n";
+                umbaLogStreamMsg << it->first << "\n";
 
             usedMacrosTxtStream << it->first << "\n";
        
@@ -560,7 +569,7 @@ int main(int argc, char* argv[])
             for( const auto &[d,l] : defs )
             {
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                    logMsg << "    " << d << " - [" << l << "]\n";
+                    umbaLogStreamMsg << "    " << d << " - [" << l << "]\n";
                 usedMacrosTxtStream << "    " << d << " - [" << l << "]\n";
             }
         }
@@ -572,41 +581,41 @@ int main(int argc, char* argv[])
         {
             std::ostringstream oss;
             oss << "Found User Declarations (Total: " << foundDeclarations.size() << ")";
-            printInfoLogSectionHeader(logMsg, oss.str());
+            printInfoLogSectionHeader(umbaLogStreamMsg, oss.str());
         }
 
         for(const auto& [cppName, info] : foundDeclarations)
         {
-            logMsg << endl;
+            umbaLogStreamMsg << endl;
 
             auto fileNameForCppName = cppNameToFileName(cppName);
-            logMsg << cppName <<  " - (" << fileNameForCppName << ")"; // << endl;
+            umbaLogStreamMsg << cppName <<  " - (" << fileNameForCppName << ")"; // << endl;
             if (isCppSpecialName(cppName))
-                logMsg << " - C++ special name";
+                umbaLogStreamMsg << " - C++ special name";
 
             std::string regexStr;
             if (umba::regex_helpers::regexMatch(cppName,regexes,&regexStr))
             {
                 if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                    logMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                    umbaLogStreamMsg << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
                 continue;
             }
 
 
-            logMsg << endl;
+            umbaLogStreamMsg << endl;
 
-            logMsg << "Kinds:" << endl;
+            umbaLogStreamMsg << "Kinds:" << endl;
             for( auto kind : info.nameKinds )
             {
-                logMsg << "    " << marty::clang::helpers::getClangDeclKindName(kind) 
+                umbaLogStreamMsg << "    " << marty::clang::helpers::getClangDeclKindName(kind) 
                        << " - "  << marty::clang::helpers::DeclKindOfKind_toStdString(marty::clang::helpers::declKind_toKindOfKind(kind))
                        << endl;
             }
 
-            logMsg << "Files:" << endl;
+            umbaLogStreamMsg << "Files:" << endl;
             for( const auto & [filenameKey, locFileInfo]: info.locationFiles )
             {
-                logMsg << "    " << marty::clang::helpers::getClangDeclKindName(locFileInfo.kind)
+                umbaLogStreamMsg << "    " << marty::clang::helpers::getClangDeclKindName(locFileInfo.kind)
                        <<   ": " << locFileInfo.locationFilename
                        <<  " - " << locFileInfo.fullFilename
                        << endl;
@@ -651,7 +660,7 @@ int main(int argc, char* argv[])
         if (!validKindFound)
         {
             if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                logMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due kind of name - " << marty::clang::helpers::DeclKindOfKind_toStdString(allNameKinds) << normal << endl;
+                umbaLogStreamMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due kind of name - " << marty::clang::helpers::DeclKindOfKind_toStdString(allNameKinds) << normal << endl;
             continue;
         }
 
@@ -659,7 +668,7 @@ int main(int argc, char* argv[])
         if (umba::regex_helpers::regexMatch(cxxName,regexes,&regexStr))
         {
             if (appConfig.testVerbosity(VerbosityLevel::detailed))
-                logMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
+                umbaLogStreamMsg << cxxName << " - " << notice << "skipped" <<  /* normal << */  " due '" << originalMasks[regexStr] << "' (" << regexStr << ")" << normal << endl;
             continue;
         }
 
@@ -711,7 +720,7 @@ int main(int argc, char* argv[])
         }
 
         if (appConfig.testVerbosity(VerbosityLevel::detailed))
-            logMsg << cxxName << " - " << canonicalFullName /* fullName */  << " - generated" << endl;
+            umbaLogStreamMsg << cxxName << " - " << canonicalFullName /* fullName */  << " - generated" << endl;
 
     }
 
@@ -792,12 +801,12 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
-        printInfoLogSectionHeader(logMsg, "Job done");
+        printInfoLogSectionHeader(umbaLogStreamMsg, "Job done");
 
-        logMsg << "Total files created: " << totalFilesCreated << endl;
+        umbaLogStreamMsg << "Total files created: " << totalFilesCreated << endl;
 
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
-        logMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
+        umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
     }
 
