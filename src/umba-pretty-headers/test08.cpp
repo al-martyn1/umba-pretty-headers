@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 
     using namespace umba::omanip;
 
-    printInfoLogSectionHeader(umbaLogStreamMsg, "Log Colors");
+    umba::info_log::printSectionHeader(umbaLogStreamMsg, "Log Colors");
 
     umbaLogStreamMsg << emergency << "emergency " << normal << endl;
     umbaLogStreamMsg << alert     << "alert     " << normal << endl;

@@ -45,7 +45,7 @@
         if (!generatedCompileFlagsTxtFiles.empty())
         {
             //printInfoLogSectionHeader(umbaLogStreamMsg, "Generated 'CompileFlags' Files");
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Generated 'compile_flags.txt' Files");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Generated 'compile_flags.txt' Files");
         }
 
         for(auto & name : generatedCompileFlagsTxtFiles)
@@ -74,7 +74,7 @@
             }
         }
 
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Initialization completed");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Initialization completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         startTick = umba::time_service::getCurTimeMs();

@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
 
     if (appConfig.verbosityLevel!=VerbosityLevel::quet)
     {
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Verbosity");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Verbosity");
         umbaLogStreamMsg << "Verbosity: " << appConfig.VerbosityLevelToStdString(appConfig.verbosityLevel) << "\n"; // endl;
         umbaLogStreamMsg << "  quet   : " << appConfig.testVerbosityStringRes(VerbosityLevel::quet    )    << "\n"; // endl;
         umbaLogStreamMsg << "  normal : " << appConfig.testVerbosityStringRes(VerbosityLevel::normal  )    << "\n"; // endl;
@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::config))
     {
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Actual Config");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Actual Config");
         argsParser.printBuiltinFileNames( umbaLogStreamMsg );
         appConfig.print(umbaLogStreamMsg) << "\n";
     }
@@ -219,7 +219,7 @@ int main(int argc, char* argv[])
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
         if (!foundFiles.empty())
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Files for Processing");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Files for Processing");
 
         for(const auto & name : foundFiles)
         {
@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
 
 
         if (!excludedFiles.empty())
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Files Excluded from Processing");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Files Excluded from Processing");
 
         for(const auto & name : excludedFiles)
         {
@@ -237,7 +237,7 @@ int main(int argc, char* argv[])
 
 
         if (!foundExtentions.empty())
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Found File Extentions");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Found File Extentions");
 
         for(const auto & ext : foundExtentions)
         {
@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Scaning for input files completed");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Scaning for input files completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
@@ -308,7 +308,7 @@ int main(int argc, char* argv[])
 
         if (appConfig.testVerbosity(VerbosityLevel::normal))
         {
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Generating C++ source");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Generating C++ source");
             // umbaLogStreamMsg << endl << "Generating C++ source: " << srcFullName << endl << endl;
             umbaLogStreamMsg << "File: " << srcFullName << "\n\n"; // endl << endl;
             umbaLogStreamMsg << "Processing..." << "\n\n"; // endl << endl;
@@ -392,7 +392,7 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Scaning C++ headers completed");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Scaning C++ headers completed");
         auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
         umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
         //startTick = umba::time_service::getCurTimeMs();
@@ -445,7 +445,7 @@ int main(int argc, char* argv[])
 
         using namespace umba::omanip;
 
-        printInfoLogSectionHeader(umbaLogStreamMsg, title);
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, title);
 
         for( auto [key,val] : m )
         {
@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
     if (!foundDefinitions.empty())
     {
         if (appConfig.testVerbosity(VerbosityLevel::detailed))
-            printInfoLogSectionHeader( umbaLogStreamMsg, "Found Defined Macros" );
+            umba::info_log::printSectionHeader( umbaLogStreamMsg, "Found Defined Macros" );
        
         std::map<std::string, std::map<std::string,std::string> >::const_iterator 
         it = foundDefinitions.begin();
@@ -594,7 +594,7 @@ int main(int argc, char* argv[])
     if (!foundUsages.empty())
     {
         if (appConfig.testVerbosity(VerbosityLevel::detailed))
-            printInfoLogSectionHeader( umbaLogStreamMsg, "Found Macro Usage" );
+            umba::info_log::printSectionHeader( umbaLogStreamMsg, "Found Macro Usage" );
 
         auto usedMacrosTxtFullName = umba::filename::makeCanonical(umba::filename::appendPath(appConfig.outputPath, std::string("__used_macros.txt")));
         std::ofstream usedMacrosTxtStream;
@@ -644,7 +644,7 @@ int main(int argc, char* argv[])
         {
             std::ostringstream oss;
             oss << "Found User Declarations (Total: " << foundDeclarations.size() << ")";
-            printInfoLogSectionHeader(umbaLogStreamMsg, oss.str());
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, oss.str());
         }
 
         for(const auto& [cppName, info] : foundDeclarations)
@@ -701,7 +701,7 @@ int main(int argc, char* argv[])
     //if (!foundDeclarations.empty() && appConfig.testVerbosity(VerbosityLevel::detailed))
     if (appConfig.testVerbosity(VerbosityLevel::detailed))
     {
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Output generation");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Output generation");
     }
 
     for(const auto& [cxxName, info] : foundDeclarations)
@@ -805,7 +805,7 @@ int main(int argc, char* argv[])
 
     if (appConfig.testVerbosity(VerbosityLevel::detailed))
     {
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Scripts generation");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Scripts generation");
     }
     
     #if defined(WIN32) || defined(_WIN32)
@@ -915,7 +915,7 @@ int main(int argc, char* argv[])
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
         umbaLogStreamMsg << "\n";
-        printInfoLogSectionHeader(umbaLogStreamMsg, "Job done");
+        umba::info_log::printSectionHeader(umbaLogStreamMsg, "Job done");
 
         umbaLogStreamMsg << "Total files created: " << totalFilesCreated << "\n"; // endl;
 

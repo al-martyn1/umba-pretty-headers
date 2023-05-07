@@ -14,6 +14,7 @@
 #include "umba/macro_helpers.h"
 #include "umba/enum_helpers.h"
 #include "umba/flag_helpers.h"
+#include "umba/info_log.h"
 #include "../common/scan_for_pp.h"
 #include "../common/utils.h"
 
@@ -47,7 +48,7 @@ int main(int argc, char* argv[])
     scanForPp( scanFilename, foundDefinitions, foundUsages );
 
     //------------------------------
-    printInfoLogSectionHeader( umbaLogStreamMsg, "Found Defined Macros" );
+    umba::info_log::printSectionHeader( umbaLogStreamMsg, "Found Defined Macros" );
 
     std::map<std::string, std::map<std::string,std::string> >::const_iterator 
     it = foundDefinitions.begin();
@@ -65,7 +66,7 @@ int main(int argc, char* argv[])
     }
 
     //------------------------------
-    printInfoLogSectionHeader( umbaLogStreamMsg, "Found Macro Usage" );
+    umba::info_log::printSectionHeader( umbaLogStreamMsg, "Found Macro Usage" );
 
     it = foundUsages.begin();
     

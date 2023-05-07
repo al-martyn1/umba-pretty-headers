@@ -45,6 +45,7 @@ bool umbaLogSourceInfo = false;
 #include "../common/utils.h"
 #include "umba/scanners.h"
 #include "app_config.h"
+#include "umba/info_log.h"
 
 umba::program_location::ProgramLocation<std::string>   programLocationInfo;
 AppConfig    appConfig;
@@ -158,7 +159,7 @@ int main(int argc, char* argv[])
     if (!appConfig.testVerbosity(VerbosityLevel::detailed))
     {
         if (!foundFiles.empty())
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Files for Processing");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Files for Processing");
 
         for(const auto & name : foundFiles)
         {
@@ -167,7 +168,7 @@ int main(int argc, char* argv[])
 
 
         if (!excludedFiles.empty())
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Files Excluded from Processing");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Files Excluded from Processing");
 
         for(const auto & name : excludedFiles)
         {
@@ -176,7 +177,7 @@ int main(int argc, char* argv[])
 
 
         if (!foundExtentions.empty())
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Found File Extentions");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Found File Extentions");
 
         for(const auto & ext : foundExtentions)
         {
@@ -193,7 +194,7 @@ int main(int argc, char* argv[])
     {
         if (!foundFiles.empty())
         {
-            printInfoLogSectionHeader(umbaLogStreamMsg, "Scaning completed");
+            umba::info_log::printSectionHeader(umbaLogStreamMsg, "Scaning completed");
             auto tickDiff = umba::time_service::getCurTimeMs() - startTick;
             umbaLogStreamMsg << "Time elapsed: " << tickDiff << "ms" << "\n";
             startTick = umba::time_service::getCurTimeMs();
