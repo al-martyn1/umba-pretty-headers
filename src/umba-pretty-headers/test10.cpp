@@ -16,7 +16,6 @@
 #include "umba/flag_helpers.h"
 #include "umba/info_log.h"
 #include "../common/scan_for_pp.h"
-#include "../common/utils.h"
 
 umba::StdStreamCharWriter coutWriter(std::cout);
 umba::StdStreamCharWriter cerrWriter(std::cerr);
@@ -32,7 +31,6 @@ bool umbaLogSourceInfo = false;
 
 
 #include "../common/log.h"
-#include "../common/utils.h"
 
 
 

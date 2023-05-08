@@ -4,6 +4,8 @@
 
 #include "umba/umba.h"
 #include "umba/debug_helpers.h"
+#include "umba/simple_formatter.h"
+#include "umba/char_writers.h"
 
 #include <iostream>
 #include <iomanip>
@@ -12,7 +14,6 @@
 #include "../common/clang.h"
 
 #include "../common/marty_clang_helpers.h"
-#include "../common/utils.h"
 
 #include "../common/DeclFindingActionTemplate.h"
 #include "../common/DeclFinderTemplate.h"

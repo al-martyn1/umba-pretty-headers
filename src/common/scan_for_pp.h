@@ -7,12 +7,42 @@
 #include <string>
 
 #include "umba/filename.h"
-#include "utils.h"
 
 //----------------------------------------------------------------------------
 
 
 
+
+//----------------------------------------------------------------------------
+bool isCppSpecialName( const std::string &s )
+{
+    return s.find_first_of( "<=>?!~[]&|+-/*%.(){}" )!=s.npos;
+}
+
+//----------------------------------------------------------------------------
+std::string cppNameToFileName( std::string name )
+{
+    umba::string_plus::ltrim( name, umba::string_plus::is_one_of<char>(":") );
+
+    std::string fileName;
+    fileName.reserve(name.size());
+
+    for(auto ch : name)
+    {
+        if (ch==':')
+        {
+            if (!fileName.empty() && fileName.back()=='/')
+                continue;
+
+            fileName.push_back('/');
+            continue;
+        }
+
+        fileName.push_back(ch);
+    }
+
+    return fileName;
+}
 
 //----------------------------------------------------------------------------
 inline

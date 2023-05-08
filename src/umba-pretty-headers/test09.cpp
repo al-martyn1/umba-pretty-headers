@@ -32,7 +32,6 @@
 #include "umba/time_service.h"
 
 
-#include "../common/utils.h"
 #include "../common/clang.h"
 #include "../common/marty_clang_helpers.h"
 #include "../common/DeclFindingActionTemplate.h"
@@ -54,7 +53,6 @@ bool umbaLogSourceInfo = false;
 
 #include "../common/log.h"
 #include "../common/compile_flags_parser.h"
-#include "../common/utils.h"
 #include "umba/scanners.h"
 
 #include "app_config.h"

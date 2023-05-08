@@ -42,7 +42,6 @@ bool umbaLogSourceInfo = false;
 
 #include "../common/log.h"
 #include "../common/compile_flags_parser.h"
-#include "../common/utils.h"
 #include "umba/scanners.h"
 #include "app_config.h"
 #include "umba/info_log.h"

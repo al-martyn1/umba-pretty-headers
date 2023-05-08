@@ -30,7 +30,6 @@ bool umbaLogSourceInfo = false;
 
 
 #include "../common/log.h"
-#include "../common/utils.h"
 #include "umba/scanners.h"
 
 
