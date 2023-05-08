@@ -1,17 +1,28 @@
 Brief Description for Project Sources
 -------------------------------------
 
-src/main/qt_stub.cpp             - Стаб, для того, чтобы windeployqt подсосал нужный рантайм для MSVC - а то совсем без Qt он не работает
-src/main/test00.cpp              - Чистый проект, без каких либо библиотек. Проверка, будут ли передаваться аргументы из среды в main под отладкой. Не проканало. Баг в MSVC 2019?
-src/main/test01.cpp              - Проба CLang Tooling'а, получаем AST
-src/main/test02.cpp              - Проба CLang Tooling'а, потрогал RecursiveASTVisitor
-src/main/test03.cpp              - Проба CLang Tooling'а, потрогал RecursiveASTVisitor - из test02 вынес часть в хидеры
-src/main/test04.cpp              - Проба CLang Tooling'а, потрогал DeclarationMatcher
-src/main/test05.cpp              - Тестики umba::filename - немного подпиливал её
-src/main/test06.cpp              - Налабал umba::program_location - классы/функции для получения основных сведений о расположении программы. Немного тестиков
-src/main/test07.cpp              - Реализация и проверка базовых функций сборка данных для сканирования хидеров
-src/main/test08.cpp              - Проверка подстановки макросов (umba::macros::substMacros, вида $(Macro) ) и хелперов для регэкспов.
-src/main/test09.cpp              - Собрал всё в одну кучу, практически готовое приложение. Использовал clang::RecursiveASTVisitor и запихиваю всё собранное в глобальные переменные
-src/main/test10.cpp              - Проверка сканера макросов (по сишным сорцам)
-src/main/umba-make-headers.cpp   - Главный файл приложения umba-make-headers. Подсасывает сорс из соседней репы или генерирует стаб, сообщающий, что сорс подтянуть не вышло. Используется #if __has_include("")
-src/main/umba-pretty-headers.cpp - Главный файл приложения umba-pretty-headers
+src/common/qt_stub.cpp                       - Стаб, для того, чтобы windeployqt подсосал нужный рантайм для MSVC - а то
+                                               совсем без Qt он не работает.
+src/umba-make-headers/umba-make-headers.cpp  - Главный файл приложения umba-make-headers. Подсасывает сорс из соседней
+                                               репы или генерирует стаб, сообщающий, что сорс подтянуть не
+                                               вышло. Используется #if __has_include("").
+src/umba-pretty-headers/test00.cpp           - Чистый проект, без каких либо библиотек. Проверка, будут ли
+                                               передаваться аргументы из среды в main под отладкой. Не проканало.
+                                               Баг в MSVC 2019?
+src/umba-pretty-headers/test01.cpp           - Проба CLang Tooling'а, получаем AST.
+src/umba-pretty-headers/test02.cpp           - Проба CLang Tooling'а, потрогал RecursiveASTVisitor.
+src/umba-pretty-headers/test03.cpp           - Проба CLang Tooling'а, потрогал RecursiveASTVisitor - из test02 вынес часть в хидеры.
+src/umba-pretty-headers/test04.cpp           - Проба CLang Tooling'а, потрогал DeclarationMatcher.
+src/umba-pretty-headers/test05.cpp           - Тестики umba::filename - немного подпиливал её.
+src/umba-pretty-headers/test06.cpp           - Налабал umba::program_location - классы/функции для получения основных
+                                               сведений о расположении программы. Немного тестиков.
+src/umba-pretty-headers/test07.cpp           - Реализация и проверка базовых функций сборка данных для
+                                               сканирования хидеров.
+src/umba-pretty-headers/test08.cpp           - Проверка подстановки макросов (umba::macros::substMacros, вида $(Macro) ) и
+                                               хелперов для регэкспов.
+src/umba-pretty-headers/test09.cpp           - Собрал всё в одну кучу, практически готовое приложение.
+                                               Использовал clang::RecursiveASTVisitor и запихиваю всё собранное в
+                                               глобальные переменные.
+src/umba-pretty-headers/test10.cpp           - Проверка сканера макросов (по сишным сорцам).
+src/umba-pretty-headers/umba-pretty-headers.cpp - Главный файл приложения umba-pretty-headers.
+tests/data/test_data_02.cpp                  - 

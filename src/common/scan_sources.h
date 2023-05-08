@@ -45,7 +45,7 @@ std::map< std::string, DeclarationLocationFileInfo> foundDeclarations;
 
 
 
-
+//!
 class DeclVisitor : public clang::RecursiveASTVisitor<DeclVisitor>
 {
 

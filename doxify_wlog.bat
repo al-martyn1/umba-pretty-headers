@@ -1,0 +1,1 @@
+@call doxify.bat > doxify.log 2>&1

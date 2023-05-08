@@ -1,0 +1,55 @@
+/**
+
+ \namespace some_ns_top
+
+ \class SimeCls_ns_top
+
+
+*/
+
+/**
+
+ \namespace some_ns_top::inner
+
+ \class SimeCls_ns_top_inner
+
+
+*/
+
+/**
+
+ \namespace dbl_dot::inner
+
+ \class SimeCls_ns_before
+
+
+*/
+
+/**
+
+ \namespace sng_dot::inner
+
+ \class SomeKlasse_ns_before
+
+*/
+
+/**
+
+ \class ns::ns_inner::SomeKlasse_ns_sep_dbl
+
+*/
+
+/**
+
+ \class ns:ns_inner:SomeKlasse_ns_sep_sng
+
+*/
+
+/**
+
+ \class ns/ns_inner/SomeKlasse_ns_sep_slash
+
+*/
+
+
+

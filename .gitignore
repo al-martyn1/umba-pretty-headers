@@ -41,3 +41,5 @@
 /windeployqt.txt
 /compile_flags_0.cpp
 /compile_flags_0.txt
+/doc/umba-pretty-headers
+/tests/*.log
