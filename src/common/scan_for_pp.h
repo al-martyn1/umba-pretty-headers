@@ -176,7 +176,7 @@ void scanForPp( const std::string                                           &fil
         {
             ltrim(line);
 
-            auto pos = line.find_first_of( "<=>?!~[]&|+-/*%.(){} " );
+            auto pos = line.find_first_of( "() \t<=>?!~[]&|+-/*%.{}" );
             if (pos!=line.npos)
                 line.erase(pos); // Удаляем хвост, включая найденную позицию
 
