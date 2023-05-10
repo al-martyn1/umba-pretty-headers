@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> foundFiles, excludedFiles;
     std::set<std::string>    foundExtentions;
-    umba::scanners::scanFolders(appConfig, umbaLogStreamMsg, foundFiles, excludedFiles, foundExtentions);
+    umba::scanners::scanFolders(appConfig, appConfig.testVerbosity(VerbosityLevel::detailed) ? umbaLogStreamMsg : umbaLogStreamNul, foundFiles, excludedFiles, foundExtentions);
 
     if (appConfig.testVerbosity(VerbosityLevel::normal))
     {
