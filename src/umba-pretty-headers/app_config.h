@@ -60,7 +60,7 @@ struct AppConfig
     //------------------------------
     // !!! Не забывать копировать и/или подготавливать поля класса в функции getAdjustedConfig
     //------------------------------
-    std::map<std::string,std::string>        macros;
+    umba::macros::StringStringMap<std::string> macros;
 
     std::vector<std::string>                 clangCompileFlagsTxtFilename; // compile_flags.txt
 
