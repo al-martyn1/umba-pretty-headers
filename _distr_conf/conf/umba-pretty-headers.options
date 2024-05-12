@@ -47,11 +47,14 @@
 -X=*.bat^,*.cmd^,=*.sh^
 
 # Doc files
--X=*.md^,*.txt^,*.ht*^,*.xht*^,*.mht*^,*.doc*^,*.rtf*^,*.xls*^,*.xlt*^,*.xla*^,*.csv^,*.xlw^,*.wk*^,*.wq*^,*.dbf^,*.prn^,*.slk^,*.dif*^
+-X=*._md^,*.md_^,*.md^,*._markdown^,*.markdown_^,*.markdown^,*.txt^,*.ht*^,*.xht*^,*.mht*^,*.doc*^,*.rtf*^,*.xls*^,*.xlt*^,*.xla*^,*.csv^,*.xlw^,*.wk*^,*.wq*^,*.dbf^,*.prn^,*.slk^,*.dif*^
 -X=*readme.*^,*Readme.*^,*ReadMe.*^,*README.*^
 
 # Qt private (or other private folders and files) and other stuff
 -X=*\private\*,*_p.h^
+
+# Archives
+-X=*.zip^,*.7z^,*.rar^,*.arj^
 
 
 # Exclude macros
