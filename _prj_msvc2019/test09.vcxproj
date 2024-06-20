@@ -91,7 +91,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/d1trimfile:C:\llvm-project\build %(AdditionalOptions)</AdditionalOptions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>clang.h</PrecompiledHeaderFile>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
@@ -119,7 +119,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/d1trimfile:C:\llvm-project\build %(AdditionalOptions)</AdditionalOptions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>clang.h</PrecompiledHeaderFile>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
@@ -146,7 +146,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/d1trimfile:C:\llvm-project\build %(AdditionalOptions)</AdditionalOptions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>clang.h</PrecompiledHeaderFile>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
@@ -174,7 +174,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/d1trimfile:C:\llvm-project\build %(AdditionalOptions)</AdditionalOptions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>clang.h</PrecompiledHeaderFile>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
